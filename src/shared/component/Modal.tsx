@@ -24,6 +24,11 @@ const Modal: React.FC<ModalProps> = ({
   const modalRoot = document.getElementById("modal-root");
   if (!modalRoot) return null;
 
+  const handleConfirm = () => {
+    onClose(); //모달 먼저 닫고
+    onConfirm(); //사용자 정의 동작 실행 (페이지 이동 or 요소 삭제)
+  };
+
   return ReactDOM.createPortal(
     <Backdrop>
       <Container>
@@ -32,7 +37,7 @@ const Modal: React.FC<ModalProps> = ({
           <Button variant="cancel" onClick={onClose}>
             {cancelText}
           </Button>
-          <Button variant="confirm" onClick={onConfirm}>
+          <Button variant="confirm" onClick={handleConfirm}>
             {confirmText}
           </Button>
         </ButtonGroup>
