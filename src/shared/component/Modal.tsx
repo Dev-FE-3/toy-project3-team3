@@ -7,8 +7,8 @@ interface ModalProps {
   onClose: () => void;
   onConfirm: () => void;
   message: string;
-  cancelText: string;
-  confirmText: string;
+  leftButtonText: string;
+  rightButtonText: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -16,8 +16,8 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   onConfirm,
   message,
-  cancelText,
-  confirmText,
+  leftButtonText,
+  rightButtonText,
 }) => {
   if (!isOpen) return null;
 
@@ -34,11 +34,11 @@ const Modal: React.FC<ModalProps> = ({
       <Container>
         <Message>{message}</Message>
         <ButtonGroup>
-          <Button variant="cancel" onClick={onClose}>
-            {cancelText}
+          <Button variant="left" onClick={onClose}>
+            {leftButtonText}
           </Button>
-          <Button variant="confirm" onClick={handleConfirm}>
-            {confirmText}
+          <Button variant="right" onClick={handleConfirm}>
+            {rightButtonText}
           </Button>
         </ButtonGroup>
       </Container>
@@ -88,14 +88,14 @@ const ButtonGroup = styled.div`
   justify-content: center;
 `;
 
-const Button = styled.button<{ variant: "cancel" | "confirm" }>`
+const Button = styled.button<{ variant: "left" | "right" }>`
   flex: 1;
   padding: 12px 0;
   border-radius: 19px;
   border: 1px solid #f6a8a8;
   background-color: ${({ variant }) =>
-    variant === "confirm" ? "#f2b4b4" : "#fff"};
-  color: ${({ variant }) => (variant === "confirm" ? "#fff" : "#F6A8A8")};
+    variant === "right" ? "#f2b4b4" : "#fff"};
+  color: ${({ variant }) => (variant === "right" ? "#fff" : "#F6A8A8")};
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
