@@ -4,21 +4,30 @@ import { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "big" | "mid" | "small";
-  bColor?: "pink" | "white";
+  btnColor?: "pink" | "white";
   children: ReactNode;
   onClick: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ size = "mid", bColor = "pink", children, onClick,
-  ...restProps }) => {
-
+const Button: React.FC<ButtonProps> = ({
+  size = "mid",
+  btnColor = "pink",
+  children,
+  onClick,
+  ...restProps
+}) => {
   return (
-    <StyledButton size={size} bColor={bColor} onClick={onClick} {...restProps}>
+    <StyledButton
+      size={size}
+      btnColor={btnColor}
+      onClick={onClick}
+      {...restProps}
+    >
       {children}
     </StyledButton>
   );
 };
-export default Button
+export default Button;
 
 // size에 따른 스타일 객체
 const sizeStyle = {
@@ -28,16 +37,16 @@ const sizeStyle = {
   },
   mid: {
     width: "350px",
-    height: "50px"
+    height: "50px",
   },
   small: {
     width: "200px",
-    height: "45px"
+    height: "45px",
   },
 };
 
 // color에 따른 스타일 객체
-const bColorStyle = {
+const btnColorStyle = {
   pink: {
     backgroundColor: "--primary",
     color: "--background-color",
@@ -58,7 +67,10 @@ const StyledButton = styled.button<ButtonProps>`
   font-size: var(--font-size-large);
   border-radius: 20px;
   text-align: center;
-  transition: background-color 0.3s, border-color 0.3s;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+  font-weight: 900px;
 
   /* size에 따른 width, height 적용 */
   ${({ size = "mid" }) => `
@@ -66,19 +78,20 @@ const StyledButton = styled.button<ButtonProps>`
     height: ${sizeStyle[size].height};
   `}
 
-  /* bColor에 따라 pink, white 버튼 스타일 적용 */
-  ${({ bColor = "pink" }) => `
-    background-color: var(${bColorStyle[bColor].backgroundColor});
-    color: var(${bColorStyle[bColor].color});
-    border: ${bColorStyle[bColor].border || "none"};
+  /* btnColor 따라 pink, white 버튼 스타일 적용 */
+  ${({ btnColor = "pink" }) => `
+    background-color: var(${btnColorStyle[btnColor].backgroundColor});
+    color: var(${btnColorStyle[btnColor].color});
+    border: ${btnColorStyle[btnColor].border || "none"};
 
     &:hover {
-      background-color: var(${bColorStyle[bColor].hoverBackground});
+      background-color: var(${btnColorStyle[btnColor].hoverBackground});
     }
 
     &:disabled {
       background-color: var(${
-        bColorStyle[bColor].disabledBackground || bColorStyle[bColor].backgroundColor
+        btnColorStyle[btnColor].disabledBackground ||
+        btnColorStyle[btnColor].backgroundColor
       });
       cursor: not-allowed;
     }
