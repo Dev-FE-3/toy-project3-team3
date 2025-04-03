@@ -2,13 +2,12 @@ import React from "react";
 import styled from "@emotion/styled";
 
 type LabelPosition = "top" | "left";
-type InputSize = "xxlarge" | "xlarge" | "large" | "medium" | "small";
 
 interface InputProps {
   label?: string;
   labelPosition?: LabelPosition;
   placeholder?: string;
-  size?: InputSize;
+  width?: string;
   isTextarea?: boolean;
   value?: string;
   onChange?: (
@@ -16,25 +15,15 @@ interface InputProps {
   ) => void;
 }
 
-const sizeMap: Record<InputSize, string> = {
-  xxlarge: "488px",
-  xlarge: "468px",
-  large: "438px",
-  medium: "318px",
-  small: "250px",
-};
-
 const CommonInput = ({
   label,
   labelPosition = "top",
   placeholder = "",
-  size = "small",
+  width = "250px",
   isTextarea = false,
   value,
   onChange,
 }: InputProps) => {
-  const width = sizeMap[size];
-
   return (
     <Wrapper
       labelPosition={labelPosition}
@@ -50,6 +39,7 @@ const CommonInput = ({
           value={value}
           onChange={onChange}
           labelPosition={labelPosition}
+          width={width}
         />
       )}
     </Wrapper>
@@ -89,10 +79,10 @@ const Label = styled.label<{ labelPosition: LabelPosition }>`
     labelPosition === "left" ? "right" : "initial"};
 `;
 
-const Input = styled.input<{ labelPosition: LabelPosition }>`
+const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
   height: 38px;
-  width: ${({ labelPosition }) =>
-    labelPosition === "left" ? "218px" : "100%"};
+  width: ${({ labelPosition, width }) =>
+    labelPosition === "left" ? width : "100%"};
   border: 1px solid var(--disabled);
   border-radius: 20px;
   background-color: var(--background-color);
@@ -110,9 +100,9 @@ const Input = styled.input<{ labelPosition: LabelPosition }>`
   }
 `;
 
-const TextArea = styled.textarea`
+const TextArea = styled.textarea<{ width?: string }>`
   height: 58px;
-  width: 228px;
+  width: ${({ width }) => width ?? "228px"};
   border: 1px solid var(--disabled);
   border-radius: 20px;
   background-color: var(--background-color);

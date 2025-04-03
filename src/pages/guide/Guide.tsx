@@ -71,33 +71,33 @@ const Guide = () => {
         />
         <CommonInput
           label="플레이리스트 제목"
-          size="xxlarge"
           placeholder="제목을 입력해주세요"
+          width="488px"
         />
 
         <CommonInput
           label="동영상 추가"
-          size="large"
           placeholder="링크를 입력해주세요"
+          width="468px"
         />
 
-        <CommonInput size="medium" placeholder="검색어를 입력해주세요" />
+        <CommonInput placeholder="이름을 입력해주세요" width="468px" />
 
-        <CommonInput size="xlarge" placeholder="이름을 입력해주세요" />
+        <CommonInput placeholder="검색어를 입력해주세요" width="318px" />
 
         <CommonInput
           label="닉네임"
           labelPosition="left"
-          size="small"
           placeholder="닉네임을 입력해주세요"
+          width="218px"
         />
 
         <CommonInput
           label="관심 아티스트"
           labelPosition="left"
-          size="small"
           isTextarea
           placeholder="좋아하는 아티스트를 입력해주세요"
+          width="250px"
         />
       </div>
     </>
