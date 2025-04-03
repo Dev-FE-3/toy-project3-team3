@@ -25,8 +25,8 @@ const Modal: React.FC<ModalProps> = ({
   if (!modalRoot) return null;
 
   const handleConfirm = () => {
-    onClose(); //모달 먼저 닫고
-    onConfirm(); //사용자 정의 동작 실행 (페이지 이동 or 요소 삭제)
+    onClose();
+    onConfirm();
   };
 
   return ReactDOM.createPortal(
@@ -73,8 +73,8 @@ const Container = styled.div`
 `;
 
 const Message = styled.p`
-  font-size: 18px;
-  color: #000;
+  font-size: var(--font-size-large);
+  color: var(--text-primary);
   flex-grow: 1;
   display: flex;
   align-items: center;
@@ -92,11 +92,12 @@ const Button = styled.button<{ variant: "left" | "right" }>`
   flex: 1;
   padding: 12px 0;
   border-radius: 19px;
-  border: 1px solid #f6a8a8;
+  border: 1px solid var(--primary);
   background-color: ${({ variant }) =>
-    variant === "right" ? "#f2b4b4" : "#fff"};
-  color: ${({ variant }) => (variant === "right" ? "#fff" : "#F6A8A8")};
-  font-size: 16px;
+    variant === "right" ? "var(--primary)" : "var(--background-color)"};
+  color: ${({ variant }) =>
+    variant === "right" ? "var(--background-color)" : "var(--primary)"};
+  font-size: var(--font-size-primary);
   font-weight: bold;
   cursor: pointer;
 
