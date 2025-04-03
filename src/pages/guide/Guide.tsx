@@ -96,7 +96,7 @@ const Guide = () => {
           label="관심 아티스트"
           labelPosition="left"
           isTextarea
-          placeholder="좋아하는 아티스트를 입력해주세요"
+          placeholder="관심 아티스트를 입력해주세요"
           width="250px"
         />
       </div>
