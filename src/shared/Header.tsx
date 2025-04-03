@@ -2,14 +2,14 @@ import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import styled from "@emotion/styled";
-import IdolLink from "../assets/images/IdolLink.svg";
-import DefaultProfile from "../assets/images/defaultProfile.svg";
+import IdolLink from "@/assets/images/IdolLink.svg";
+import DefaultProfile from "@/assets/images/DefaultProfile.svg";
 
 interface User {
   id: string;
 }
 
-const Header: React.FC = () => {
+const Header = () => {
   const location = useLocation();
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -18,8 +18,7 @@ const Header: React.FC = () => {
     const fetchUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       if (error || !data?.user) {
-        console.warn("사용자가 로그인하지 않았습니다.");
-        return;
+        return; // 로그인 하지 않았을 때
       }
       setUser({ id: data.user.id });
     };
@@ -36,8 +35,7 @@ const Header: React.FC = () => {
         .list("profiles/", { search: user.id });
 
       if (error || fileList.length === 0) {
-        console.warn("프로필 이미지가 존재하지 않습니다.");
-        setProfileImage(DefaultProfile);
+        setProfileImage(DefaultProfile); // 프로필 이미지 설정 전인 경우
         return;
       }
 
@@ -50,7 +48,7 @@ const Header: React.FC = () => {
     fetchProfileImage();
   }, [user]);
 
-  const isProfilePage = location.pathname === "/profile";
+  const isProfilePage = location.pathname === "/profile"; // 경로는 storage 설정하면서 수정하면 됩니다..!
 
   return (
     <HeaderWrapper>
@@ -102,5 +100,6 @@ const LogoutButton = styled.button`
   :hover {
     background-color: var(--button-gray);
     border-radius: 20px;
+    transition: background-color 0.3s ease-in-out;
   }
 `;
