@@ -22,6 +22,6 @@ const Wrapper = styled.div`
 `;
 
 const AnimationBox = styled.div`
-  width: 30px;
-  height: 30px;
+  width: 130px;
+  height: 130px;
 `;
