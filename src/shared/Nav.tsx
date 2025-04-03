@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
 import styled from "@emotion/styled";
 import { ReactSVG } from "react-svg";
-import Home from "../assets/images/Home.svg";
-import Inbox from "../assets/images/Inbox.svg";
-import Plus from "../assets/images/Plus.svg";
-import Search from "../assets/images/Search.svg";
+import Home from "@/assets/images/Home.svg";
+import Inbox from "@/assets/images/Inbox.svg";
+import Plus from "@/assets/images/Plus.svg";
+import Search from "@/assets/images/Search.svg";
 
 interface NavItemProps {
   to: string;
