@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import Modal from "../../shared/component/Modal";
-import cancel from "../../assets/images/cancel.svg";
+import { useState } from "react";
+import Modal from "@/shared/component/Modal";
+import cancel from "@/assets/images/cancel.svg";
 
-const ModalTest: React.FC = () => {
+const ModalTest = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDelete = () => {

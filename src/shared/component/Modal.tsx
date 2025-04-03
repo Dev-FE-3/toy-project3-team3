@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import styled from "@emotion/styled";
-import Button from "./Button";
+import Button from "@/shared/component/Button";
 
 interface ModalProps {
   isOpen: boolean;
