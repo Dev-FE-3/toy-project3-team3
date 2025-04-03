@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./shared/Layout.tsx";
+import GlobalStyle from "./shared/styles/GlobalStyle.tsx";
 import Home from "./pages/home/Home.tsx";
 import Profile from "./pages/profile/Profile.tsx";
 
@@ -21,7 +22,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <GlobalStyle />
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
 export default App;

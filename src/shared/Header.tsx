@@ -78,5 +78,7 @@ const LogoutButton = styled.button`
   background-color: transparent;
   border: none;
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--font-size-large);
+  color: var(--text-secondary);
+  font-weight: 700;
 `;
