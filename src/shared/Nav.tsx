@@ -23,7 +23,7 @@ const Nav = () => {
   return (
     <NavWrapper>
       {navItems.map(({ to, icon, label }) => (
-        <StyledNavLink to={to}>
+        <StyledNavLink key={to} to={to}>
           <ButtonIcon src={icon} alt={label} />
           <ButtonName>{label}</ButtonName>
         </StyledNavLink>
