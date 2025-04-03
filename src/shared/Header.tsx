@@ -5,34 +5,50 @@ import styled from "@emotion/styled";
 import IdolLink from "../assets/images/IdolLink.svg";
 import DefaultProfile from "../assets/images/defaultProfile.svg";
 
-const Header = () => {
+interface User {
+  id: string;
+}
+
+const Header: React.FC = () => {
   const location = useLocation();
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchProfileImage = async () => {
-      const userId = "example-user-id"; // 실제 사용자 ID로 변경 필요
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data?.user) {
+        console.warn("사용자가 로그인하지 않았습니다.");
+        return;
+      }
+      setUser({ id: data.user.id });
+    };
 
-      // 파일이 존재하는지 확인
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchProfileImage = async () => {
       const { data: fileList, error } = await supabase.storage
         .from("profiles")
-        .list("profiles/", { search: userId });
+        .list("profiles/", { search: user.id });
 
       if (error || fileList.length === 0) {
         console.warn("프로필 이미지가 존재하지 않습니다.");
-        setProfileImage(DefaultProfile); // 기본 이미지 유지
+        setProfileImage(DefaultProfile);
         return;
       }
 
-      // 존재하면 URL 가져오기
       const { data } = supabase.storage
         .from("profiles")
-        .getPublicUrl(`profiles/${userId}.png`);
+        .getPublicUrl(`profiles/${user.id}.png`);
       setProfileImage(data.publicUrl);
     };
 
     fetchProfileImage();
-  }, []);
+  }, [user]);
 
   const isProfilePage = location.pathname === "/profile";
 
@@ -81,4 +97,10 @@ const LogoutButton = styled.button`
   font-size: var(--font-size-large);
   color: var(--text-secondary);
   font-weight: 700;
+  padding: 10px;
+
+  :hover {
+    background-color: var(--button-gray);
+    border-radius: 20px;
+  }
 `;
