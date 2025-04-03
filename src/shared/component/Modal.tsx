@@ -1,5 +1,4 @@
 import ReactDOM from "react-dom";
-import React from "react";
 import styled from "@emotion/styled";
 import Button from "./Button";
 
@@ -12,14 +11,14 @@ interface ModalProps {
   rightButtonText: string;
 }
 
-const Modal: React.FC<ModalProps> = ({
+const Modal = ({
   isOpen,
   onClose,
   onConfirm,
   message,
   leftButtonText,
   rightButtonText,
-}) => {
+}: ModalProps) => {
   if (!isOpen) return null;
 
   const modalRoot = document.getElementById("modal-root");
