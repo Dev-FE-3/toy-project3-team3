@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import Lottie from "lottie-react";
-import loadingAnimation from "../../assets/animation/loading.json";
+import loadingAnimation from "@/assets/animation/loading.json";
 
 const Loading = () => {
   return (
