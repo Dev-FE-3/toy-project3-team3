@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
-import React from "react";
 import styled from "@emotion/styled";
+import Button from "@/shared/component/Button";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,14 +11,14 @@ interface ModalProps {
   rightButtonText: string;
 }
 
-const Modal: React.FC<ModalProps> = ({
+const Modal = ({
   isOpen,
   onClose,
   onConfirm,
   message,
   leftButtonText,
   rightButtonText,
-}) => {
+}: ModalProps) => {
   if (!isOpen) return null;
 
   const modalRoot = document.getElementById("modal-root");
@@ -34,10 +34,20 @@ const Modal: React.FC<ModalProps> = ({
       <Container>
         <Message>{message}</Message>
         <ButtonGroup>
-          <Button variant="left" onClick={onClose}>
+          <Button
+            className="left-button"
+            size="small"
+            btnColor="white"
+            onClick={onClose}
+          >
             {leftButtonText}
           </Button>
-          <Button variant="right" onClick={handleConfirm}>
+          <Button
+            className="right-button"
+            size="small"
+            btnColor="pink"
+            onClick={handleConfirm}
+          >
             {rightButtonText}
           </Button>
         </ButtonGroup>
@@ -86,22 +96,4 @@ const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
   justify-content: center;
-`;
-
-const Button = styled.button<{ variant: "left" | "right" }>`
-  flex: 1;
-  padding: 12px 0;
-  border-radius: 19px;
-  border: 1px solid var(--primary);
-  background-color: ${({ variant }) =>
-    variant === "right" ? "var(--primary)" : "var(--background-color)"};
-  color: ${({ variant }) =>
-    variant === "right" ? "var(--background-color)" : "var(--primary)"};
-  font-size: var(--font-size-primary);
-  font-weight: bold;
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.85;
-  }
 `;
