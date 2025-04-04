@@ -86,6 +86,10 @@ const Profile = styled.img`
   height: 42px;
   border-radius: 50%;
   cursor: pointer;
+  :hover {
+    width: 44px;
+    height: 44px;
+  }
 `;
 
 const LogoutButton = styled.button`
