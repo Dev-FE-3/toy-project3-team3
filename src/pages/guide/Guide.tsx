@@ -2,12 +2,17 @@ import { useState } from "react";
 import Modal from "@/shared/component/Modal";
 import cancel from "@/assets/images/cancel.svg";
 import Button from "@/shared/component/Button";
+import Dropbox from "@/shared/component/Dropbox";
 
 const Guide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDelete = () => {
     setIsModalOpen(false);
+  };
+
+  const handleSelect = (item: string) => {
+    console.log("선택한 옵션:", item);
   };
 
   return (
@@ -69,6 +74,9 @@ const Guide = () => {
           rightButtonText="삭제하기"
         />
       </div>
+      <h1>드롭다운</h1>
+      <Dropbox variant="icon" onSelect={handleSelect} />
+      <Dropbox variant="text" onSelect={handleSelect} />
     </>
   );
 };
