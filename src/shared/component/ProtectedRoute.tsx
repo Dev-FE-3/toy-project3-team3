@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase.ts";
 import type { User } from "@supabase/supabase-js";
 import { Navigate } from "react-router-dom";
+import Loading from "@/shared/component/Loading";
 
 export default function ProtectedRoute({
   children,
@@ -24,7 +25,7 @@ export default function ProtectedRoute({
     checkUser();
   }, []);
 
-  if (isLoading) return <div>로딩 중...</div>;
+  if (isLoading) return <Loading />;
 
   return user ? children : <Navigate to="/login" />;
 }
