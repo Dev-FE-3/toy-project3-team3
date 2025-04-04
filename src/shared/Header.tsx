@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import styled from "@emotion/styled";
@@ -11,6 +11,7 @@ interface User {
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
@@ -48,6 +49,15 @@ const Header = () => {
     fetchProfileImage();
   }, [user]);
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("로그아웃 실패:", error.message);
+    } else {
+      navigate("/login");
+    }
+  };
+
   const isProfilePage = location.pathname === "/profile"; // 경로는 storage 설정하면서 수정하면 됩니다..!
 
   return (
@@ -56,7 +66,7 @@ const Header = () => {
         <Logo src={IdolLink} alt="IdolLink Logo" />
       </Link>
       {isProfilePage ? (
-        <LogoutButton>로그아웃</LogoutButton>
+        <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
       ) : (
         <Link to="/profile">
           <Profile src={profileImage || DefaultProfile} alt="Profile Image" />
