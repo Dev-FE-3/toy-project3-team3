@@ -5,16 +5,11 @@ import Home from "./pages/home/Home.tsx";
 import Search from "./pages/search/Search.tsx";
 import Guide from "./pages/guide/Guide.tsx";
 import Login from "./pages/auth/Login.tsx";
-import ProtectedRoute from "./shared/component/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <ProtectedRoute>
-        <Layout />
-      </ProtectedRoute>
-    ),
+    element: <Layout />,
     children: [
       {
         path: "",
