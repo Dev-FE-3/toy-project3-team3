@@ -70,22 +70,33 @@ const Guide = () => {
           rightButtonText="삭제하기"
         />
         <CommonInput
+          id="playlistTitle"
           label="플레이리스트 제목"
           placeholder="제목을 입력해주세요"
           width="488px"
         />
 
         <CommonInput
+          id="videoUrl"
           label="동영상 추가"
           placeholder="링크를 입력해주세요"
           width="468px"
         />
 
-        <CommonInput placeholder="이름을 입력해주세요" width="468px" />
-
-        <CommonInput placeholder="검색어를 입력해주세요" width="318px" />
+        <CommonInput
+          id="userName"
+          placeholder="이름을 입력해주세요"
+          width="468px"
+        />
 
         <CommonInput
+          id="search"
+          placeholder="검색어를 입력해주세요"
+          width="318px"
+        />
+
+        <CommonInput
+          id="nickname"
           label="닉네임"
           labelPosition="left"
           placeholder="닉네임을 입력해주세요"
@@ -93,6 +104,7 @@ const Guide = () => {
         />
 
         <CommonInput
+          id="artist"
           label="관심 아티스트"
           labelPosition="left"
           isTextarea

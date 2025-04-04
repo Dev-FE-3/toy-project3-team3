@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 type LabelPosition = "top" | "left";
 
 interface InputProps {
+  id?: string;
   label?: string;
   labelPosition?: LabelPosition;
   placeholder?: string;
@@ -16,6 +17,7 @@ interface InputProps {
 }
 
 const CommonInput = ({
+  id,
   label,
   labelPosition = "top",
   placeholder = "",
@@ -30,11 +32,21 @@ const CommonInput = ({
       width={width}
       isTextarea={isTextarea}
     >
-      {label && <Label labelPosition={labelPosition}>{label}</Label>}
+      {label && (
+        <Label htmlFor={id} labelPosition={labelPosition}>
+          {label}
+        </Label>
+      )}
       {isTextarea ? (
-        <TextArea placeholder={placeholder} value={value} onChange={onChange} />
+        <TextArea
+          id={id}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+        />
       ) : (
         <Input
+          id={id}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
