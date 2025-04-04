@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import styled from "@emotion/styled";
 import Header from "./Header";
+import Nav from "./Nav";
 
 const Wrapper = styled.div`
   width: 600px;
@@ -14,6 +15,7 @@ const Layout = () => {
     <Wrapper>
       <Header />
       <Outlet />
+      <Nav />
     </Wrapper>
   );
 };
