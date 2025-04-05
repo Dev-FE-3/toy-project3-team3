@@ -2,7 +2,7 @@ import { useState } from "react";
 import Modal from "@/shared/component/Modal";
 import cancel from "@/assets/images/cancel.svg";
 import Button from "@/shared/component/Button";
-import Dropbox from "@/shared/component/Dropbox";
+import CommonInput from "@/shared/component/input";
 
 const Guide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,6 +72,48 @@ const Guide = () => {
           message="해당 영상을 정말 삭제하시겠습니까?"
           leftButtonText="취소"
           rightButtonText="삭제하기"
+        />
+        <CommonInput
+          id="playlistTitle"
+          label="플레이리스트 제목"
+          placeholder="제목을 입력해주세요"
+          width="488px"
+        />
+
+        <CommonInput
+          id="videoUrl"
+          label="동영상 추가"
+          placeholder="링크를 입력해주세요"
+          width="468px"
+        />
+
+        <CommonInput
+          id="userName"
+          placeholder="이름을 입력해주세요"
+          width="468px"
+        />
+
+        <CommonInput
+          id="search"
+          placeholder="검색어를 입력해주세요"
+          width="318px"
+        />
+
+        <CommonInput
+          id="nickname"
+          label="닉네임"
+          labelPosition="left"
+          placeholder="닉네임을 입력해주세요"
+          width="218px"
+        />
+
+        <CommonInput
+          id="artist"
+          label="관심 아티스트"
+          labelPosition="left"
+          isTextarea
+          placeholder="관심 아티스트를 입력해주세요"
+          width="250px"
         />
       </div>
       <h1>드롭다운</h1>
