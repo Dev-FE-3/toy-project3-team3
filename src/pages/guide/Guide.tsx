@@ -3,6 +3,7 @@ import Modal from "@/shared/component/Modal";
 import cancel from "@/assets/images/cancel.svg";
 import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
+import Dropbox from "@/shared/component/Dropbox";
 
 const Guide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -11,6 +11,7 @@ interface InputProps {
   width?: string;
   isTextarea?: boolean;
   value?: string;
+  isReadOnly?: boolean;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
@@ -24,6 +25,7 @@ const CommonInput = ({
   width = "250px",
   isTextarea = false,
   value,
+  isReadOnly,
   onChange,
 }: InputProps) => {
   return (
@@ -43,6 +45,8 @@ const CommonInput = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          readOnly={isReadOnly}
+          className={isReadOnly ? "read-only" : ""}
         />
       ) : (
         <Input
@@ -52,6 +56,8 @@ const CommonInput = ({
           onChange={onChange}
           labelPosition={labelPosition}
           width={width}
+          readOnly={isReadOnly}
+          className={isReadOnly ? "read-only" : ""}
         />
       )}
     </Wrapper>
@@ -103,12 +109,24 @@ const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
   color: var(--text-primary);
 
   &:focus {
-    border: 2px solid var(--primary);
+    border: 1px solid var(--primary);
   }
 
   &::placeholder {
     color: var(--disabled);
     font-size: var(--font-size-primary);
+  }
+
+  &.read-only {
+    border: 1px solid transparent; // ← 투명 테두리!
+    background-color: transparent;
+    cursor: default;
+  }
+
+  &.read-only:focus {
+    outline: none;
+    border: 1px solid transparent;
+    box-shadow: none;
   }
 `;
 
@@ -124,11 +142,23 @@ const TextArea = styled.textarea<{ width?: string }>`
   resize: none;
 
   &:focus {
-    border: 2px solid var(--primary);
+    border: 1px solid var(--primary);
   }
 
   &::placeholder {
     color: var(--disabled);
     font-size: var(--font-size-primary);
+  }
+
+  &.read-only {
+    border: 1px solid transparent; // ← 투명 테두리!
+    background-color: transparent;
+    cursor: default;
+  }
+
+  &.read-only:focus {
+    outline: none;
+    border: 1px solid transparent;
+    box-shadow: none;
   }
 `;
