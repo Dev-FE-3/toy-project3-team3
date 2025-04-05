@@ -124,7 +124,7 @@ const TextArea = styled.textarea<{ width?: string }>`
   resize: none;
 
   &:focus {
-    border: 2px solid var(--primary);
+    border: 1px solid var(--primary);
   }
 
   &::placeholder {

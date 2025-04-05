@@ -7,6 +7,7 @@ import Guide from "@/pages/guide/Guide.tsx";
 import Profile from "@/pages/profile/Profile.tsx";
 import ProtectedRoute from "@/shared/component/ProtectedRoute.tsx";
 import Login from "@/pages/auth/Login.tsx";
+import Signup from "./pages/auth/Signup";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
     ],
   },
   { path: "/login", element: <Login /> },
+  { path: "/signup", element: <Signup /> },
 ]);
 
 function App() {
