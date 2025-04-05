@@ -5,6 +5,7 @@ import Home from "./pages/home/Home.tsx";
 import Search from "./pages/search/Search.tsx";
 import Guide from "./pages/guide/Guide.tsx";
 import Profile from "./pages/profile/Profile.tsx";
+import Storage from "./pages/storage/storage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/storage",
+        element: <Storage />,
       },
     ],
   },
