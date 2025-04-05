@@ -11,6 +11,10 @@ const Guide = () => {
     setIsModalOpen(false);
   };
 
+  const handleSelect = (item: string) => {
+    console.log("선택한 옵션:", item);
+  };
+
   return (
     <>
       <div>
@@ -112,6 +116,9 @@ const Guide = () => {
           width="250px"
         />
       </div>
+      <h1>드롭다운</h1>
+      <Dropbox variant="icon" onSelect={handleSelect} />
+      <Dropbox variant="text" onSelect={handleSelect} />
     </>
   );
 };
