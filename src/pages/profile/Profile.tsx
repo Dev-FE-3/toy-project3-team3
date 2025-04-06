@@ -1,37 +1,40 @@
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
 import useProfileImage from "@/shared/hooks/useUserProfile";
+import Dropbox from "@/shared/component/Dropbox";
+import useDeleteProfileImage from "@/pages/profile/hooks/useDeleteProfileImage";
+import useUploadProfileImage from "@/pages/profile/hooks/useUploadProfileImage";
 
 const Profile = () => {
-  const [user, setUser] = useState<{
-    id: string;
-    email: string;
-  } | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    nickname: "사용자 닉네임",
+    nickname: "링크",
     bio: "한 줄 소개를 입력해주세요.",
     artists: "관심 있는 아티스트를 입력해주세요.",
   });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data?.user) return;
-      setUser({
-        id: data.user.id,
-        email: data.user.email ?? "",
-      });
-    };
+  const { profileImage, user, refetchImage } = useProfileImage();
+  const { upload } = useUploadProfileImage(user?.id, refetchImage);
+  const { remove } = useDeleteProfileImage(user?.id, refetchImage);
 
-    fetchUser();
-  }, []);
-
-  const { profileImage } = useProfileImage();
+  const handleSelect = async (type: string) => {
+    if (type === "수정하기") {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = (e: Event) => {
+        const target = e.target as HTMLInputElement;
+        const file = target.files?.[0];
+        if (file) upload(file);
+      };
+      input.click();
+    } else if (type === "삭제하기") {
+      remove();
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -50,10 +53,15 @@ const Profile = () => {
         <Title>프로필</Title>
       </TitleWrapper>
       <ProfileHeader>
-        <ProfileImage
-          src={profileImage || DefaultProfile}
-          alt="프로필 이미지"
-        />
+        <ImageWrapper>
+          <ProfileImage
+            src={profileImage || DefaultProfile}
+            alt="프로필 이미지"
+          />
+          <DropboxWrapper>
+            <Dropbox variant="icon" onSelect={handleSelect} />
+          </DropboxWrapper>
+        </ImageWrapper>
       </ProfileHeader>
       <ProfileDataWrapper>
         <FormWrapper>
@@ -132,6 +140,22 @@ const ProfileHeader = styled.div`
   display: flex;
   justify-content: center;
   position: relative;
+`;
+
+const ImageWrapper = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+`;
+
+const DropboxWrapper = styled.div`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
 `;
 
 const ProfileImage = styled.img`

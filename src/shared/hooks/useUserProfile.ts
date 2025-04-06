@@ -1,3 +1,4 @@
+// useProfileImage.ts
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
@@ -10,39 +11,40 @@ const useProfileImage = () => {
     const fetchUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       if (error || !data?.user) return;
-      setUser({
-        id: data.user.id,
-        email: data.user.email ?? undefined,
-      });
+      setUser({ id: data.user.id, email: data.user.email ?? undefined });
     };
 
     fetchUser();
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    const fetchImage = async () => {
+      if (!user) return;
 
-    const fetchProfileImage = async () => {
-      const { data: fileList, error } = await supabase.storage
+      const { data: list, error } = await supabase.storage
         .from("profiles")
-        .list("profiles", { search: `${user.id}.png` });
+        .list();
 
-      if (error || fileList.length === 0) {
-        setProfileImage(DefaultProfile);
-        return;
-      }
+      if (error || !list) return;
+
+      const file = list.find((f) => f.name.startsWith(user.id));
+      if (!file) return setProfileImage(DefaultProfile);
 
       const { data } = supabase.storage
         .from("profiles")
-        .getPublicUrl(`profiles/${user.id}.png`);
+        .getPublicUrl(file.name);
 
-      setProfileImage(data.publicUrl);
+      if (data?.publicUrl) {
+        setProfileImage(data.publicUrl);
+      } else {
+        setProfileImage(DefaultProfile);
+      }
     };
 
-    fetchProfileImage();
+    fetchImage();
   }, [user]);
 
-  return { profileImage, user };
+  return { profileImage, user, refetchImage: () => window.location.reload() };
 };
 
 export default useProfileImage;
