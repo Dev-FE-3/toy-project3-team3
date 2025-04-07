@@ -1,3 +1,4 @@
+import { supabase } from "@/lib/supabase.ts";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { useForm } from "react-hook-form";
@@ -13,23 +14,37 @@ type FormValues = {
 const Signup = () => {
   const navigate = useNavigate();
   const {
-    register,
+    register, //각 input에 연결해서 폼 상태 관리
     handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormValues>({ mode: "onChange" });
+    watch, //특정 필드 값을 실시간으로 감시
+    formState: { errors, isValid },
+  } = useForm<FormValues>({ mode: "onChange" }); //입력이 바뀔 때마다 유효성 검사 실행
 
   const password = watch("password");
 
-  const onSubmit = (data: FormValues) => {
-    console.log("회원가입 진행:", data);
+  /**회원가입 처리 */
+  const handleSignup = async (data: FormValues) => {
+    const { email, password } = data;
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error("회원가입 실패: ", error.message);
+      return;
+    }
+
+    alert("회원가입 성공!");
+    navigate("/login");
   };
 
   return (
     <Wrapper>
       <Logo src={IdolLinkLogo} alt="로고" />
 
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(handleSignup)}>
         <Title>회원가입</Title>
 
         <InputWrapper>
@@ -37,6 +52,7 @@ const Signup = () => {
           <SignupInput
             id="email"
             type="email"
+            autoComplete="email"
             placeholder="이메일을 입력해주세요"
             hasError={!!errors.email}
             {...register("email", {
@@ -56,7 +72,8 @@ const Signup = () => {
           <SignupInput
             id="password"
             type="password"
-            placeholder="비밀번호를 입력해주세요(8자리 이상)"
+            autoComplete="new-password"
+            placeholder="비밀번호를 입력해주세요 (8자리 이상)"
             hasError={!!errors.password}
             {...register("password", {
               validate: (value) =>
@@ -83,6 +100,7 @@ const Signup = () => {
           <SignupInput
             id="confirmPassword"
             type="password"
+            autoComplete="new-password"
             placeholder="비밀번호를 다시 입력해주세요"
             hasError={!!errors.confirmPassword}
             {...register("confirmPassword", {
@@ -98,7 +116,8 @@ const Signup = () => {
         <SignupButton
           size="big"
           btnColor="pink"
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit(handleSignup)}
+          disabled={!isValid} //유효할 때만 버튼 활성화
         >
           회원가입
         </SignupButton>
