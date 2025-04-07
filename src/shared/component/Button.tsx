@@ -70,7 +70,7 @@ const StyledButton = styled.button<ButtonProps>`
   transition:
     background-color 0.3s,
     border-color 0.3s;
-  font-weight: 900px;
+  font-weight: 700;
 
   /* size에 따른 width, height 적용 */
   ${({ size = "mid" }) => `

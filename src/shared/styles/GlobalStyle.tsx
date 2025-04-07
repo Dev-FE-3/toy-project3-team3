@@ -20,7 +20,7 @@ const globalStyles = css`
     --button-gray: #e9e9e9;
 
     // font size
-    --font-size-title: 32px;
+    --font-size-title: 28px;
     --font-size-large: 18px;
     --font-size-primary: 16px;
     --font-size-small: 14px;
@@ -43,6 +43,10 @@ const globalStyles = css`
 
   body {
     font-family: "Noto Sans KR", sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
   }
 
   /* 스크롤바 스타일 */
