@@ -47,6 +47,7 @@ const Dropbox: React.FC<DropboxProps> = ({
   return (
     <DropdownWrapper ref={containerRef} variant={variant} iconSize={iconSize}>
       <DropdownToggle
+        type="button"
         onClick={handleToggle}
         variant={variant}
         iconSize={iconSize}
@@ -75,6 +76,7 @@ const Dropbox: React.FC<DropboxProps> = ({
         <DropdownMenu variant={variant}>
           {options.map((option, index) => (
             <DropdownOption
+              type="button"
               key={index}
               isActive={defaultValue === option}
               variant={variant}
@@ -146,12 +148,12 @@ const DropdownOption = styled.button<{ isActive: boolean; variant: string }>`
     background-color: #f5f5f5;
   }
 
-  &:first-child {
+  &:first-of-type {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
 
-  &:last-child {
+  &:last-of-type {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
   }
