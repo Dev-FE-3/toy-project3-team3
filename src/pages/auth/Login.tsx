@@ -89,11 +89,10 @@ const Form = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: var(--font-size-large);
+  font-size: 24px;
   color: var(--text-primary);
   margin: 35px 0;
-  font-weight: bold;
-  align-self: flex-start;
+  align-self: center;
 `;
 
 const InputWrapper = styled.div`
