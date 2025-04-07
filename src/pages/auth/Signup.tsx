@@ -1,8 +1,9 @@
 import { supabase } from "@/lib/supabase.ts";
 import { useNavigate } from "react-router-dom";
-import styled from "@emotion/styled";
 import { useForm } from "react-hook-form";
+import styled from "@emotion/styled";
 import Button from "@/shared/component/Button";
+import FormInput from "./component/FormInput";
 import IdolLinkLogo from "@/assets/images/IdolLink.svg";
 
 type FormValues = {
@@ -47,71 +48,63 @@ const Signup = () => {
       <Form onSubmit={handleSubmit(handleSignup)}>
         <Title>회원가입</Title>
 
-        <InputWrapper>
-          <InputLabel htmlFor="email">이메일</InputLabel>
-          <SignupInput
-            id="email"
-            type="email"
-            autoComplete="email"
-            placeholder="이메일을 입력해주세요"
-            hasError={!!errors.email}
-            {...register("email", {
-              validate: (value) =>
-                value.trim() !== "" || "공백만 입력할 수 없습니다.",
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                message: "유효한 이메일 주소를 입력해 주세요.",
-              },
-            })}
-          />
-          {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
-        </InputWrapper>
+        <FormInput
+          id="email"
+          label="이메일"
+          type="email"
+          autoComplete="email"
+          placeholder="이메일을 입력해주세요"
+          error={errors.email?.message}
+          {...register("email", {
+            required: "이메일을 입력해주세요.",
+            validate: (value) =>
+              value.trim() !== "" || "공백만 입력할 수 없습니다.",
+            pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "유효한 이메일 주소를 입력해 주세요.",
+            },
+          })}
+        />
 
-        <InputWrapper>
-          <InputLabel htmlFor="password">비밀번호</InputLabel>
-          <SignupInput
-            id="password"
-            type="password"
-            autoComplete="new-password"
-            placeholder="비밀번호를 입력해주세요 (8자리 이상)"
-            hasError={!!errors.password}
-            {...register("password", {
-              validate: (value) =>
-                value.trim() !== "" || "공백만 입력할 수 없습니다.",
-              minLength: {
-                value: 8,
-                message: "비밀번호는 8자리 이상이어야 합니다.",
-              },
-              maxLength: {
-                value: 16,
-                message: "비밀번호는 16자리 이하여야 합니다.",
-              },
-              pattern: {
-                value: /[!@#$%^&*(),.?":{}|<>]/,
-                message: "비밀번호에 특수문자 하나 이상 포함해주세요.",
-              },
-            })}
-          />
-          {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
-        </InputWrapper>
+        <FormInput
+          id="password"
+          label="비밀번호"
+          type="password"
+          autoComplete="off"
+          placeholder="비밀번호를 입력해주세요 (8자리 이상)"
+          error={errors.password?.message}
+          {...register("password", {
+            required: "비밀번호를 입력해주세요.",
+            validate: (value) =>
+              value.trim() !== "" || "공백만 입력할 수 없습니다.",
+            minLength: {
+              value: 8,
+              message: "비밀번호는 8자리 이상이어야 합니다.",
+            },
+            maxLength: {
+              value: 16,
+              message: "비밀번호는 16자리 이하여야 합니다.",
+            },
+            pattern: {
+              value: /[!@#$%^&*(),.?":{}|<>]/,
+              message: "비밀번호에 특수문자 하나 이상 포함해주세요.",
+            },
+          })}
+        />
 
-        <InputWrapper>
-          <InputLabel htmlFor="confirmPassword">비밀번호 확인</InputLabel>
-          <SignupInput
-            id="confirmPassword"
-            type="password"
-            autoComplete="new-password"
-            placeholder="비밀번호를 다시 입력해주세요"
-            hasError={!!errors.confirmPassword}
-            {...register("confirmPassword", {
-              validate: (value) =>
-                value === password || "비밀번호가 일치하지 않습니다.",
-            })}
-          />
-          {errors.confirmPassword && (
-            <ErrorText>{errors.confirmPassword.message}</ErrorText>
-          )}
-        </InputWrapper>
+        <FormInput
+          id="confirmPassword"
+          label="비밀번호 확인"
+          type="password"
+          autoComplete="off"
+          placeholder="비밀번호를 다시 입력해주세요"
+          error={errors.confirmPassword?.message}
+          {...register("confirmPassword", {
+            required: "비밀번호를 다시 입력해주세요.",
+            validate: (value) =>
+              value === password || "비밀번호가 일치하지 않습니다.",
+          })}
+        />
 
         <SignupButton
           size="big"
@@ -161,50 +154,6 @@ const Title = styled.h2`
   color: var(--text-primary);
   margin: 35px 0;
   align-self: center;
-`;
-
-const InputWrapper = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-`;
-
-const InputLabel = styled.label`
-  font-size: var(--font-size-large);
-  color: var(--text-primary);
-  margin-bottom: 20px;
-`;
-
-const SignupInput = styled.input<{ hasError?: boolean }>`
-  width: 374px;
-  height: 48px;
-  border: 1px solid
-    ${(props) => (props.hasError ? "var(--error, red)" : "var(--disabled)")};
-  color: var(--text-primary);
-  font-size: var(--font-size-primary);
-  border-radius: 20px;
-  padding: 0 12px;
-  margin-bottom: 37px;
-
-  &::placeholder {
-    color: var(--disabled);
-  }
-
-  &:focus {
-    border: 1px solid
-      ${(props) => (props.hasError ? "var(--error, red)" : "var(--primary)")};
-  }
-`;
-
-const ErrorText = styled.p`
-  position: absolute;
-  bottom: 20px;
-  left: 12px;
-  color: var(--error, red);
-  font-size: var(--font-size-small);
-  margin: 0;
 `;
 
 const SignupButton = styled(Button)`

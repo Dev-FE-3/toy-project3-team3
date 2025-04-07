@@ -1,16 +1,27 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase.ts";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import styled from "@emotion/styled";
 import Button from "@/shared/component/Button";
+import FormInput from "./component/FormInput";
 import IdolLinkLogo from "@/assets/images/IdolLink.svg";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+type FormValues = {
+  email: string;
+  password: string;
+};
 
-  const handleLogin = async () => {
+const Login = () => {
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<FormValues>({ mode: "onChange" });
+
+  const handleLogin = async (data: FormValues) => {
+    const { email, password } = data;
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -28,31 +39,54 @@ const Login = () => {
     <Wrapper>
       <Logo src={IdolLinkLogo} alt="로고" />
 
-      <Form>
+      <Form onSubmit={handleSubmit(handleLogin)}>
         <Title>로그인</Title>
-        <InputWrapper>
-          <InputLabel htmlFor="email">이메일</InputLabel>
-          <LoginInput
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="이메일을 입력해주세요"
-          />
-        </InputWrapper>
 
-        <InputWrapper>
-          <InputLabel htmlFor="password">비밀번호</InputLabel>
-          <LoginInput
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="비밀번호를 입력해주세요"
-          />
-        </InputWrapper>
+        <FormInput
+          id="email"
+          label="이메일"
+          type="email"
+          placeholder="이메일을 입력해주세요"
+          error={errors.email?.message}
+          {...register("email", {
+            required: "이메일을 입력해주세요.",
+            pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "이메일을 다시 입력해주세요.",
+            },
+          })}
+        />
 
-        <LoginButton size="big" btnColor="pink" onClick={handleLogin}>
+        <FormInput
+          id="password"
+          label="비밀번호"
+          type="password"
+          autoComplete="off"
+          placeholder="비밀번호를 입력해주세요"
+          error={errors.password?.message}
+          {...register("password", {
+            required: "비밀번호를 입력해주세요.",
+            minLength: {
+              value: 8,
+              message: "비밀번호를 다시 입력해주세요.",
+            },
+            maxLength: {
+              value: 16,
+              message: "비밀번호를 다시 입력해주세요.",
+            },
+            pattern: {
+              value: /[!@#$%^&*(),.?":{}|<>]/,
+              message: "비밀번호를 다시 입력해주세요.",
+            },
+          })}
+        />
+
+        <LoginButton
+          size="big"
+          btnColor="pink"
+          onClick={handleSubmit(handleLogin)}
+          disabled={!isValid}
+        >
           로그인
         </LoginButton>
         <SignupGuide>
@@ -81,7 +115,7 @@ const Logo = styled.img`
   height: 42px;
 `;
 
-const Form = styled.div`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
   width: 400px;
@@ -93,38 +127,6 @@ const Title = styled.h2`
   color: var(--text-primary);
   margin: 35px 0;
   align-self: center;
-`;
-
-const InputWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-`;
-
-const InputLabel = styled.label`
-  font-size: var(--font-size-large);
-  color: var(--text-primary);
-  margin-bottom: 20px;
-`;
-
-const LoginInput = styled.input`
-  width: 374px;
-  height: 48px;
-  border: 1px solid var(--disabled);
-  color: var(--text-primary);
-  font-size: var(--font-size-primary);
-  border-radius: 20px;
-  padding: 0 12px;
-  margin-bottom: 37px;
-
-  &::placeholder {
-    color: var(--disabled);
-  }
-
-  &:focus {
-    border: 1px solid var(--primary);
-  }
 `;
 
 const LoginButton = styled(Button)`
