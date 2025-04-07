@@ -45,6 +45,10 @@ const globalStyles = css`
     font-family: "Noto Sans KR", sans-serif;
   }
 
+  * {
+    box-sizing: border-box;
+  }
+
   /* 스크롤바 스타일 */
   ::-webkit-scrollbar {
     width: 8px;
