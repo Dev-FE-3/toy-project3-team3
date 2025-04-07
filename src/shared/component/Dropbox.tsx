@@ -70,15 +70,14 @@ const Dropbox: React.FC<DropboxProps> = ({
       {isOpen && (
         <DropdownMenu>
           {options.map((option, index) => (
-            <li key={index}>
-              <DropdownOption
-                isActive={defaultValue === option}
-                variant={variant}
-                onClick={() => handleSelect(option)}
-              >
-                {option}
-              </DropdownOption>
-            </li>
+            <DropdownOption
+              key={index}
+              isActive={defaultValue === option}
+              variant={variant}
+              onClick={() => handleSelect(option)}
+            >
+              {option}
+            </DropdownOption>
           ))}
         </DropdownMenu>
       )}
@@ -113,15 +112,14 @@ const DropdownToggle = styled.button<{ variant: string }>`
   cursor: pointer;
 `;
 
-const DropdownMenu = styled.ul`
+const DropdownMenu = styled.div`
   position: absolute;
   width: 100%;
   top: 100%;
-  left: 0;
+  right: 0;
   background: var(--background-color);
   border: 1px solid var(--disabled);
   border-radius: 10px;
-  padding: 6px 0;
   z-index: 10;
 `;
 
@@ -133,8 +131,6 @@ const DropdownOption = styled.button<{ isActive: boolean; variant: string }>`
   text-align: center;
   font-size: var(--font-size-primary);
   cursor: pointer;
-  /* color: ${({ isActive }) =>
-    isActive ? "var(--primary)" : "var(--text-secondary)"}; */
   color: ${({ isActive, variant }) =>
     variant === "text" && isActive
       ? "var(--primary)"
@@ -143,5 +139,15 @@ const DropdownOption = styled.button<{ isActive: boolean; variant: string }>`
 
   &:hover {
     background-color: #f5f5f5;
+  }
+
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
   }
 `;
