@@ -3,6 +3,7 @@ import Modal from "@/shared/component/Modal";
 import cancel from "@/assets/images/cancel.svg";
 import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
+import Dropbox from "@/shared/component/Dropbox";
 
 const Guide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,6 +18,13 @@ const Guide = () => {
 
   return (
     <>
+      <h1>드롭다운</h1>
+      <span>큰 아이콘</span>
+      <Dropbox variant="icon" iconSize={24} />
+      <span>작은 아이콘</span>
+      <Dropbox variant="icon" onSelect={handleSelect} />
+      <span>텍스트 드롭</span>
+      <Dropbox variant="text" onSelect={handleSelect} />
       <div>
         <br />
         <h1>가이드 페이지</h1>
@@ -116,9 +124,6 @@ const Guide = () => {
           width="250px"
         />
       </div>
-      <h1>드롭다운</h1>
-      <Dropbox variant="icon" onSelect={handleSelect} />
-      <Dropbox variant="text" onSelect={handleSelect} />
     </>
   );
 };
