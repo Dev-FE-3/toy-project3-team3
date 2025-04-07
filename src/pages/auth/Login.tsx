@@ -99,8 +99,7 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 100%
-  gap: 20px;
+  width: 100%;
 `;
 
 const InputLabel = styled.label`
@@ -114,7 +113,7 @@ const LoginInput = styled.input`
   height: 48px;
   border: 1px solid var(--disabled);
   color: var(--text-primary);
-  font-size: var(----font-size-large);
+  font-size: var(--font-size-primary);
   border-radius: 20px;
   padding: 0 12px;
   margin-bottom: 37px;
