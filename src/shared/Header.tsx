@@ -3,13 +3,13 @@ import { supabase } from "@/lib/supabase";
 import styled from "@emotion/styled";
 import IdolLink from "@/assets/images/IdolLink.svg";
 import DefaultProfile from "@/assets/images/DefaultProfile.svg";
-import useProfileImage from "@/shared/hooks/useUserProfile"; // ✅ 훅 사
+import useProfileImage from "@/shared/hooks/useUserProfile";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { profileImage } = useProfileImage(); // ✅ 훅 사용
+  const { profileImage } = useProfileImage();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -20,7 +20,7 @@ const Header = () => {
     }
   };
 
-  const isProfilePage = location.pathname === "/profile"; // 경로는 storage 설정하면서 수정하면 됩니다..!
+  const isProfilePage = location.pathname === "/profile";
 
   return (
     <HeaderWrapper>

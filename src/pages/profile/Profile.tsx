@@ -14,7 +14,7 @@ const Profile = () => {
     nickname: "링크",
     bio: "한 줄 소개를 입력해주세요.",
     artists: "관심 있는 아티스트를 입력해주세요.",
-  });
+  }); // 이 부분은 db에서 받아오는 걸로 수정할 예정입니다
 
   const { profileImage, user, refetchImage } = useProfileImage();
   const { upload } = useUploadProfileImage(user?.id, refetchImage);
