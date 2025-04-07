@@ -5,20 +5,29 @@ import styled from "@emotion/styled";
 
 type DropdownVariant = "icon" | "text";
 
-interface DropboxProps {
+interface CommonProps {
   variant: DropdownVariant;
-  onSelect?: (selected: string) => void;
-  iconSize?: number; // 기본 12, 필요시 지정
+  iconSize?: number;
 }
 
-const Dropbox: React.FC<DropboxProps> = ({
-  variant,
-  onSelect,
-  iconSize = 12,
-}) => {
+interface TextDropdownProps extends CommonProps {
+  variant: "text";
+  value: string;
+  onChange: (selected: string) => void;
+}
+
+interface IconDropdownProps extends CommonProps {
+  variant: "icon";
+  onChange?: (selected: string) => void;
+  value?: never;
+}
+
+type DropboxProps = TextDropdownProps | IconDropdownProps;
+
+const Dropbox: React.FC<DropboxProps> = (props) => {
+  const { variant, onChange, iconSize = 12 } = props;
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [defaultValue, setDefaultValue] = useState("최신순");
 
   const iconOptions = ["수정하기", "삭제하기"];
   const textOptions = ["최신순", "인기순"];
@@ -26,9 +35,8 @@ const Dropbox: React.FC<DropboxProps> = ({
 
   const handleToggle = () => setIsOpen((prev) => !prev);
   const handleSelect = (item: string) => {
-    setDefaultValue(item);
     setIsOpen(false);
-    onSelect?.(item);
+    onChange?.(item);
   };
 
   useEffect(() => {
@@ -61,7 +69,7 @@ const Dropbox: React.FC<DropboxProps> = ({
           />
         ) : (
           <>
-            <span>{defaultValue}</span>
+            {"value" in props && <span>{props.value}</span>}
             <img
               src={drop}
               alt="드롭다운 아이콘"
@@ -78,7 +86,7 @@ const Dropbox: React.FC<DropboxProps> = ({
             <DropdownOption
               type="button"
               key={index}
-              isActive={defaultValue === option}
+              isActive={"value" in props && props.value === option}
               variant={variant}
               onClick={() => handleSelect(option)}
             >
