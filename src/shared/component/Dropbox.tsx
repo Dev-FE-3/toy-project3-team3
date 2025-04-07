@@ -46,7 +46,11 @@ const Dropbox: React.FC<DropboxProps> = ({
 
   return (
     <DropdownWrapper ref={containerRef} variant={variant} iconSize={iconSize}>
-      <DropdownToggle onClick={handleToggle} variant={variant}>
+      <DropdownToggle
+        onClick={handleToggle}
+        variant={variant}
+        iconSize={iconSize}
+      >
         {variant === "icon" ? (
           <img
             src={menu}
@@ -68,7 +72,7 @@ const Dropbox: React.FC<DropboxProps> = ({
       </DropdownToggle>
 
       {isOpen && (
-        <DropdownMenu>
+        <DropdownMenu variant={variant}>
           {options.map((option, index) => (
             <DropdownOption
               key={index}
@@ -90,16 +94,17 @@ export default Dropbox;
 const DropdownWrapper = styled.div<{ variant: string; iconSize: number }>`
   position: relative;
   display: inline-block;
-  width: ${({ variant }) => (variant === "text" ? "85px" : "90px")};
   height: ${({ variant, iconSize }) =>
     variant === "icon" ? `${iconSize}px` : "auto"};
 `;
 
-const DropdownToggle = styled.button<{ variant: string }>`
+const DropdownToggle = styled.button<{ variant: string; iconSize: number }>`
   display: flex;
   justify-content: space-between;
-  width: 100%;
   align-items: center;
+  width: ${({ variant }) => (variant === "text" ? "85px" : "auto")};
+  height: ${({ variant, iconSize }) =>
+    variant === "icon" ? `${iconSize}px` : "auto"};
   gap: 4px;
   background: var(--background-color);
   border: ${({ variant }) =>
@@ -112,10 +117,11 @@ const DropdownToggle = styled.button<{ variant: string }>`
   cursor: pointer;
 `;
 
-const DropdownMenu = styled.div`
+const DropdownMenu = styled.div<{ variant: string }>`
   position: absolute;
-  width: 100%;
-  top: 100%;
+  display: flex;
+  flex-direction: column;
+  width: ${({ variant }) => (variant === "text" ? "85px" : "90px")};
   right: 0;
   background: var(--background-color);
   border: 1px solid var(--disabled);
@@ -127,7 +133,6 @@ const DropdownOption = styled.button<{ isActive: boolean; variant: string }>`
   background: none;
   border: none;
   padding: 8px 0;
-  width: 100%;
   text-align: center;
   font-size: var(--font-size-primary);
   cursor: pointer;
