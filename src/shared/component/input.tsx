@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
 type LabelPosition = "top" | "left";
 
@@ -35,7 +36,11 @@ const CommonInput = ({
       isTextarea={isTextarea}
     >
       {label && (
-        <Label htmlFor={id} labelPosition={labelPosition}>
+        <Label
+          htmlFor={id}
+          labelPosition={labelPosition}
+          isTextarea={isTextarea}
+        >
           {label}
         </Label>
       )}
@@ -87,7 +92,10 @@ const Wrapper = styled.div<WrapperProps>`
     labelPosition === "left" ? "auto" : width};
 `;
 
-const Label = styled.label<{ labelPosition: LabelPosition }>`
+const Label = styled.label<{
+  labelPosition: LabelPosition;
+  isTextarea: boolean;
+}>`
   font-weight: bold;
   font-size: var(--font-size-large);
   color: var(--text-primary);
@@ -95,6 +103,13 @@ const Label = styled.label<{ labelPosition: LabelPosition }>`
     labelPosition === "left" ? "110px" : "auto"};
   text-align: ${({ labelPosition }) =>
     labelPosition === "left" ? "right" : "initial"};
+
+  ${({ labelPosition, isTextarea }) =>
+    labelPosition === "left" &&
+    isTextarea &&
+    css`
+      margin-top: 10px;
+    `}
 `;
 
 const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
@@ -126,7 +141,6 @@ const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
   &.read-only:focus {
     outline: none;
     border: 1px solid transparent;
-    box-shadow: none;
   }
 `;
 
@@ -159,6 +173,5 @@ const TextArea = styled.textarea<{ width?: string }>`
   &.read-only:focus {
     outline: none;
     border: 1px solid transparent;
-    box-shadow: none;
   }
 `;

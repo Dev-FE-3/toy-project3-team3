@@ -118,7 +118,6 @@ const Profile = () => {
 
 export default Profile;
 
-// 스타일
 const TitleWrapper = styled.div`
   width: 600px;
   height: 60px;
