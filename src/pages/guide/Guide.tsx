@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "@/shared/component/Modal";
 import cancel from "@/assets/images/cancel.svg";
 import Button from "@/shared/component/Button";
@@ -16,8 +16,18 @@ const Guide = () => {
     setIsModalOpen(false);
   };
 
-  const handleSelect = (item: string) => {
-    console.log("선택한 옵션:", item);
+  const [sortOrder, setSortOrder] = useState("최신순");
+
+  useEffect(() => {
+    console.log("정렬:", sortOrder);
+  }, [sortOrder]);
+
+  const handleIconAction = (action: string) => {
+    if (action === "수정하기") {
+      console.log("수정 기능 실행");
+    } else if (action === "삭제하기") {
+      console.log("삭제 기능 실행");
+    }
   };
 
   const navigate = useNavigate();
@@ -65,6 +75,13 @@ const Guide = () => {
           </>
         }
       />
+      <h1>드롭다운</h1>
+      <span>큰 아이콘</span>
+      <Dropbox variant="icon" iconSize={24} onChange={handleIconAction} />
+      <span>작은 아이콘</span>
+      <Dropbox variant="icon" onChange={handleIconAction} />
+      <span>텍스트 드롭</span>
+      <Dropbox variant="text" value={sortOrder} onChange={setSortOrder} />
       <div>
         <Button
           size="big"
@@ -161,9 +178,6 @@ const Guide = () => {
           width="250px"
         />
       </div>
-      <h1>드롭다운</h1>
-      <Dropbox variant="icon" onSelect={handleSelect} />
-      <Dropbox variant="text" onSelect={handleSelect} />
     </>
   );
 };
