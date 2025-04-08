@@ -91,7 +91,7 @@ const Signup = () => {
           label="비밀번호"
           type="password"
           autoComplete="off"
-          placeholder="비밀번호를 입력해주세요 (8자리 이상)"
+          placeholder="비밀번호를 입력해주세요 (특수문자 포함 8자리 이상)"
           error={errors.password?.message}
           {...register("password", {
             required: "비밀번호를 입력해주세요.",

@@ -28,7 +28,7 @@ const Login = () => {
     });
 
     if (error) {
-      console.error("로그인 실패:", error.message);
+      toast.error("이메일 또는 비밀번호를 다시 확인해주세요.");
       return;
     }
 
@@ -51,10 +51,6 @@ const Login = () => {
           error={errors.email?.message}
           {...register("email", {
             required: "이메일을 입력해주세요.",
-            pattern: {
-              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "이메일을 다시 입력해주세요.",
-            },
           })}
         />
 
@@ -67,18 +63,6 @@ const Login = () => {
           error={errors.password?.message}
           {...register("password", {
             required: "비밀번호를 입력해주세요.",
-            minLength: {
-              value: 8,
-              message: "비밀번호를 다시 입력해주세요.",
-            },
-            maxLength: {
-              value: 16,
-              message: "비밀번호를 다시 입력해주세요.",
-            },
-            pattern: {
-              value: /[!@#$%^&*(),.?":{}|<>]/,
-              message: "비밀번호를 다시 입력해주세요.",
-            },
           })}
         />
 
