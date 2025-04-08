@@ -3,6 +3,8 @@ import Modal from "@/shared/component/Modal";
 import cancel from "@/assets/images/cancel.svg";
 import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
+import Dropbox from "@/shared/component/Dropbox";
+import { toast } from "react-toastify";
 
 const Guide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -119,6 +121,14 @@ const Guide = () => {
       <h1>드롭다운</h1>
       <Dropbox variant="icon" onSelect={handleSelect} />
       <Dropbox variant="text" onSelect={handleSelect} />
+
+      <Button
+        size="small"
+        btnColor="pink"
+        onClick={() => toast.success("토스트 알림 출력!")}
+      >
+        토스트 알림
+      </Button>
     </>
   );
 };

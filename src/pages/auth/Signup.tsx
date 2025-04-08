@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import Button from "@/shared/component/Button";
 import FormInput from "./component/FormInput";
 import IdolLinkLogo from "@/assets/images/IdolLink.svg";
+import { toast } from "react-toastify";
 
 type FormValues = {
   email: string;
@@ -37,7 +38,7 @@ const Signup = () => {
       return;
     }
 
-    alert("회원가입 성공!");
+    toast.success("회원가입 성공!");
     navigate("/login");
   };
 
