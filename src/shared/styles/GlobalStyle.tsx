@@ -21,7 +21,7 @@ const globalStyles = css`
     --profile-background: #fbfafb;
 
     // font size
-    --font-size-title: 32px;
+    --font-size-title: 28px;
     --font-size-large: 18px;
     --font-size-primary: 16px;
     --font-size-small: 14px;

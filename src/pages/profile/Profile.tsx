@@ -7,6 +7,7 @@ import useProfileImage from "@/shared/hooks/useUserProfile";
 import Dropbox from "@/shared/component/Dropbox";
 import useDeleteProfileImage from "@/pages/profile/hooks/useDeleteProfileImage";
 import useUploadProfileImage from "@/pages/profile/hooks/useUploadProfileImage";
+import Title from "@/shared/component/Title";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -49,9 +50,7 @@ const Profile = () => {
 
   return (
     <>
-      <TitleWrapper>
-        <Title>프로필</Title>
-      </TitleWrapper>
+      <Title title="프로필" />
       <ProfileHeader>
         <ImageWrapper>
           <ProfileImage
@@ -117,20 +116,6 @@ const Profile = () => {
 };
 
 export default Profile;
-
-const TitleWrapper = styled.div`
-  width: 600px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  font-size: 28px;
-  font-weight: 400;
-  color: var(--text-primary);
-  margin-left: 24px;
-`;
 
 const ProfileHeader = styled.div`
   width: 100%;
