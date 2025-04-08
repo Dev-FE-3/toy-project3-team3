@@ -38,7 +38,7 @@ const Signup = () => {
       return;
     }
 
-    toast.success("회원가입 성공!");
+    toast.success(`환영합니다 🎉`);
     navigate("/login");
   };
 

@@ -22,7 +22,6 @@ const Login = () => {
 
   const handleLogin = async (data: FormValues) => {
     const { email, password } = data;
-
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -33,7 +32,7 @@ const Login = () => {
       return;
     }
 
-    toast.success("로그인 성공!");
+    toast.success(`반갑습니다! 🙌`);
     navigate("/");
   };
 
