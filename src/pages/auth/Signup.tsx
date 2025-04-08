@@ -24,17 +24,36 @@ const Signup = () => {
 
   const password = watch("password");
 
+  const generateRandomId = () => {
+    return Math.floor(100000 + Math.random() * 900000); //6자리 숫자
+  };
+
   /**회원가입 처리 */
   const handleSignup = async (data: FormValues) => {
     const { email, password } = data;
+    const randomId = generateRandomId();
 
-    const { error } = await supabase.auth.signUp({
+    //Supabase Auth를 사용하여 회원가입 진행
+    const { data: signupData, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    if (error) {
-      console.error("회원가입 실패: ", error.message);
+    //에러가 발생하거나 유저 정보가 없으면 종료
+    if (error || !signupData.user) {
+      console.error("회원가입 실패: ", error?.message);
+      return;
+    }
+
+    //회원 정보를 user_table에 저장
+    const { error: insertError } = await supabase.from("user_table").insert({
+      email,
+      password,
+      random_id: randomId,
+    });
+
+    if (insertError) {
+      console.error("user_table 저장 실패: ", insertError.message);
       return;
     }
 
