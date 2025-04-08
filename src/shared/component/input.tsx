@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
 type LabelPosition = "top" | "left";
 
@@ -11,6 +12,7 @@ interface InputProps {
   width?: string;
   isTextarea?: boolean;
   value?: string;
+  isReadOnly?: boolean;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
@@ -24,6 +26,7 @@ const CommonInput = ({
   width = "250px",
   isTextarea = false,
   value,
+  isReadOnly,
   onChange,
 }: InputProps) => {
   return (
@@ -33,7 +36,11 @@ const CommonInput = ({
       isTextarea={isTextarea}
     >
       {label && (
-        <Label htmlFor={id} labelPosition={labelPosition}>
+        <Label
+          htmlFor={id}
+          labelPosition={labelPosition}
+          isTextarea={isTextarea}
+        >
           {label}
         </Label>
       )}
@@ -43,6 +50,8 @@ const CommonInput = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          readOnly={isReadOnly}
+          className={isReadOnly ? "read-only" : ""}
         />
       ) : (
         <Input
@@ -52,6 +61,8 @@ const CommonInput = ({
           onChange={onChange}
           labelPosition={labelPosition}
           width={width}
+          readOnly={isReadOnly}
+          className={isReadOnly ? "read-only" : ""}
         />
       )}
     </Wrapper>
@@ -81,7 +92,10 @@ const Wrapper = styled.div<WrapperProps>`
     labelPosition === "left" ? "auto" : width};
 `;
 
-const Label = styled.label<{ labelPosition: LabelPosition }>`
+const Label = styled.label<{
+  labelPosition: LabelPosition;
+  isTextarea: boolean;
+}>`
   font-weight: bold;
   font-size: var(--font-size-large);
   color: var(--text-primary);
@@ -89,6 +103,13 @@ const Label = styled.label<{ labelPosition: LabelPosition }>`
     labelPosition === "left" ? "110px" : "auto"};
   text-align: ${({ labelPosition }) =>
     labelPosition === "left" ? "right" : "initial"};
+
+  ${({ labelPosition, isTextarea }) =>
+    labelPosition === "left" &&
+    isTextarea &&
+    css`
+      margin-top: 10px;
+    `}
 `;
 
 const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
@@ -103,12 +124,23 @@ const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
   color: var(--text-primary);
 
   &:focus {
-    border: 2px solid var(--primary);
+    border: 1px solid var(--primary);
   }
 
   &::placeholder {
     color: var(--disabled);
     font-size: var(--font-size-primary);
+  }
+
+  &.read-only {
+    border: 1px solid transparent; // ← 투명 테두리!
+    background-color: transparent;
+    cursor: default;
+  }
+
+  &.read-only:focus {
+    outline: none;
+    border: 1px solid transparent;
   }
 `;
 
@@ -130,5 +162,16 @@ const TextArea = styled.textarea<{ width?: string }>`
   &::placeholder {
     color: var(--disabled);
     font-size: var(--font-size-primary);
+  }
+
+  &.read-only {
+    border: 1px solid transparent; // ← 투명 테두리!
+    background-color: transparent;
+    cursor: default;
+  }
+
+  &.read-only:focus {
+    outline: none;
+    border: 1px solid transparent;
   }
 `;

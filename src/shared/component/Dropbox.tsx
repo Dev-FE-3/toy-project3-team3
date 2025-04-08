@@ -116,7 +116,8 @@ const DropdownToggle = styled.button<{ variant: string; iconSize: number }>`
   height: ${({ variant, iconSize }) =>
     variant === "icon" ? `${iconSize}px` : "auto"};
   gap: 4px;
-  background: var(--background-color);
+  background: ${({ variant }) =>
+    variant === "text" ? "var(--background-color)" : "none"};
   border: ${({ variant }) =>
     variant === "text" ? "1px solid var(--disabled)" : "none"};
   border-radius: ${({ variant }) => (variant === "text" ? "10px" : "0")};
