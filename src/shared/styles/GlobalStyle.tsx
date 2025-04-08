@@ -43,6 +43,7 @@ const globalStyles = css`
 
   body {
     font-family: "Noto Sans KR", sans-serif;
+    background-color: #f5f5f5;
   }
 
   * {

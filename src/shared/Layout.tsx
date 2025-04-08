@@ -7,6 +7,7 @@ const Wrapper = styled.div`
   width: 600px;
   height: 100vh;
   margin: 0 auto;
+  background-color: var(--background-color);
   box-sizing: border-box;
 `;
 
@@ -21,3 +22,4 @@ const Layout = () => {
 };
 
 export default Layout;
+
