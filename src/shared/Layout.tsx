@@ -11,13 +11,20 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
+const TopWrapper = styled.div`
+  background-color: var(--button-gray);
+  width: 100%;
+  height: 100vh;
+`;
 const Layout = () => {
   return (
-    <Wrapper>
-      <Header />
-      <Outlet />
-      <Nav />
-    </Wrapper>
+    <TopWrapper>
+      <Wrapper>
+        <Header />
+        <Outlet />
+        <Nav />
+      </Wrapper>
+    </TopWrapper>
   );
 };
 
