@@ -3,13 +3,15 @@ import { supabase } from "@/lib/supabase";
 import styled from "@emotion/styled";
 import IdolLink from "@/assets/images/IdolLink.svg";
 import DefaultProfile from "@/assets/images/DefaultProfile.svg";
-import useProfileImage from "@/shared/hooks/useUserProfile";
+import useProfileImage from "@/shared/hooks/useProfileImage";
+import useUser from "@/pages/profile/hooks/useUser";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { profileImage } = useProfileImage();
+  const { user } = useUser();
+  const { profileImage } = useProfileImage(user?.id);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();

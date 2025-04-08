@@ -1,27 +1,48 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
-import useUserProfile from "@/shared/hooks/useUserProfile";
+import useProfileImage from "@/shared/hooks/useProfileImage";
 import Dropbox from "@/shared/component/Dropbox";
 import useDeleteProfileImage from "@/pages/profile/hooks/useDeleteProfileImage";
 import useUploadProfileImage from "@/pages/profile/hooks/useUploadProfileImage";
 import Title from "@/shared/component/Title";
+import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
+import useUser from "@/pages/profile/hooks/useUser";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    nickname: "링크",
-    bio: "한 줄 소개를 입력해주세요.",
-    artists: "관심 있는 아티스트를 입력해주세요.",
+    nickname: "",
+    sort_intro: "",
+    artist_hash_tag: "",
   });
 
-  const { profileImage, user, refetchImage } = useUserProfile();
+  const { user, isLoading: isUserLoading, isError: isUserError } = useUser(); // 유저 정보
+  const { profileImage, refetch: refetchImage } = useProfileImage(user?.id); // 프로필 이미지
 
-  // ✅ useMutation 스타일로 수정
   const uploadMutation = useUploadProfileImage(refetchImage);
   const deleteMutation = useDeleteProfileImage(refetchImage);
+  const updateMutation = useUpdateUserInfo((updatedData) => {
+    setProfileData({
+      nickname: updatedData.nickname ?? "",
+      sort_intro: updatedData.sort_intro ?? "",
+      artist_hash_tag: updatedData.artist_hash_tag ?? "",
+    });
+    setIsEditing(false);
+  });
+
+  // 초기 유저 데이터 profileData에 세팅
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        nickname: user.nickname ?? "",
+        sort_intro: user.sort_intro ?? "",
+        artist_hash_tag: user.artist_hash_tag ?? "",
+      });
+    }
+  }, [user]);
 
   const handleIconAction = (action: string) => {
     if (!user?.id) return;
@@ -51,9 +72,17 @@ const Profile = () => {
   };
 
   const handleSave = () => {
-    setIsEditing(false);
+    if (!user?.email) return;
+    updateMutation.mutate({
+      email: user.email,
+      updatedFields: profileData,
+    });
   };
 
+  if (isUserLoading) return <div>로딩 중...</div>;
+  if (isUserError) return <div>유저 정보를 불러오지 못했습니다.</div>;
+
+  if (!user) return <div>유저 정보가 없습니다.</div>;
   return (
     <>
       <Title title="프로필" />
@@ -79,6 +108,7 @@ const Profile = () => {
           <CommonInput
             id="nickname"
             label="닉네임"
+            placeholder="닉네임"
             labelPosition="left"
             value={profileData.nickname}
             onChange={handleInputChange}
@@ -95,20 +125,22 @@ const Profile = () => {
             isReadOnly
           />
           <CommonInput
-            id="bio"
+            id="sort_intro"
             label="한 줄 소개"
+            placeholder="한 줄 소개를 입력해 주세요."
             labelPosition="left"
             isTextarea
-            value={profileData.bio}
+            value={profileData.sort_intro}
             onChange={handleInputChange}
             isReadOnly={!isEditing}
           />
           <CommonInput
-            id="artists"
+            id="artist_hash_tag"
             label="관심 아티스트"
+            placeholder="관심 아티스트를 입력해 주세요."
             labelPosition="left"
             isTextarea
-            value={profileData.artists}
+            value={profileData.artist_hash_tag}
             onChange={handleInputChange}
             isReadOnly={!isEditing}
           />
