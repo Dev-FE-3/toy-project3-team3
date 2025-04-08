@@ -18,6 +18,7 @@ const globalStyles = css`
     --disabled: #c4c4c4; // input
     --disabled-2: #d8d8d8; // 줄 선
     --button-gray: #e9e9e9;
+    --profile-background: #fbfafb;
 
     // font size
     --font-size-title: 28px;
