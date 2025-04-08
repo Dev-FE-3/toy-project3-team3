@@ -21,8 +21,8 @@ const Profile = () => {
   const { upload } = useUploadProfileImage(user?.id, refetchImage);
   const { remove } = useDeleteProfileImage(user?.id, refetchImage);
 
-  const handleSelect = async (type: string) => {
-    if (type === "수정하기") {
+  const handleIconAction = (action: string) => {
+    if (action === "수정하기") {
       const input = document.createElement("input");
       input.type = "file";
       input.accept = "image/*";
@@ -32,7 +32,7 @@ const Profile = () => {
         if (file) upload(file);
       };
       input.click();
-    } else if (type === "삭제하기") {
+    } else if (action === "삭제하기") {
       remove();
     }
   };
@@ -57,9 +57,15 @@ const Profile = () => {
             src={profileImage || DefaultProfile}
             alt="프로필 이미지"
           />
-          <DropboxWrapper>
-            <Dropbox variant="icon" onSelect={handleSelect} />
-          </DropboxWrapper>
+          {isEditing && (
+            <DropboxWrapper>
+              <Dropbox
+                variant="icon"
+                iconSize={24}
+                onChange={handleIconAction}
+              />
+            </DropboxWrapper>
+          )}
         </ImageWrapper>
       </ProfileHeader>
       <ProfileDataWrapper>
@@ -121,8 +127,6 @@ const ProfileHeader = styled.div`
   width: 100%;
   height: 224px;
   background-color: var(--profile-background);
-  display: flex;
-  justify-content: center;
   position: relative;
 `;
 
@@ -137,19 +141,16 @@ const ImageWrapper = styled.div`
 
 const DropboxWrapper = styled.div`
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 0;
+  right: 0;
   z-index: 2;
 `;
 
 const ProfileImage = styled.img`
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  object-fit: cover;
 `;
 
 const ProfileDataWrapper = styled.div`
