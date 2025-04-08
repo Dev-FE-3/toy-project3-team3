@@ -3,7 +3,7 @@ import { useState } from "react";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
-import useProfileImage from "@/shared/hooks/useUserProfile";
+import useUserProfile from "@/shared/hooks/useUserProfile";
 import Dropbox from "@/shared/component/Dropbox";
 import useDeleteProfileImage from "@/pages/profile/hooks/useDeleteProfileImage";
 import useUploadProfileImage from "@/pages/profile/hooks/useUploadProfileImage";
@@ -15,13 +15,17 @@ const Profile = () => {
     nickname: "링크",
     bio: "한 줄 소개를 입력해주세요.",
     artists: "관심 있는 아티스트를 입력해주세요.",
-  }); // 이 부분은 db에서 받아오는 걸로 수정할 예정입니다
+  });
 
-  const { profileImage, user, refetchImage } = useProfileImage();
-  const { upload } = useUploadProfileImage(user?.id, refetchImage);
-  const { remove } = useDeleteProfileImage(user?.id, refetchImage);
+  const { profileImage, user, refetchImage } = useUserProfile();
+
+  // ✅ useMutation 스타일로 수정
+  const uploadMutation = useUploadProfileImage(refetchImage);
+  const deleteMutation = useDeleteProfileImage(refetchImage);
 
   const handleIconAction = (action: string) => {
+    if (!user?.id) return;
+
     if (action === "수정하기") {
       const input = document.createElement("input");
       input.type = "file";
@@ -29,11 +33,13 @@ const Profile = () => {
       input.onchange = (e: Event) => {
         const target = e.target as HTMLInputElement;
         const file = target.files?.[0];
-        if (file) upload(file);
+        if (file) {
+          uploadMutation.mutate({ userId: user.id, file });
+        }
       };
       input.click();
     } else if (action === "삭제하기") {
-      remove();
+      deleteMutation.mutate(user.id);
     }
   };
 
