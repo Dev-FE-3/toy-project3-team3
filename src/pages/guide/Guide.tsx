@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "@/shared/component/Modal";
 import cancel from "@/assets/images/cancel.svg";
 import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
+import Dropbox from "@/shared/component/Dropbox";
+import Title from "@/shared/component/Title";
+import { StyledTitle } from "@/shared/component/Title";
+import { useNavigate } from "react-router-dom";
+import Like from "@/assets/images/Like.svg";
+import { toast } from "react-toastify";
 
 const Guide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,16 +17,73 @@ const Guide = () => {
     setIsModalOpen(false);
   };
 
-  const handleSelect = (item: string) => {
-    console.log("선택한 옵션:", item);
+  const [sortOrder, setSortOrder] = useState("최신순");
+
+  useEffect(() => {
+    console.log("정렬:", sortOrder);
+  }, [sortOrder]);
+
+  const handleIconAction = (action: string) => {
+    if (action === "수정하기") {
+      console.log("수정 기능 실행");
+    } else if (action === "삭제하기") {
+      console.log("삭제 기능 실행");
+    }
   };
 
+  const navigate = useNavigate();
   return (
     <>
+      <Title showBackButton title="공지사항" />
+      <Title title="제목만" />
+      <Title showBackButton />
+      /* 지금부터 완전 커스텀 */
+      <Title
+        leftContent={
+          <>
+            <StyledTitle>탐색</StyledTitle>
+            <CommonInput
+              placeholder="영상 제목을 검색해주세요."
+              width="200px"
+            />
+          </> /* StyledTitle을 따로 import 할 수 있게 빼뒀어요! */
+        }
+      />
+      <Title
+        showBackButton
+        title="공지사항"
+        rightContent={
+          <img
+            src={cancel}
+            alt="닫기"
+            onClick={() => navigate(-1)}
+            style={{ cursor: "pointer" }}
+          />
+        }
+      />
+      <Title
+        showBackButton
+        title="커스텀 2"
+        rightContent={
+          <>
+            <img src={Like} alt="좋아요" style={{ cursor: "pointer" }} />
+            <img
+              src={cancel}
+              alt="닫기"
+              onClick={() => navigate(-1)}
+              style={{ cursor: "pointer" }}
+            />
+          </>
+        }
+      />
+      <h1>드롭다운</h1>
+      <span>큰 아이콘</span>
+      <Dropbox variant="icon" iconSize={24} onChange={handleIconAction} />
+      <span>작은 아이콘</span>
+      <Dropbox variant="icon" onChange={handleIconAction} />
+      <span>텍스트 드롭</span>
+      <Dropbox variant="text" value={sortOrder} onChange={setSortOrder} />
       <div>
-        <br />
-        <h1>가이드 페이지</h1>
-        <br />
         <Button
           size="big"
           color="pink"
@@ -116,9 +179,13 @@ const Guide = () => {
           width="250px"
         />
       </div>
-      <h1>드롭다운</h1>
-      <Dropbox variant="icon" onSelect={handleSelect} />
-      <Dropbox variant="text" onSelect={handleSelect} />
+      <Button
+        size="small"
+        btnColor="pink"
+        onClick={() => toast.success("토스트 알림 출력!")}
+      >
+        토스트 알림
+      </Button>
     </>
   );
 };

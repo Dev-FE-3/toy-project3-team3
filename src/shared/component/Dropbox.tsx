@@ -1,77 +1,169 @@
 import drop from "@/assets/images/drop.svg";
 import menu from "@/assets/images/menu.svg";
 import { useEffect, useRef, useState } from "react";
+import styled from "@emotion/styled";
 
-/** 드롭다운 종류 구분 */
-type DropdownVariant = 'icon' | 'text';
+type DropdownVariant = "icon" | "text";
 
-interface DropboxProps {
-  /** 드롭다운 종류: 아이콘 드롭다운 or 일반 텍스트 드롭다운 */
+interface CommonProps {
   variant: DropdownVariant;
-  /** 항목 선택 시 실행될 콜백 */
-  onSelect?: (selected: string) => void;
+  iconSize?: number;
 }
 
-const Dropbox: React.FC<DropboxProps> = ({variant, onSelect}) => {
+interface TextDropdownProps extends CommonProps {
+  variant: "text";
+  value: string;
+  onChange: (selected: string) => void;
+}
+
+interface IconDropdownProps extends CommonProps {
+  variant: "icon";
+  onChange?: (selected: string) => void;
+  value?: never;
+}
+
+type DropboxProps = TextDropdownProps | IconDropdownProps;
+
+const Dropbox: React.FC<DropboxProps> = (props) => {
+  const { variant, onChange, iconSize = 12 } = props;
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [defaultValue, setDefaultValue] = useState('최신순')
 
-  /** variant에 따라 고정된 옵션 분기 */
-  const iconOptions = ['수정하기', '삭제하기'];
-  const textOptions = ['최신순', '인기순'];
+  const iconOptions = ["수정하기", "삭제하기"];
+  const textOptions = ["최신순", "인기순"];
+  const options = variant === "icon" ? iconOptions : textOptions;
 
-  /** 실제 렌더링할 옵션 */
-  const options = variant === 'icon' ? iconOptions : textOptions;
-
-  const handleToggle = () => {
-    setIsOpen((prev) => ! prev);
-  }
-
+  const handleToggle = () => setIsOpen((prev) => !prev);
   const handleSelect = (item: string) => {
-    setDefaultValue(item)
     setIsOpen(false);
-    onSelect?.(item);
-  }
+    onChange?.(item);
+  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false)
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <div>
-      <div ref={containerRef}>
-        <button onClick={handleToggle}>
-          {variant === 'icon' ?
-          (
-            <img src={menu} alt="메뉴 드롭다운" style={{ width: 24, height: 24 }} />
-          ) : (
-            <button>
-              {defaultValue}
-              <img
+    <DropdownWrapper ref={containerRef} variant={variant} iconSize={iconSize}>
+      <DropdownToggle
+        type="button"
+        onClick={handleToggle}
+        variant={variant}
+        iconSize={iconSize}
+      >
+        {variant === "icon" ? (
+          <img
+            src={menu}
+            alt="메뉴 드롭다운"
+            width={iconSize}
+            height={iconSize}
+          />
+        ) : (
+          <>
+            {"value" in props && <span>{props.value}</span>}
+            <img
               src={drop}
               alt="드롭다운 아이콘"
-              style={{ width: 16, height: 16 }}
+              width={iconSize}
+              height={iconSize}
             />
-            </button>
-          )}
-        </button>
-        {isOpen && (<ul>
-          {options.map((option, index) => (
-            <li key={index}>
-               <button onClick={() => handleSelect(option)}>{option}</button>
-            </li>
-          ))}
-        </ul>)}
-      </div>
-    </div>
-  )
-}
+          </>
+        )}
+      </DropdownToggle>
 
-export default Dropbox
+      {isOpen && (
+        <DropdownMenu variant={variant}>
+          {options.map((option, index) => (
+            <DropdownOption
+              type="button"
+              key={index}
+              isActive={"value" in props && props.value === option}
+              variant={variant}
+              onClick={() => handleSelect(option)}
+            >
+              {option}
+            </DropdownOption>
+          ))}
+        </DropdownMenu>
+      )}
+    </DropdownWrapper>
+  );
+};
+
+export default Dropbox;
+
+const DropdownWrapper = styled.div<{ variant: string; iconSize: number }>`
+  position: relative;
+  display: inline-block;
+  height: ${({ variant, iconSize }) =>
+    variant === "icon" ? `${iconSize}px` : "auto"};
+`;
+
+const DropdownToggle = styled.button<{ variant: string; iconSize: number }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: ${({ variant }) => (variant === "text" ? "85px" : "auto")};
+  height: ${({ variant, iconSize }) =>
+    variant === "icon" ? `${iconSize}px` : "auto"};
+  gap: 4px;
+  background: ${({ variant }) =>
+    variant === "text" ? "var(--background-color)" : "none"};
+  border: ${({ variant }) =>
+    variant === "text" ? "1px solid var(--disabled)" : "none"};
+  border-radius: ${({ variant }) => (variant === "text" ? "10px" : "0")};
+  padding: ${({ variant }) => (variant === "text" ? "6px 10px" : "0")};
+  font-size: var(--font-size-primary);
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+`;
+
+const DropdownMenu = styled.div<{ variant: string }>`
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: ${({ variant }) => (variant === "text" ? "85px" : "90px")};
+  right: 0;
+  background: var(--background-color);
+  border: 1px solid var(--disabled);
+  border-radius: 10px;
+  z-index: 10;
+`;
+
+const DropdownOption = styled.button<{ isActive: boolean; variant: string }>`
+  background: none;
+  border: none;
+  padding: 8px 0;
+  text-align: center;
+  font-size: var(--font-size-primary);
+  cursor: pointer;
+  color: ${({ isActive, variant }) =>
+    variant === "text" && isActive
+      ? "var(--primary)"
+      : "var(--text-secondary)"};
+  font-weight: 500;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  &:first-of-type {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  &:last-of-type {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+`;
