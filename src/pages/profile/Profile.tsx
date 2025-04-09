@@ -9,15 +9,17 @@ import useDeleteProfileImage from "@/pages/profile/hooks/useDeleteProfileImage";
 import useUploadProfileImage from "@/pages/profile/hooks/useUploadProfileImage";
 import Title from "@/shared/component/Title";
 import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
-import useUser from "@/pages/profile/hooks/useUser";
+import useUser from "@/shared/hooks/useUser.ts";
 import Cancel from "@/assets/images/cancel.svg";
 import Modal from "@/shared/component/Modal";
 import { useNavigate } from "react-router-dom";
 import useLockStore from "@/stores/lockStore";
+import Loading from "@/shared/component/Loading";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { lock, unlock } = useLockStore();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -26,17 +28,19 @@ const Profile = () => {
     artist_hash_tag: "",
   });
 
-  const { user, isLoading: isUserLoading, isError: isUserError } = useUser(); // 유저 정보
-  const { profileImage, refetch: refetchImage } = useProfileImage(user?.id); // 프로필 이미지
+  const {
+    user,
+    authUserId,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useUser(); // 유저 정보
+  // 프로필 이미지 fetch
+  const { profileImage, refetch: refetchImage } = useProfileImage(authUserId);
 
   const uploadMutation = useUploadProfileImage(refetchImage);
   const deleteMutation = useDeleteProfileImage(refetchImage);
-  const updateMutation = useUpdateUserInfo((updatedData) => {
-    setProfileData({
-      nickname: updatedData.nickname ?? "",
-      sort_intro: updatedData.sort_intro ?? "",
-      artist_hash_tag: updatedData.artist_hash_tag ?? "",
-    });
+
+  const updateMutation = useUpdateUserInfo(() => {
     setIsEditing(false);
   });
 
@@ -60,7 +64,7 @@ const Profile = () => {
   }, [user]);
 
   const handleIconAction = (action: string) => {
-    if (!user?.id) return;
+    if (!authUserId) return;
 
     if (action === "수정하기") {
       const input = document.createElement("input");
@@ -70,12 +74,12 @@ const Profile = () => {
         const target = e.target as HTMLInputElement;
         const file = target.files?.[0];
         if (file) {
-          uploadMutation.mutate({ userId: user.id, file });
+          uploadMutation.mutate({ userId: authUserId, file });
         }
       };
       input.click();
     } else if (action === "삭제하기") {
-      deleteMutation.mutate(user.id);
+      deleteMutation.mutate(authUserId);
     }
   };
 
@@ -87,17 +91,17 @@ const Profile = () => {
   };
 
   const handleSave = () => {
-    if (!user?.email) return;
+    if (!user?.id) return;
     updateMutation.mutate({
-      email: user.email,
+      id: user.id,
       updatedFields: profileData,
     });
   };
 
-  if (isUserLoading) return <div>로딩 중...</div>;
+  if (isUserLoading) return <Loading />;
   if (isUserError) return <div>유저 정보를 불러오지 못했습니다.</div>;
-
   if (!user) return <div>유저 정보가 없습니다.</div>;
+
   return (
     <>
       {isEditing ? (

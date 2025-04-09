@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import IdolLink from "@/assets/images/IdolLink.svg";
 import DefaultProfile from "@/assets/images/DefaultProfile.svg";
 import useProfileImage from "@/shared/hooks/useProfileImage";
-import useUser from "@/pages/profile/hooks/useUser";
+import useUser from "@/shared/hooks/useUser";
 import useLockStore from "@/stores/lockStore";
 import { toast } from "react-toastify";
 
@@ -13,8 +13,8 @@ const Header = () => {
   const navigate = useNavigate();
   const { isLocked } = useLockStore();
 
-  const { user } = useUser();
-  const { profileImage } = useProfileImage(user?.id);
+  const { authUserId } = useUser();
+  const { profileImage } = useProfileImage(authUserId);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
