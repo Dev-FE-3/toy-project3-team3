@@ -13,9 +13,11 @@ import useUser from "@/pages/profile/hooks/useUser";
 import Cancel from "@/assets/images/cancel.svg";
 import Modal from "@/shared/component/Modal";
 import { useNavigate } from "react-router-dom";
+import useLockStore from "@/stores/lockStore";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { lock, unlock } = useLockStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -37,6 +39,14 @@ const Profile = () => {
     });
     setIsEditing(false);
   });
+
+  useEffect(() => {
+    if (isEditing) {
+      lock();
+    } else {
+      unlock();
+    }
+  }, [isEditing, lock, unlock]);
 
   // 초기 유저 데이터 profileData에 세팅
   useEffect(() => {

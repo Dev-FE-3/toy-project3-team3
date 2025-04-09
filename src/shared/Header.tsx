@@ -5,10 +5,13 @@ import IdolLink from "@/assets/images/IdolLink.svg";
 import DefaultProfile from "@/assets/images/DefaultProfile.svg";
 import useProfileImage from "@/shared/hooks/useProfileImage";
 import useUser from "@/pages/profile/hooks/useUser";
+import useLockStore from "@/stores/lockStore";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isLocked } = useLockStore();
 
   const { user } = useUser();
   const { profileImage } = useProfileImage(user?.id);
@@ -26,13 +29,24 @@ const Header = () => {
 
   return (
     <HeaderWrapper>
-      <Link to="/">
+      <Link to="/" onClick={(e) => isLocked && e.preventDefault()}>
         <Logo src={IdolLink} alt="IdolLink Logo" />
       </Link>
       {isProfilePage ? (
-        <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+        <LogoutButton
+          onClick={(e) => {
+            if (isLocked) {
+              e.preventDefault(); // 혹시 모를 이벤트 기본 동작 방지
+              toast.error("현재 수정 중이라 로그아웃이 불가합니다.");
+              return; // 로그아웃 막기
+            }
+            handleLogout();
+          }}
+        >
+          로그아웃
+        </LogoutButton>
       ) : (
-        <Link to="/profile">
+        <Link to="/profile" onClick={(e) => isLocked && e.preventDefault()}>
           <Profile src={profileImage || DefaultProfile} alt="Profile Image" />
         </Link>
       )}

@@ -5,6 +5,7 @@ import Home from "@/assets/images/Home.svg";
 import Inbox from "@/assets/images/Inbox.svg";
 import Plus from "@/assets/images/Plus.svg";
 import Search from "@/assets/images/Search.svg";
+import useLockStore from "@/stores/lockStore";
 
 interface NavItemProps {
   to: string;
@@ -20,10 +21,16 @@ const navItems: NavItemProps[] = [
 ];
 
 const Nav = () => {
+  const { isLocked } = useLockStore();
+
   return (
     <NavWrapper>
       {navItems.map(({ to, icon, label }) => (
-        <StyledNavLink key={to} to={to}>
+        <StyledNavLink
+          key={to}
+          to={to}
+          onClick={(e) => isLocked && e.preventDefault()}
+        >
           <ButtonIcon src={icon} alt={label} />
           <ButtonName>{label}</ButtonName>
         </StyledNavLink>
