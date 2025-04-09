@@ -115,6 +115,7 @@ const InfoItem = styled.div`
   align-items: center;
   justify-content: center;
   gap: 7px;
+  cursor: pointer;
 `;
 
 const InfoCount = styled.span`
