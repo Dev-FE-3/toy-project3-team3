@@ -10,8 +10,13 @@ import useUploadProfileImage from "@/pages/profile/hooks/useUploadProfileImage";
 import Title from "@/shared/component/Title";
 import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
 import useUser from "@/pages/profile/hooks/useUser";
+import Cancel from "@/assets/images/cancel.svg";
+import Modal from "@/shared/component/Modal";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
     nickname: "",
@@ -85,7 +90,22 @@ const Profile = () => {
   if (!user) return <div>유저 정보가 없습니다.</div>;
   return (
     <>
-      <Title title="프로필" />
+      {isEditing ? (
+        <Title
+          title="프로필"
+          rightContent={
+            <img
+              src={Cancel}
+              alt="닫기"
+              onClick={() => setIsModalOpen(true)}
+              style={{ cursor: "pointer" }}
+            />
+          }
+        />
+      ) : (
+        <Title showBackButton title="프로필" />
+      )}
+
       <ProfileHeader>
         <ImageWrapper>
           <ProfileImage
@@ -155,6 +175,18 @@ const Profile = () => {
           {isEditing ? "저장하기" : "수정하기"}
         </Button>
       </ButtonWrapper>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} // 계속하기
+        onConfirm={() => {
+          setIsModalOpen(false);
+          navigate(0);
+        }}
+        message="프로필 수정을 그만두시겠습니까?"
+        leftButtonText="계속하기"
+        rightButtonText="네"
+      />
     </>
   );
 };
