@@ -77,15 +77,10 @@ const ProfileWrapper = styled.div`
   width: 600px;
   height: 280px;
   padding: 10px 40px 10px 40px;
-  /* margin-top: 10px;
-  margin-left: 40px;
-  margin-right: 40px; */
 `;
 
 const ProfileCardTop = styled.div`
   display: flex;
-  /* flex-direction: column; */
-  //justify-content: space-between;
   padding: 18px 40px;
   gap: 100px;
 `;
@@ -203,11 +198,12 @@ const TabRight = styled.div<{ isActive: boolean }>`
 const PlaylistArea = styled.div`
   display: flex;
   gap: 15px 0;
-  padding: 15px 40px 0 40px;
+  padding: 15px 40px 85px 40px;
   overflow-y: auto;
   flex-wrap: wrap;
-  height: 800px;
+  max-height: 800px;
   justify-content: space-between;
+  align-items: flex-start;
 `;
 
 const VideoWrapper = styled.div`
