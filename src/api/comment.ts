@@ -20,13 +20,13 @@ export async function createComment(): Promise<Comment[]> {
   return response.data;
 }
 
-//수정하기
+// 현재로서 사용하지 않음
 export async function patchComment(): Promise<Comment[]> {
   const response = await axiosInstance.patch<Comment[]>("/comments_table")
   return response.data;
 }
 
-//삭제하기
+// 현재로서 사용하지 않음
 export async function deleteComment(): Promise<Comment[]> {
   const response = await axiosInstance.delete<Comment[]>("/comments_table")
   return response.data;

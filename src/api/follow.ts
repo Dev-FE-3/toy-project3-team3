@@ -26,8 +26,8 @@ export async function patchFollow(): Promise<Follow[]> {
   return response.data;
 }
 
-//삭제하기
-export async function deleteFollow(): Promise<Follow[]> {
-  const response = await axiosInstance.delete<Follow[]>("/follow_table")
-  return response.data;
-}
+//현재로서 사용하지 않음
+ export async function deleteFollow(): Promise<Follow[]> {
+   const response = await axiosInstance.delete<Follow[]>("/follow_table")
+   return response.data;
+ }

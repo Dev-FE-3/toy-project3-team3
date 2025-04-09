@@ -30,8 +30,9 @@ export async function patchAllUser(): Promise<User[]> {
   return response.data;
 }
 
-//삭제하기
-export async function deleteAllUser(): Promise<User[]> {
-  const response = await axiosInstance.delete<User[]>("/user_table")
-  return response.data;
-}
+// 현재로서 사용하지 않음
+ export async function deleteAllUser(): Promise<User[]> {
+   const response = await axiosInstance.delete<User[]>("/user_table")
+   return response.data;
+ } 
+

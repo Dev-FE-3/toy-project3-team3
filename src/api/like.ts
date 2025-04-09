@@ -26,7 +26,7 @@ export async function patchLike(): Promise<Like[]> {
   return response.data;
 }
 
-//삭제하기
+//현재로서 사용하지 않음
 export async function deleteLike(): Promise<Like[]> {
   const response = await axiosInstance.delete<Like[]>("/likes_table")
   return response.data;
