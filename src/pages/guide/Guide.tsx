@@ -8,6 +8,7 @@ import Title from "@/shared/component/Title";
 import { StyledTitle } from "@/shared/component/Title";
 import { useNavigate } from "react-router-dom";
 import Like from "@/assets/images/Like.svg";
+import { toast } from "react-toastify";
 
 const Guide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -178,6 +179,13 @@ const Guide = () => {
           width="250px"
         />
       </div>
+      <Button
+        size="small"
+        btnColor="pink"
+        onClick={() => toast.success("토스트 알림 출력!")}
+      >
+        토스트 알림
+      </Button>
     </>
   );
 };
