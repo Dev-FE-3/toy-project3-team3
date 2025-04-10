@@ -6,7 +6,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  message: string;
+  message: React.ReactNode;
   leftButtonText: string;
   rightButtonText: string;
 }

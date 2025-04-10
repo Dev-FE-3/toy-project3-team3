@@ -146,7 +146,7 @@ const Guide = () => {
           id="videoUrl"
           label="동영상 추가"
           placeholder="링크를 입력해주세요"
-          width="468px"
+          width="438px"
         />
 
         <CommonInput
