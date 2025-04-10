@@ -3,6 +3,8 @@ import Title from "@/shared/component/Title";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
 import Button from "@/shared/component/Button";
 import { useState } from "react";
+import Like from "@/assets/images/like.svg";
+import Comment from "@/assets/images/comment.svg";
 
 const Storage = () => {
   const [activeTab, setActiveTab] = useState<"left" | "right">("left");
@@ -58,14 +60,166 @@ const Storage = () => {
         </TabRight>
       </TabMenu>
       <PlaylistArea>
-        <VideoWrapper />
-        <VideoWrapper />
-        <VideoWrapper />
-        <VideoWrapper />
-        <VideoWrapper />
-        <VideoWrapper />
-        <VideoWrapper />
-        <VideoWrapper />
+        <VideoWrapper>
+          <VideoArea />
+          <Meta>
+            <DetailArea>
+              <Count>동영상 5개</Count>
+              <IconGroup>
+                <span className="Like">
+                  <img src={Like} alt="좋아요" /> 50
+                </span>
+                <span className="Comment">
+                  <img src={Comment} alt="댓글" /> 235
+                </span>
+              </IconGroup>
+            </DetailArea>
+            <VideoTitle>
+              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
+              어떨까요...
+            </VideoTitle>
+          </Meta>
+        </VideoWrapper>
+        <VideoWrapper>
+          <VideoArea />
+          <Meta>
+            <DetailArea>
+              <Count>동영상 5개</Count>
+              <IconGroup>
+                <span className="Like">
+                  <img src={Like} alt="좋아요" /> 50
+                </span>
+                <span className="Comment">
+                  <img src={Comment} alt="댓글" /> 235
+                </span>
+              </IconGroup>
+            </DetailArea>
+            <VideoTitle>
+              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
+              어떨까요...
+            </VideoTitle>
+          </Meta>
+        </VideoWrapper>
+        <VideoWrapper>
+          <VideoArea />
+          <Meta>
+            <DetailArea>
+              <Count>동영상 5개</Count>
+              <IconGroup>
+                <span className="Like">
+                  <img src={Like} alt="좋아요" /> 50
+                </span>
+                <span className="Comment">
+                  <img src={Comment} alt="댓글" /> 235
+                </span>
+              </IconGroup>
+            </DetailArea>
+            <VideoTitle>
+              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
+              어떨까요...
+            </VideoTitle>
+          </Meta>
+        </VideoWrapper>
+        <VideoWrapper>
+          <VideoArea />
+          <Meta>
+            <DetailArea>
+              <Count>동영상 5개</Count>
+              <IconGroup>
+                <span className="Like">
+                  <img src={Like} alt="좋아요" /> 50
+                </span>
+                <span className="Comment">
+                  <img src={Comment} alt="댓글" /> 235
+                </span>
+              </IconGroup>
+            </DetailArea>
+            <VideoTitle>
+              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
+              어떨까요...
+            </VideoTitle>
+          </Meta>
+        </VideoWrapper>
+        <VideoWrapper>
+          <VideoArea />
+          <Meta>
+            <DetailArea>
+              <Count>동영상 5개</Count>
+              <IconGroup>
+                <span className="Like">
+                  <img src={Like} alt="좋아요" /> 50
+                </span>
+                <span className="Comment">
+                  <img src={Comment} alt="댓글" /> 235
+                </span>
+              </IconGroup>
+            </DetailArea>
+            <VideoTitle>
+              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
+              어떨까요...
+            </VideoTitle>
+          </Meta>
+        </VideoWrapper>
+        <VideoWrapper>
+          <VideoArea />
+          <Meta>
+            <DetailArea>
+              <Count>동영상 5개</Count>
+              <IconGroup>
+                <span className="Like">
+                  <img src={Like} alt="좋아요" /> 50
+                </span>
+                <span className="Comment">
+                  <img src={Comment} alt="댓글" /> 235
+                </span>
+              </IconGroup>
+            </DetailArea>
+            <VideoTitle>
+              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
+              어떨까요...
+            </VideoTitle>
+          </Meta>
+        </VideoWrapper>
+        <VideoWrapper>
+          <VideoArea />
+          <Meta>
+            <DetailArea>
+              <Count>동영상 5개</Count>
+              <IconGroup>
+                <span className="Like">
+                  <img src={Like} alt="좋아요" /> 50
+                </span>
+                <span className="Comment">
+                  <img src={Comment} alt="댓글" /> 235
+                </span>
+              </IconGroup>
+            </DetailArea>
+            <VideoTitle>
+              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
+              어떨까요...
+            </VideoTitle>
+          </Meta>
+        </VideoWrapper>
+        <VideoWrapper>
+          <VideoArea />
+          <Meta>
+            <DetailArea>
+              <Count>동영상 5개</Count>
+              <IconGroup>
+                <span className="Like">
+                  <img src={Like} alt="좋아요" /> 50
+                </span>
+                <span className="Comment">
+                  <img src={Comment} alt="댓글" /> 235
+                </span>
+              </IconGroup>
+            </DetailArea>
+            <VideoTitle>
+              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
+              어떨까요...
+            </VideoTitle>
+          </Meta>
+        </VideoWrapper>
       </PlaylistArea>
     </>
   );
@@ -171,7 +325,7 @@ const TabLeft = styled.div<{ isActive: boolean }>`
   color: ${(props) =>
     props.isActive ? `var(--primary)` : `var(--disabled-2)`};
   &:hover {
-    background-color: #f5f5f5;
+    background-color: var(--profile-background);
     transition: background-color 0.3s ease-in-out;
   }
 `;
@@ -189,9 +343,9 @@ const TabRight = styled.div<{ isActive: boolean }>`
       ? `3px solid var(--primary)`
       : `3px solid var(--disabled-2)`};
   color: ${(props) =>
-    props.isActive ? `var(--primary)` : `var(--disabled-2)`};
+    props.isActive ? `var(--primary)` : `var(--text-primary)`};
   &:hover {
-    background-color: #f5f5f5;
+    background-color: var(--profile-background);
     transition: background-color 0.3s ease-in-out;
   }
 `;
@@ -212,4 +366,57 @@ const VideoWrapper = styled.div`
   height: 220px;
   border-radius: 15px;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  object-fit: cover;
+`;
+
+const VideoArea = styled.img`
+  background-color: var(--text-secondary);
+  width: 224px;
+  height: 126px;
+  border-radius: 5px;
+  margin: 11px 13px 7px 13px;
+`;
+
+const Meta = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+  gap: 9px;
+  flex-direction: column;
+  margin: 0 13px 13px 13px;
+`;
+
+const DetailArea = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const Count = styled.span``;
+
+const IconGroup = styled.div`
+  display: flex;
+  gap: 10px;
+  span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+`;
+
+const VideoTitle = styled.div`
+  font-size: var(--font-size-primary);
+  font-weight: 700;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
