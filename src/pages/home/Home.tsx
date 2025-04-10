@@ -5,6 +5,7 @@ import defaultProfile from "@/assets/images/defaultProfile.svg";
 import Title, { StyledTitle } from "@/shared/component/Title";
 import Dropbox from "@/shared/component/Dropbox";
 import { useEffect, useState } from "react";
+import backgroundImage from "@/assets/images/backGround.png";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
@@ -24,7 +25,9 @@ const Home = () => {
 
       <HomePage>
         <CardWrapper>
-          <Thumbnail />
+          <Thumbnail>
+            <ThumbnailImg src={backgroundImage} />
+          </Thumbnail>
 
           <Description>
             <TitleAndCreatorWrapper>
@@ -74,29 +77,32 @@ const HomePage = styled.div`
 
 const CardWrapper = styled.div`
   display: flex;
-  /* width: 100%;
-  max-width: 520px;
-  height: 100px; */
   width: 519px;
-  height: 136px;
-  padding: 8px 0;
+  height: 135px;
+  /* padding: 8px 0; */
+  margin-bottom: 15px;
   gap: 15px;
 `;
 
 const Thumbnail = styled.div`
-  /* width: 120px;
-  height: 84px; */
   width: 240px;
-  height: 136px;
-  background-color: var(--disabled);
+  height: 135px;
   border-radius: 10px;
   flex-shrink: 0;
+  border-radius: 1px solid var(--text-primary);
+`;
+
+const ThumbnailImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const Description = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin: 8px 0;
   flex: 1;
 `;
 
