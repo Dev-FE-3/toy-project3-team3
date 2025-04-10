@@ -5,8 +5,6 @@ import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
 import useProfileImage from "@/shared/hooks/useProfileImage";
 import Dropbox from "@/shared/component/Dropbox";
-import useDeleteProfileImage from "@/pages/profile/hooks/useDeleteProfileImage";
-import useUploadProfileImage from "@/pages/profile/hooks/useUploadProfileImage";
 import Title from "@/shared/component/Title";
 import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
 import useUser from "@/shared/hooks/useUser.ts";
@@ -15,6 +13,8 @@ import Modal from "@/shared/component/Modal";
 import { useNavigate } from "react-router-dom";
 import useLockStore from "@/stores/lockStore";
 import Loading from "@/shared/component/Loading";
+import useUploadDeleteProfileImage from "./hooks/useUploadDeleteProfileImage";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -28,18 +28,10 @@ const Profile = () => {
     artist_hash_tag: "",
   });
 
-  const {
-    user,
-    authUserId,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useUser(); // 유저 정보
-  // 프로필 이미지 fetch
-  const { profileImage, refetch: refetchImage } = useProfileImage(authUserId);
+  const { user, isLoading: isUserLoading, isError: isUserError } = useUser(); // 유저 정보
+  const { profileImage, refetch: refetchImage } = useProfileImage(); // 프로필 이미지 fetch
 
-  const uploadMutation = useUploadProfileImage(refetchImage);
-  const deleteMutation = useDeleteProfileImage(refetchImage);
-
+  const imageMutation = useUploadDeleteProfileImage(refetchImage);
   const updateMutation = useUpdateUserInfo(() => {
     setIsEditing(false);
   });
@@ -50,7 +42,7 @@ const Profile = () => {
     } else {
       unlock();
     }
-  }, [isEditing, lock, unlock]);
+  }, [isEditing, lock, unlock]); // isEditing 상태에 따라 상단 하단 lock/unlock
 
   // 초기 유저 데이터 profileData에 세팅
   useEffect(() => {
@@ -64,7 +56,7 @@ const Profile = () => {
   }, [user]);
 
   const handleIconAction = (action: string) => {
-    if (!authUserId) return;
+    if (!user) return;
 
     if (action === "수정하기") {
       const input = document.createElement("input");
@@ -74,12 +66,12 @@ const Profile = () => {
         const target = e.target as HTMLInputElement;
         const file = target.files?.[0];
         if (file) {
-          uploadMutation.mutate({ userId: authUserId, file });
+          imageMutation.mutate({ file });
         }
       };
       input.click();
     } else if (action === "삭제하기") {
-      deleteMutation.mutate(authUserId);
+      imageMutation.mutate({});
     }
   };
 
@@ -99,8 +91,8 @@ const Profile = () => {
   };
 
   if (isUserLoading) return <Loading />;
-  if (isUserError) return <div>유저 정보를 불러오지 못했습니다.</div>;
-  if (!user) return <div>유저 정보가 없습니다.</div>;
+  if (isUserError) return toast.error("유저 정보를 불러오지 못 했습니다.");
+  if (!user) return toast.error("유저 정보가 존재하지 않습니다.");
 
   return (
     <>

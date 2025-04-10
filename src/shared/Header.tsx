@@ -3,8 +3,7 @@ import { supabase } from "@/lib/supabase";
 import styled from "@emotion/styled";
 import IdolLink from "@/assets/images/IdolLink.svg";
 import DefaultProfile from "@/assets/images/DefaultProfile.svg";
-import useProfileImage from "@/shared/hooks/useProfileImage";
-import useUser from "@/shared/hooks/useUser";
+import useProfileImage from "./hooks/useProfileImage";
 import useLockStore from "@/stores/lockStore";
 import { toast } from "react-toastify";
 
@@ -13,8 +12,7 @@ const Header = () => {
   const navigate = useNavigate();
   const { isLocked } = useLockStore();
 
-  const { authUserId } = useUser();
-  const { profileImage } = useProfileImage(authUserId);
+  const { profileImage } = useProfileImage(); // 프로필 이미지 fetch
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
