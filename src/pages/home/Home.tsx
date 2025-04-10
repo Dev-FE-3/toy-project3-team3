@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
-import Like from "@/assets/images/Like.svg";
+import like from "@/assets/images/originLike.svg";
 import comment from "@/assets/images/comment.svg";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
 import Title, { StyledTitle } from "@/shared/component/Title";
 import Dropbox from "@/shared/component/Dropbox";
 import { useEffect, useState } from "react";
 import backgroundImage from "@/assets/images/backGround.png";
+import { ReactSVG } from "react-svg";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
@@ -52,10 +53,12 @@ const Home = () => {
               <span className="videoCount">동영상 10개</span>
               <IconGroup>
                 <span className="like">
-                  <img src={Like} alt="좋아요" /> 50
+                  <ReactSVG src={like} wrapper="span" className="likeSvg" />
+                  50
                 </span>
                 <span className="comment">
-                  <img src={comment} alt="댓글" /> 235
+                  <img src={comment} alt="댓글" />
+                  235
                 </span>
               </IconGroup>
             </Meta>
@@ -79,7 +82,6 @@ const CardWrapper = styled.div`
   display: flex;
   width: 519px;
   height: 135px;
-  /* padding: 8px 0; */
   margin-bottom: 15px;
   gap: 15px;
 `;
@@ -158,15 +160,28 @@ const Meta = styled.div`
 const IconGroup = styled.div`
   display: flex;
   gap: 10px;
+  align-items: center;
 
-  span {
+  .like,
+  .comment {
     display: flex;
     align-items: center;
     gap: 4px;
+  }
 
-    img {
-      width: 14px;
-      height: 14px;
-    }
+  .likeSvg {
+    color: var(--primary); // ✅ 하트만 색상 적용
+  }
+
+  .likeSvg svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+  }
+
+  .comment img {
+    width: 14px;
+    height: 14px;
+    display: block;
   }
 `;
