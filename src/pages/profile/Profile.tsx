@@ -201,7 +201,7 @@ export default Profile;
 
 const ProfileHeader = styled.div`
   width: 100%;
-  height: 224px;
+  height: 150px;
   background-color: var(--profile-background);
   position: relative;
 `;
@@ -231,19 +231,19 @@ const ProfileImage = styled.img`
 
 const ProfileDataWrapper = styled.div`
   width: 500px;
-  height: 400px;
+  height: 350px;
   border-radius: 18px;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 125px auto 0;
+  margin: 110px auto 0;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 30px;
+  margin-top: 15px;
 `;
 
 const FormWrapper = styled.div`
