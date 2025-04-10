@@ -48,11 +48,11 @@ const TextBox = styled.div`
 
 const VideoTitle = styled.div`
   font-size: var(--font-size-primary);
-  display: -webkit-box; //줄 수 제한을 위해 사용용
+  display: -webkit-box; //줄 수 제한을 위해 사용
   -webkit-line-clamp: 2; // 최대 2줄
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis; //넘치면 ... 을 보여줌줌
+  text-overflow: ellipsis; //넘치면 ... 을 보여줌
   line-height: 1.1;
 `;
 
