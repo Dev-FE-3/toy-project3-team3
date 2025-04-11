@@ -150,7 +150,7 @@ const TextArea = styled.textarea<{ width?: string }>`
   border: 1px solid var(--disabled);
   border-radius: 20px;
   background-color: var(--background-color);
-  padding: 10px;
+  padding: 10px 15px;
   font-size: var(--font-size-primary);
   color: var(--text-primary);
   resize: none;
