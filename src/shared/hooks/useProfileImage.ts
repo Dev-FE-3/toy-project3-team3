@@ -1,48 +1,35 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
+import useUser from "@/shared/hooks/useUser";
+
+const fetchProfileImage = async (randomId: number): Promise<string> => {
+  const { data: list, error } = await supabase.storage.from("profiles").list();
+  if (error || !list) return DefaultProfile;
+
+  const file = list.find((f) => f.name.startsWith(String(randomId)));
+  if (!file) return DefaultProfile;
+
+  const { data } = supabase.storage.from("profiles").getPublicUrl(file.name);
+  return data?.publicUrl || DefaultProfile;
+};
 
 const useProfileImage = () => {
-  const [profileImage, setProfileImage] = useState<string>(DefaultProfile);
-  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
+  const { user: currentUser } = useUser();
+  const randomId = currentUser?.random_id;
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data?.user) return;
-      setUser({
-        id: data.user.id,
-        email: data.user.email ?? undefined,
-      });
-    };
+  const {
+    data: profileImage,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["profileImage", randomId],
+    queryFn: () => fetchProfileImage(randomId!),
+    enabled: !!randomId,
+  });
 
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchProfileImage = async () => {
-      const { data: fileList, error } = await supabase.storage
-        .from("profiles")
-        .list("profiles", { search: `${user.id}.png` });
-
-      if (error || fileList.length === 0) {
-        setProfileImage(DefaultProfile);
-        return;
-      }
-
-      const { data } = supabase.storage
-        .from("profiles")
-        .getPublicUrl(`profiles/${user.id}.png`);
-
-      setProfileImage(data.publicUrl);
-    };
-
-    fetchProfileImage();
-  }, [user]);
-
-  return { profileImage, user };
+  return { profileImage, isLoading, isError, refetch };
 };
 
 export default useProfileImage;
