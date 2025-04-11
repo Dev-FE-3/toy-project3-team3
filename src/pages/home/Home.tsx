@@ -7,13 +7,41 @@ import Dropbox from "@/shared/component/Dropbox";
 import { useEffect, useState } from "react";
 import backgroundImage from "@/assets/images/backGround.png";
 import { ReactSVG } from "react-svg";
+// import { useUserStore } from "@/stores/userStore";
+import { getPlaylistCard, PlaylistFullView } from "@/api/services/getPlaylistData";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
+  const [playlistCard, setPlaylistCard] = useState<PlaylistFullView[]>([]);
 
   useEffect(() => {
     console.log("정렬:", sortOrder);
   }, [sortOrder]);
+
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      try {
+        const data = await getPlaylistCard();
+        setPlaylistCard(data);
+        console.log("가져온 플레이리스트 :::", data);
+      } catch (error) {
+        console.error("플레이리스트 가져오기 실패", error);
+      }
+    };
+
+    fetchPlaylists();
+  }, []);
+
+  // 정렬시키는 함수
+  const sortedPlaylistCards = [...playlistCard].sort((a, b) => {
+    if (sortOrder === "최신순") {
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    } else {
+      return b.like_count - a.like_count;
+    }
+  });
 
   return (
     <>
@@ -25,45 +53,43 @@ const Home = () => {
       />
 
       <HomePage>
-        <CardWrapper>
-          <Thumbnail>
-            <ThumbnailImg src={backgroundImage} />
-          </Thumbnail>
+        {sortedPlaylistCards.map((item) => (
+          <CardWrapper key={item.p_id}>
+            <Thumbnail>
+              <ThumbnailImg src={item.cover_img_path || backgroundImage} />
+            </Thumbnail>
 
-          <Description>
-            <TitleAndCreatorWrapper>
-              <PlayListTitle>
-                aespa.zip | Black Mamba부터 Whiplash까지 그리고 또 다른 영상
-                제목이 이어집니다람쥐는 찍찍이는 벨트로 밴드 편해요
-              </PlayListTitle>
+            <Description>
+              <TitleAndCreatorWrapper>
+                <PlayListTitle>{item.playlist_title}</PlayListTitle>
+                <CreatorInfo>
+                  <div className="profileImg">
+                    <img
+                      src={item.user_img || defaultProfile}
+                      alt="프로필"
+                      className="defaultProfile"
+                    />
+                  </div>
+                  <span>{item.nickname}</span>
+                </CreatorInfo>
+              </TitleAndCreatorWrapper>
 
-              <CreatorInfo>
-                <div className="profileImg">
-                  <img
-                    src={defaultProfile}
-                    alt="프로필"
-                    className="defaultProfile"
-                  />
-                </div>
-                <span>나는 만든사람 입니다.</span>
-              </CreatorInfo>
-            </TitleAndCreatorWrapper>
-
-            <Meta>
-              <span className="videoCount">동영상 10개</span>
-              <IconGroup>
-                <span className="like">
-                  <ReactSVG src={like} wrapper="span" className="likeSvg" />
-                  50
-                </span>
-                <span className="comment">
-                  <img src={comment} alt="댓글" />
-                  235
-                </span>
-              </IconGroup>
-            </Meta>
-          </Description>
-        </CardWrapper>
+              <Meta>
+                <span className="videoCount">동영상 {item.video_count}개</span>
+                <IconGroup>
+                  <span className="like">
+                    <ReactSVG src={like} wrapper="span" className="likeSvg" />
+                    {item.like_count}
+                  </span>
+                  <span className="comment">
+                    <img src={comment} alt="댓글" />
+                    {item.comment_count}
+                  </span>
+                </IconGroup>
+              </Meta>
+            </Description>
+          </CardWrapper>
+        ))}
       </HomePage>
     </>
   );

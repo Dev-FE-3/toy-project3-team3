@@ -2,10 +2,11 @@ import axiosInstance from "./axiosInstance";
 
 export interface Playlist {
   p_id: number;
-  user_id: number;
-  playlist_id: number;
-  comment: string;
-  created_at: string; 
+  video_count: number;
+  cover_img_path: string;
+  playlist_title: string;
+  is_delete: boolean;
+  created_at: string;
 }
 
 //가져오기
