@@ -10,6 +10,7 @@ import Login from "@/pages/auth/Login.tsx";
 import Signup from "@/pages/auth/Signup";
 import Create from "@/pages/playlist/Create";
 import Storage from "@/pages/storage/Storage";
+import NavigateToMyStorage from "./pages/storage/NavigateToMyStorage";
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/storage",
-        element: <Storage />,
+        element: <NavigateToMyStorage />, // 내부에서 useUser()로 randomId 가져와서 redirect
+      },
+      {
+        path: "/storage/:randomId",
+        element: <Storage />, // 내 계정도 randomId로 접근하게 함
+      },
+      {
+        path: "/storage/:randomId/follow-info",
+        element: <FollowInfo />, // follow/following 전용 페이지
       },
       {
         path: "/create",
