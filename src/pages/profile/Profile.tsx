@@ -1,27 +1,63 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import Button from "@/shared/component/Button";
 import CommonInput from "@/shared/component/input";
-import useProfileImage from "@/shared/hooks/useUserProfile";
+import useProfileImage from "@/shared/hooks/useProfileImage";
 import Dropbox from "@/shared/component/Dropbox";
-import useDeleteProfileImage from "@/pages/profile/hooks/useDeleteProfileImage";
-import useUploadProfileImage from "@/pages/profile/hooks/useUploadProfileImage";
 import Title from "@/shared/component/Title";
+import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
+import useUser from "@/shared/hooks/useUser.ts";
+import Cancel from "@/assets/images/cancel.svg";
+import Modal from "@/shared/component/Modal";
+import { useNavigate } from "react-router-dom";
+import useLockStore from "@/stores/lockStore";
+import Loading from "@/shared/component/Loading";
+import useUploadDeleteProfileImage from "./hooks/useUploadDeleteProfileImage";
+import { toast } from "react-toastify";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const { lock, unlock } = useLockStore();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    nickname: "링크",
-    bio: "한 줄 소개를 입력해주세요.",
-    artists: "관심 있는 아티스트를 입력해주세요.",
-  }); // 이 부분은 db에서 받아오는 걸로 수정할 예정입니다
+    nickname: "",
+    sort_intro: "",
+    artist_hash_tag: "",
+  });
 
-  const { profileImage, user, refetchImage } = useProfileImage();
-  const { upload } = useUploadProfileImage(user?.id, refetchImage);
-  const { remove } = useDeleteProfileImage(user?.id, refetchImage);
+  const { user, isLoading: isUserLoading, isError: isUserError } = useUser(); // 유저 정보
+  const { profileImage, refetch: refetchImage } = useProfileImage(); // 프로필 이미지 fetch
+
+  const imageMutation = useUploadDeleteProfileImage(refetchImage);
+  const updateMutation = useUpdateUserInfo(() => {
+    setIsEditing(false);
+  });
+
+  useEffect(() => {
+    if (isEditing) {
+      lock();
+    } else {
+      unlock();
+    }
+  }, [isEditing, lock, unlock]); // isEditing 상태에 따라 상단 하단 lock/unlock
+
+  // 초기 유저 데이터 profileData에 세팅
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        nickname: user.nickname ?? "",
+        sort_intro: user.sort_intro ?? "",
+        artist_hash_tag: user.artist_hash_tag ?? "",
+      });
+    }
+  }, [user]);
 
   const handleIconAction = (action: string) => {
+    if (!user) return;
+
     if (action === "수정하기") {
       const input = document.createElement("input");
       input.type = "file";
@@ -29,11 +65,13 @@ const Profile = () => {
       input.onchange = (e: Event) => {
         const target = e.target as HTMLInputElement;
         const file = target.files?.[0];
-        if (file) upload(file);
+        if (file) {
+          imageMutation.mutate({ file });
+        }
       };
       input.click();
     } else if (action === "삭제하기") {
-      remove();
+      imageMutation.mutate({});
     }
   };
 
@@ -45,12 +83,35 @@ const Profile = () => {
   };
 
   const handleSave = () => {
-    setIsEditing(false);
+    if (!user?.id) return;
+    updateMutation.mutate({
+      id: user.id,
+      updatedFields: profileData,
+    });
   };
+
+  if (isUserLoading) return <Loading />;
+  if (isUserError) return toast.error("유저 정보를 불러오지 못 했습니다.");
+  if (!user) return toast.error("유저 정보가 존재하지 않습니다.");
 
   return (
     <>
-      <Title title="프로필" />
+      {isEditing ? (
+        <Title
+          title="프로필"
+          rightContent={
+            <img
+              src={Cancel}
+              alt="닫기"
+              onClick={() => setIsModalOpen(true)}
+              style={{ cursor: "pointer" }}
+            />
+          }
+        />
+      ) : (
+        <Title showBackButton title="프로필" />
+      )}
+
       <ProfileHeader>
         <ImageWrapper>
           <ProfileImage
@@ -73,6 +134,7 @@ const Profile = () => {
           <CommonInput
             id="nickname"
             label="닉네임"
+            placeholder="닉네임"
             labelPosition="left"
             value={profileData.nickname}
             onChange={handleInputChange}
@@ -89,20 +151,22 @@ const Profile = () => {
             isReadOnly
           />
           <CommonInput
-            id="bio"
+            id="sort_intro"
             label="한 줄 소개"
+            placeholder="한 줄 소개를 입력해 주세요."
             labelPosition="left"
             isTextarea
-            value={profileData.bio}
+            value={profileData.sort_intro}
             onChange={handleInputChange}
             isReadOnly={!isEditing}
           />
           <CommonInput
-            id="artists"
+            id="artist_hash_tag"
             label="관심 아티스트"
+            placeholder="관심 아티스트를 입력해 주세요."
             labelPosition="left"
             isTextarea
-            value={profileData.artists}
+            value={profileData.artist_hash_tag}
             onChange={handleInputChange}
             isReadOnly={!isEditing}
           />
@@ -117,6 +181,18 @@ const Profile = () => {
           {isEditing ? "저장하기" : "수정하기"}
         </Button>
       </ButtonWrapper>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} // 계속하기
+        onConfirm={() => {
+          setIsModalOpen(false);
+          navigate(0);
+        }}
+        message="프로필 수정을 그만두시겠습니까?"
+        leftButtonText="계속하기"
+        rightButtonText="네"
+      />
     </>
   );
 };
@@ -125,7 +201,7 @@ export default Profile;
 
 const ProfileHeader = styled.div`
   width: 100%;
-  height: 224px;
+  height: 150px;
   background-color: var(--profile-background);
   position: relative;
 `;
@@ -155,19 +231,19 @@ const ProfileImage = styled.img`
 
 const ProfileDataWrapper = styled.div`
   width: 500px;
-  height: 400px;
+  height: 350px;
   border-radius: 18px;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 125px auto 0;
+  margin: 110px auto 0;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 30px;
+  margin-top: 15px;
 `;
 
 const FormWrapper = styled.div`
