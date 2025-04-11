@@ -66,7 +66,7 @@ const Backdrop = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2;
+  z-index: 999;
 `;
 
 const Container = styled.div`
