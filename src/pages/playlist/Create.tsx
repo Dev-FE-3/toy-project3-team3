@@ -1,55 +1,41 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useLockStore from "@/stores/lockStore";
+import { ReactSVG } from "react-svg";
 import styled from "@emotion/styled";
+import useLockStore from "@/stores/lockStore";
 import Title from "@/shared/component/Title";
 import CommonInput from "@/shared/component/input";
 import Button from "@/shared/component/Button";
 import cancel from "@/assets/images/cancel.svg";
 import add from "@/assets/images/add.svg";
 import Modal from "@/shared/component/Modal";
-import VideoItem from "./component/VideoItem";
-import { ReactSVG } from "react-svg";
-import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import Loading from "@/shared/component/Loading";
+import VideoItem from "./component/VideoItem";
+import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
 
 const Create = () => {
+  const navigate = useNavigate();
   const { lock, unlock } = useLockStore();
-
-  useEffect(() => {
-    lock();
-  }, []);
-
+  const { getVideoInfo, loading, error } = useYoutubeInfo();
+  const { thumbnail, handleThumbnailChange } = useThumbnail();
   const [videoUrl, setVideoUrl] = useState("");
   const [videos, setVideos] = useState<
     { title: string; source: string; thumbnail?: string }[]
   >([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"exit" | "delete" | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  const { getVideoInfo, loading, error } = useYoutubeInfo();
+  useEffect(() => {
+    lock();
+  }, []);
 
   const handleAddVideo = async () => {
     const video = await getVideoInfo(videoUrl);
     if (!video) return;
     setVideos((prev) => [...prev, video]);
     setVideoUrl("");
-  };
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"exit" | "delete" | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const navigate = useNavigate();
-
-  const handleModalClose = () => setIsModalOpen(false);
-  const handleModalConfirm = () => {
-    if (modalType === "exit") {
-      navigate("/");
-    } else if (modalType === "delete" && selectedIndex !== null) {
-      handleDelete(selectedIndex);
-    }
-    setIsModalOpen(false);
-    setModalType(null);
-    setSelectedIndex(null);
   };
 
   const handleDelete = (index: number) => {
@@ -64,12 +50,23 @@ const Create = () => {
     setIsModalOpen(true);
   };
 
+  const handleModalClose = () => setIsModalOpen(false);
+
+  const handleModalConfirm = () => {
+    if (modalType === "exit") {
+      navigate("/");
+    } else if (modalType === "delete" && selectedIndex !== null) {
+      handleDelete(selectedIndex);
+    }
+    setIsModalOpen(false);
+    setModalType(null);
+    setSelectedIndex(null);
+  };
+
   const handleUpload = () => {
     unlock(); //업로드 하면 Header/Nav 다시 작동 가능하게
     navigate("/"); //보관함 페이지로 변경 예정
   };
-
-  const { thumbnail, handleThumbnailChange } = useThumbnail();
 
   return (
     <Wrapper>
@@ -201,15 +198,12 @@ const Container = styled.div`
 const ThumbnailWrapper = styled.div`
   width: 400px;
   height: 225px;
-  background-color: var(--background-color);
   border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 25px 0;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
   position: relative;
-
+  display: flex;
+  align-items: center;
+  margin: 25px 0;
   display: flex;
   justify-content: center;
   align-items: center;
