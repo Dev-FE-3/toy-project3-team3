@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import useLockStore from "@/stores/lockStore";
 import styled from "@emotion/styled";
 import Title from "@/shared/component/Title";
 import CommonInput from "@/shared/component/input";
@@ -11,6 +12,12 @@ import VideoItem from "./component/VideoItem";
 import { ReactSVG } from "react-svg";
 
 const Create = () => {
+  const { lock, unlock } = useLockStore();
+
+  useEffect(() => {
+    lock();
+  }, []);
+
   const [videos, setVideos] = useState([
     {
       title:
@@ -45,10 +52,15 @@ const Create = () => {
     setVideos(newVideos);
   };
 
-  const handleVideoDeleteRequest = (index: number) => {
+  const handleDeleteRequest = (index: number) => {
     setSelectedIndex(index);
     setModalType("delete");
     setIsModalOpen(true);
+  };
+
+  const handleUpload = () => {
+    unlock(); //업로드 하면 Header/Nav 다시 작동 가능하게
+    navigate("/"); //보관함 페이지로 변경 예정
   };
 
   return (
@@ -104,18 +116,14 @@ const Create = () => {
                 key={index}
                 title={video.title}
                 source={video.source}
-                onDelete={() => handleVideoDeleteRequest(index)}
+                onDelete={() => handleDeleteRequest(index)}
               />
             ))}
           </ScrollableList>
         </VideoListWrapper>
         <ButtonWrapper>
           {/*버튼 클릭 이벤트는 로직 구현하면서 변경 예정*/}
-          <Button
-            size="big"
-            color="pink"
-            onClick={() => console.log("큰 버튼 클릭됨")}
-          >
+          <Button size="big" color="pink" onClick={handleUpload}>
             업로드 하기
           </Button>
         </ButtonWrapper>
@@ -206,7 +214,7 @@ const AddButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 28px;
+  margin-top: 30px;
   color: var(--text-secondary);
 `;
 
