@@ -7,14 +7,13 @@ import useProfileImage from "@/shared/hooks/useProfileImage";
 import Dropbox from "@/shared/component/Dropbox";
 import Title from "@/shared/component/Title";
 import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
-import useUser from "@/shared/hooks/useUser.ts";
 import Cancel from "@/assets/images/cancel.svg";
 import Modal from "@/shared/component/Modal";
 import { useNavigate } from "react-router-dom";
 import useLockStore from "@/stores/lockStore";
-import Loading from "@/shared/component/Loading";
 import useUploadDeleteProfileImage from "./hooks/useUploadDeleteProfileImage";
 import { toast } from "react-toastify";
+import { useUserStore } from "@/stores/userStore";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -28,7 +27,7 @@ const Profile = () => {
     artist_hash_tag: "",
   });
 
-  const { user, isLoading: isUserLoading, isError: isUserError } = useUser(); // 유저 정보
+  const user = useUserStore((state) => state.user);
   const { profileImage, refetch: refetchImage } = useProfileImage(); // 프로필 이미지 fetch
 
   const imageMutation = useUploadDeleteProfileImage(refetchImage);
@@ -90,8 +89,6 @@ const Profile = () => {
     });
   };
 
-  if (isUserLoading) return <Loading />;
-  if (isUserError) return toast.error("유저 정보를 불러오지 못 했습니다.");
   if (!user) return toast.error("유저 정보가 존재하지 않습니다.");
 
   return (

@@ -4,21 +4,52 @@ import Title from "@/shared/component/Title";
 import CommonInput from "@/shared/component/input";
 import styled from "@emotion/styled";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
+import useFollowList from "@/api/services/useFollowList";
+import { getUser } from "@/api/users.ts";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "@/shared/component/Loading";
+
+interface FollowItem {
+  random_id: number;
+  nickname: string;
+  user_img?: string;
+}
 
 const FollowInfo = () => {
   const { randomId } = useParams();
   const [searchParams] = useSearchParams();
-  const defaultTab = searchParams.get("tab") || "follower"; // 기본값은 follower
+
+  const tabParam = searchParams.get("tab");
+  const initialTab =
+    tabParam === "follower" || tabParam === "following" ? tabParam : "follower";
 
   const [selectedTab, setSelectedTab] = useState<"follower" | "following">(
-    defaultTab as any,
+    initialTab,
   );
 
   useEffect(() => {
-    if (defaultTab === "follower" || defaultTab === "following") {
-      setSelectedTab(defaultTab);
+    if (tabParam === "follower" || tabParam === "following") {
+      setSelectedTab(tabParam);
     }
-  }, [defaultTab]);
+  }, [tabParam]);
+
+  const targetId = Number(randomId);
+
+  const { data: followList = [], isLoading: isFollowLoading } = useFollowList(
+    targetId,
+    selectedTab,
+  );
+  const { data: users = [], isLoading: isUserLoading } = useQuery({
+    queryKey: ["allUsers"],
+    queryFn: getUser,
+  });
+
+  const isLoading = isFollowLoading || isUserLoading;
+
+  // followList의 random_id에 해당하는 user만 필터링
+  const matchedUsers = users.filter((user) =>
+    (followList as FollowItem[]).some((f) => f.random_id === user.random_id),
+  );
 
   return (
     <>
@@ -44,21 +75,20 @@ const FollowInfo = () => {
           width="468px"
         />
       </InputWrapper>
-
-      {selectedTab === "follower" ? (
+      {selectedTab === "follower" || selectedTab === "following" ? (
         <ProfileListWrapper>
-          <ProfileArea>
-            <ProfileImg src={defaultProfile} />
-            <ProfileName>사용자 이름</ProfileName>
-          </ProfileArea>
-          <ProfileArea>
-            <ProfileImg src={defaultProfile} />
-            <ProfileName>사용자 이름</ProfileName>
-          </ProfileArea>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            matchedUsers.map((user) => (
+              <ProfileArea key={user.random_id}>
+                <ProfileImg src={user.user_img || defaultProfile} />
+                <ProfileName>{user.nickname}</ProfileName>
+              </ProfileArea>
+            ))
+          )}
         </ProfileListWrapper>
-      ) : (
-        <div>팔로잉 리스트 렌더링</div>
-      )}
+      ) : null}
     </>
   );
 };

@@ -5,37 +5,97 @@ import Button from "@/shared/component/Button";
 import { useState } from "react";
 import Like from "@/assets/images/like.svg";
 import Comment from "@/assets/images/comment.svg";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import useOtherUser from "@/pages/storage/hooks/useOtherUser";
+import useFollowCount from "@/api/services/useFollowCount";
+import Loading from "@/shared/component/Loading";
+import { useUserStore } from "@/stores/userStore";
+import useFollowStatus from "../followInfo/hooks/useFollowStatus";
 
 const Storage = () => {
   const [activeTab, setActiveTab] = useState<"left" | "right">("left");
+  //const [isFollowing, setIsFollowing] = useState(false);
   const { randomId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const { data: currentUser } = useCurrentUser();
+  // const currentUser = useUserStore((state) => state.user);
+  // const { data: otherUser } = useOtherUser(Number(randomId));
+  // const isMyPage = currentUser?.random_id === Number(randomId);
+  // const targetUser = isMyPage ? currentUser : otherUser;
+  // const userData = isMyPage ? currentUser : otherUser;
+  // const targetId = isMyPage
+  //   ? currentUser?.random_id
+  //   : (otherUser?.random_id ?? 0);
+  // const { followerCount, followingCount } = useFollowCount(targetId);
+
+  // if (!currentUser?.random_id || !targetId) {
+  //   return <Loading />;
+  // }
+
+  // const { isFollowing, followRowId, follow, unfollow, isLoading } =
+  //   useFollowStatus(currentUser?.random_id, targetId);
+
+  // const handleNavigate = (tab: "follower" | "following") => {
+  //   navigate(`/storage/${randomId}/follow-info?tab=${tab}`);
+  // };
+
+  // if (!targetUser || isLoading) {
+  //   return <Loading />;
+  // }
+
+  // const isProfilePage = location.pathname === "/profile";
+
+  const currentUser = useUserStore((state) => state.user);
   const { data: otherUser } = useOtherUser(Number(randomId));
   const isMyPage = currentUser?.random_id === Number(randomId);
+  const targetId = isMyPage ? currentUser?.random_id : otherUser?.random_id;
+
   const targetUser = isMyPage ? currentUser : otherUser;
+  const userData = targetUser;
+
+  const { followerCount, followingCount } = useFollowCount(targetId);
+
+  const {
+    isFollowing,
+    followRowId,
+    handleFollow, // ✅ 이걸 써야 함
+    handleUnfollow,
+    isLoading: isFollowLoading,
+    isFollowPending,
+    isUnfollowPending,
+  } = useFollowStatus(currentUser?.random_id, targetId);
 
   const handleNavigate = (tab: "follower" | "following") => {
     navigate(`/storage/${randomId}/follow-info?tab=${tab}`);
   };
 
+  if (!targetUser || isFollowLoading) {
+    return <Loading />;
+  }
+
+  const isProfilePage = location.pathname === "/profile";
+
   return (
     <>
-      <Title title="보관함" />
+      {isMyPage ? (
+        <Title title="보관함" />
+      ) : (
+        <Title title="보관함" showBackButton />
+      )}
+
       <ProfileWrapper>
         <ProfileCardTop>
           <ImageArea src={defaultProfile} />
           <ProfileInfo>
-            <NickName>내 계정</NickName>
+            <NickName>{userData?.nickname}</NickName>
             <InfoItemWrapper>
               <InfoItem onClick={() => handleNavigate("follower")}>
-                <InfoCount>6</InfoCount>
+                <InfoCount>{followerCount}</InfoCount>
                 <InfoLabel>팔로워</InfoLabel>
               </InfoItem>
               <InfoItem onClick={() => handleNavigate("following")}>
-                <InfoCount>30</InfoCount>
+                <InfoCount>{followingCount}</InfoCount>
                 <InfoLabel>팔로잉</InfoLabel>
               </InfoItem>
               <InfoItem>
@@ -43,18 +103,44 @@ const Storage = () => {
                 <InfoLabel>리스트</InfoLabel>
               </InfoItem>
             </InfoItemWrapper>
-            <Button
-              size="small"
-              btnColor="pink"
-              onClick={() => console.log("중간 버튼 클릭됨")}
-            >
-              프로필 수정
-            </Button>
+            {isMyPage ? (
+              !isProfilePage && (
+                <Button size="small" onClick={() => navigate("/profile")}>
+                  프로필 수정
+                </Button>
+              )
+            ) : (
+              <Button
+                size="small"
+                btnColor={isFollowing ? "white" : "pink"}
+                onClick={() => {
+                  if (!currentUser?.random_id || !targetId) return;
+
+                  if (isFollowing && followRowId) {
+                    handleUnfollow(followRowId);
+                  } else {
+                    handleFollow();
+                  }
+                }}
+                disabled={
+                  isFollowPending ||
+                  isUnfollowPending ||
+                  !currentUser?.random_id ||
+                  !targetId
+                }
+              >
+                {isFollowPending || isUnfollowPending
+                  ? "처리 중..."
+                  : isFollowing
+                    ? "팔로잉"
+                    : "팔로우"}
+              </Button>
+            )}
           </ProfileInfo>
         </ProfileCardTop>
         <ProfileCardBottom>
-          <BioArea>아이돌 좋아</BioArea>
-          <HashTagArea>#에스파</HashTagArea>
+          <BioArea>{userData?.sort_intro}</BioArea>
+          <HashTagArea>{userData?.artist_hash_tag}</HashTagArea>
         </ProfileCardBottom>
       </ProfileWrapper>
       <TabMenu>
