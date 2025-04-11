@@ -2,10 +2,10 @@ import axiosInstance from "./axiosInstance";
 
 export interface Like {
   l_id: number;
-  user_id: number;
   playlist_id: number;
   comment: string;
-  created_at: string; 
+  is_active: boolean;
+  created_at: string;
 }
 
 //가져오기
