@@ -5,13 +5,16 @@ import { ReactSVG } from "react-svg";
 interface VideoItemProps {
   title: string;
   source: string;
+  thumbnail?: string;
   onDelete: () => void;
 }
 
-const VideoItem = ({ title, source, onDelete }: VideoItemProps) => {
+const VideoItem = ({ title, source, thumbnail, onDelete }: VideoItemProps) => {
   return (
     <ItemWrapper>
-      <Thumbnail />
+      <Thumbnail>
+        {thumbnail && <img src={thumbnail} alt="영상 썸네일" />}
+      </Thumbnail>
       <TextBox>
         <VideoTitle>{title}</VideoTitle>
         <VideoSource>{source}</VideoSource>
@@ -37,6 +40,13 @@ const Thumbnail = styled.div`
   height: 90px;
   background-color: #d9d9d9;
   border-radius: 5px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+  }
 `;
 
 const TextBox = styled.div`

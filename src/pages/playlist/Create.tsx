@@ -10,6 +10,9 @@ import add from "@/assets/images/add.svg";
 import Modal from "@/shared/component/Modal";
 import VideoItem from "./component/VideoItem";
 import { ReactSVG } from "react-svg";
+import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
+import Loading from "@/shared/component/Loading";
+import { useThumbnail } from "./hooks/useThumbnailUpload";
 
 const Create = () => {
   const { lock, unlock } = useLockStore();
@@ -18,16 +21,19 @@ const Create = () => {
     lock();
   }, []);
 
-  const [videos, setVideos] = useState([
-    {
-      title:
-        "카리나 직캠인데, 에스파 직캠인데, 누구 직캠이지? 모르겠는데, 윈터 직캠인가 길게 길게 길게해요",
-      source: "SM공식 계정은 아니야",
-    },
-    { title: "도파민", source: "멜론" },
-    { title: "고양이 직캠", source: "지니" },
-    { title: "강아지 직캠", source: "유튜브 뮤직" },
-  ]);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videos, setVideos] = useState<
+    { title: string; source: string; thumbnail?: string }[]
+  >([]);
+
+  const { getVideoInfo, loading, error } = useYoutubeInfo();
+
+  const handleAddVideo = async () => {
+    const video = await getVideoInfo(videoUrl);
+    if (!video) return;
+    setVideos((prev) => [...prev, video]);
+    setVideoUrl("");
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"exit" | "delete" | null>(null);
@@ -63,6 +69,8 @@ const Create = () => {
     navigate("/"); //보관함 페이지로 변경 예정
   };
 
+  const { thumbnail, handleThumbnailChange } = useThumbnail();
+
   return (
     <Wrapper>
       <Title
@@ -82,11 +90,23 @@ const Create = () => {
 
       <Container>
         <ThumbnailWrapper>
+          {thumbnail && (
+            <ThumbnailImage src={thumbnail} alt="썸네일 미리보기" />
+          )}
+
           <AddThumbnailButton>
-            <img src={add} alt="추가" style={{ cursor: "pointer" }} />
+            <label htmlFor="thumbnail-upload" style={{ cursor: "pointer" }}>
+              <img src={add} alt="추가" />
+            </label>
+            <input
+              id="thumbnail-upload"
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleThumbnailChange}
+            />
           </AddThumbnailButton>
         </ThumbnailWrapper>
-
         <TitleInputWrapper>
           <CommonInput
             id="playlistTitle"
@@ -102,11 +122,20 @@ const Create = () => {
             label="동영상 추가"
             placeholder="링크를 입력해주세요"
             width="438px"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
           />
-          <AddButton>
+          <AddButton onClick={handleAddVideo}>
             <ReactSVG src={add} wrapper="span" />
           </AddButton>
         </VideoInputWrapper>
+
+        {loading && (
+          <p style={{ color: "#888" }}>
+            <Loading />
+          </p>
+        )}
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
         <VideoListWrapper>
           <SectionTitle>추가된 동영상 목록</SectionTitle>
@@ -114,6 +143,7 @@ const Create = () => {
             {videos.map((video, index) => (
               <VideoItem
                 key={index}
+                thumbnail={video.thumbnail}
                 title={video.title}
                 source={video.source}
                 onDelete={() => handleDeleteRequest(index)}
@@ -122,7 +152,6 @@ const Create = () => {
           </ScrollableList>
         </VideoListWrapper>
         <ButtonWrapper>
-          {/*버튼 클릭 이벤트는 로직 구현하면서 변경 예정*/}
           <Button size="big" color="pink" onClick={handleUpload}>
             업로드 하기
           </Button>
@@ -178,10 +207,28 @@ const ThumbnailWrapper = styled.div`
   justify-content: center;
   align-items: center;
   margin: 25px 0;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2); //
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ThumbnailImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
 `;
 
 const AddThumbnailButton = styled.button`
+  position: absolute;
+  z-index: 2;
   background-color: transparent;
   font-size: 24px;
   color: var(--text-primary);
