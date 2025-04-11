@@ -10,7 +10,8 @@ import Login from "@/pages/auth/Login.tsx";
 import Signup from "@/pages/auth/Signup";
 import Create from "@/pages/playlist/Create";
 import Storage from "@/pages/storage/Storage";
-import NavigateToMyStorage from "./pages/storage/NavigateToMyStorage";
+import NavigateToMyStorage from "@/pages/storage/NavigateToMyStorage";
+import FollowInfo from "@/pages/followInfo/FollowInfo";
 
 const router = createBrowserRouter([
   {
