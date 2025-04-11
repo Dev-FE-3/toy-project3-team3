@@ -5,9 +5,21 @@ import Button from "@/shared/component/Button";
 import { useState } from "react";
 import Like from "@/assets/images/like.svg";
 import Comment from "@/assets/images/comment.svg";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Storage = () => {
   const [activeTab, setActiveTab] = useState<"left" | "right">("left");
+  const { randomId } = useParams();
+  const navigate = useNavigate();
+
+  const { data: currentUser } = useCurrentUser();
+  const { data: otherUser } = useOtherUser(Number(randomId));
+  const isMyPage = currentUser?.random_id === Number(randomId);
+  const targetUser = isMyPage ? currentUser : otherUser;
+
+  const handleNavigate = (tab: "follower" | "following") => {
+    navigate(`/storage/${randomId}/follow-info?tab=${tab}`);
+  };
 
   return (
     <>
@@ -18,11 +30,11 @@ const Storage = () => {
           <ProfileInfo>
             <NickName>내 계정</NickName>
             <InfoItemWrapper>
-              <InfoItem>
+              <InfoItem onClick={() => handleNavigate("follower")}>
                 <InfoCount>6</InfoCount>
-                <InfoLabel>팔로우</InfoLabel>
+                <InfoLabel>팔로워</InfoLabel>
               </InfoItem>
-              <InfoItem>
+              <InfoItem onClick={() => handleNavigate("following")}>
                 <InfoCount>30</InfoCount>
                 <InfoLabel>팔로잉</InfoLabel>
               </InfoItem>
@@ -59,168 +71,47 @@ const Storage = () => {
           하트
         </TabRight>
       </TabMenu>
-      <PlaylistArea>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-      </PlaylistArea>
+      {activeTab === "left" ? (
+        <PlaylistArea>
+          <VideoWrapper>
+            <VideoArea />
+            <Meta>
+              <DetailArea>
+                <Count>동영상 3개</Count>
+                <IconGroup>
+                  <span className="Like">
+                    <img src={Like} alt="좋아요" /> 80
+                  </span>
+                  <span className="Comment">
+                    <img src={Comment} alt="댓글" /> 110
+                  </span>
+                </IconGroup>
+              </DetailArea>
+              <VideoTitle>내 리스트 예시입니다!</VideoTitle>
+            </Meta>
+          </VideoWrapper>
+        </PlaylistArea>
+      ) : (
+        <PlaylistArea>
+          <VideoWrapper>
+            <VideoArea />
+            <Meta>
+              <DetailArea>
+                <Count>동영상 3개</Count>
+                <IconGroup>
+                  <span className="Like">
+                    <img src={Like} alt="좋아요" /> 80
+                  </span>
+                  <span className="Comment">
+                    <img src={Comment} alt="댓글" /> 110
+                  </span>
+                </IconGroup>
+              </DetailArea>
+              <VideoTitle>좋아요 누른 콘텐츠 예시입니다!</VideoTitle>
+            </Meta>
+          </VideoWrapper>
+        </PlaylistArea>
+      )}
     </>
   );
 };
@@ -323,7 +214,7 @@ const TabLeft = styled.div<{ isActive: boolean }>`
       ? `3px solid var(--primary)`
       : `3px solid var(--disabled-2)`};
   color: ${(props) =>
-    props.isActive ? `var(--primary)` : `var(--disabled-2)`};
+    props.isActive ? `var(--primary)` : `var(--text-primary)`};
   &:hover {
     background-color: var(--profile-background);
     transition: background-color 0.3s ease-in-out;
