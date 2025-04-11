@@ -2,9 +2,9 @@ import axiosInstance from "./axiosInstance";
 
 export interface Follow {
   f_id: number;
-  user_id: number;
-  playlist_id: number;
-  comment: string;
+  randeom_id: number;
+  following_id: number;
+  is_following: boolean;
   created_at: string;
 }
 

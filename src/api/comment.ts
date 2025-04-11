@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export interface Comment {
   c_id: number;
-  user_id: number;
+  random_id: number;
   playlist_id: number;
   comment: string;
   created_at: string;
