@@ -6,6 +6,7 @@ interface VideoItemProps {
   title: string;
   source: string;
   thumbnail?: string;
+  thumbnailFile?: File;
   onDelete: () => void;
 }
 

@@ -10,18 +10,34 @@ import cancel from "@/assets/images/cancel.svg";
 import add from "@/assets/images/add.svg";
 import Modal from "@/shared/component/Modal";
 import Loading from "@/shared/component/Loading";
+import { toast } from "react-toastify";
 import VideoItem from "./component/VideoItem";
 import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
+import { uploadPlaylist } from "@/api/services/uploadPlaylist";
+import { useUserStore } from "@/stores/userStore";
 
 const Create = () => {
   const navigate = useNavigate();
   const { lock, unlock } = useLockStore();
-  const { getVideoInfo, loading, error } = useYoutubeInfo();
-  const { thumbnail, handleThumbnailChange } = useThumbnail();
+  const { getVideoInfo, loading } = useYoutubeInfo();
+  const {
+    thumbnailPreview,
+    handleThumbnailChange,
+    uploadPlaylistThumbnail,
+    uploadVideoThumbnail,
+  } = useThumbnail();
+
+  const user = useUserStore((s) => s.user); //store에서 사용자 정보 가져오기
   const [videoUrl, setVideoUrl] = useState("");
   const [videos, setVideos] = useState<
-    { title: string; source: string; thumbnail?: string }[]
+    {
+      videoId: string;
+      title: string;
+      source: string;
+      thumbnail?: string; //유튜브 썸네일 url
+      thumbnailFile?: File; //blob 이미지 (스토리지에 업로드할 파일)
+    }[]
   >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"exit" | "delete" | null>(null);
@@ -29,11 +45,24 @@ const Create = () => {
 
   useEffect(() => {
     lock();
-  }, []);
+  }, [lock, navigate]);
 
   const handleAddVideo = async () => {
     const video = await getVideoInfo(videoUrl);
     if (!video) return;
+
+    try {
+      const response = await fetch(video.thumbnail!); //유튜브 썸네일 이미지를 브라우저에서 가져옴
+      const blob = await response.blob(); //blob 형태로 변환
+
+      const extension = blob.type.split("/")[1]; //확장자 추출
+      const fileName = `${video.title}.${extension}`;
+
+      const file = new File([blob], fileName, { type: blob.type }); //supabase에서 인식이 가능한 형태로 변경 (File객체로 감쌈)
+      video.thumbnailFile = file;
+    } catch (e) {
+      console.error("썸네일 업로드 실패:", e);
+    }
     setVideos((prev) => [...prev, video]);
     setVideoUrl("");
   };
@@ -63,9 +92,59 @@ const Create = () => {
     setSelectedIndex(null);
   };
 
-  const handleUpload = () => {
-    unlock(); //업로드 하면 Header/Nav 다시 작동 가능하게
-    navigate("/"); //보관함 페이지로 변경 예정
+  const handleUpload = async () => {
+    const titleInput = document.getElementById(
+      "playlistTitle",
+    ) as HTMLInputElement;
+    const playlistTitle = titleInput?.value.trim();
+
+    if (!playlistTitle) {
+      toast.error("플레이리스트 제목을 입력해주세요.");
+      return;
+    }
+
+    if (videos.length === 0) {
+      toast.error("1개 이상의 영상을 추가해주세요.");
+      return;
+    }
+
+    try {
+      const thumbnailUrl = await uploadPlaylistThumbnail();
+      const videoData = await Promise.all(
+        videos.map(async (v) => {
+          let finalThumb = v.thumbnail; //finalThumb는 최종적으로 DB에 저장할 썸네일 url
+          if (v.thumbnailFile) {
+            //thumbnailFile은 스토리지에 업로드할 blob형태의 이미지
+            finalThumb = await uploadVideoThumbnail(v.thumbnailFile);
+          }
+          return {
+            title: v.title,
+            channel_name: v.source,
+            thumbnail_url: finalThumb!,
+            video_id: v.videoId,
+          };
+        }),
+      );
+
+      await uploadPlaylist(
+        {
+          random_id: user!.random_id, //현재 유저와 플레이리스트를 연결
+          cover_img_path: thumbnailUrl,
+          playlist_title: playlistTitle,
+          video_count: videos.length,
+        },
+        videoData,
+      );
+
+      unlock();
+      navigate("/"); //보관함 페이지로 변경 예정
+    } catch (error) {
+      console.error(
+        "업로드 실패:",
+        error instanceof Error ? error.message : error,
+      );
+      toast.error("업로드에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -87,8 +166,8 @@ const Create = () => {
 
       <Container>
         <ThumbnailWrapper>
-          {thumbnail && (
-            <ThumbnailImage src={thumbnail} alt="썸네일 미리보기" />
+          {thumbnailPreview && (
+            <ThumbnailImage src={thumbnailPreview} alt="썸네일 미리보기" />
           )}
 
           <AddThumbnailButton>
@@ -127,12 +206,7 @@ const Create = () => {
           </AddButton>
         </VideoInputWrapper>
 
-        {loading && (
-          <p style={{ color: "#888" }}>
-            <Loading />
-          </p>
-        )}
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {loading && <Loading />}
 
         <VideoListWrapper>
           <SectionTitle>추가된 동영상 목록</SectionTitle>
