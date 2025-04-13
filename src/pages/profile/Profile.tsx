@@ -14,6 +14,7 @@ import useLockStore from "@/stores/lockStore";
 import useUploadDeleteProfileImage from "./hooks/useUploadDeleteProfileImage";
 import { toast } from "react-toastify";
 import { useUserStore } from "@/stores/userStore";
+import { isNicknameDuplicated } from "@/api/users";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -81,8 +82,18 @@ const Profile = () => {
     setProfileData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!user?.id) return;
+
+    // 닉네임 중복 체크
+    if (profileData.nickname !== user.nickname) {
+      const isDuplicate = await isNicknameDuplicated(profileData.nickname);
+      if (isDuplicate) {
+        toast.error("이미 사용 중인 닉네임입니다.");
+        return;
+      }
+    }
+
     updateMutation.mutate({
       id: user.id,
       updatedFields: profileData,

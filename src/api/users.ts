@@ -41,3 +41,13 @@ export async function deleteAllUser(): Promise<User[]> {
   const response = await axiosInstance.delete<User[]>("/user_table");
   return response.data;
 }
+
+export const isNicknameDuplicated = async (nickname: string) => {
+  const { data } = await axiosInstance.get("/user_table", {
+    params: {
+      nickname: `eq.${nickname}`,
+      select: "id",
+    },
+  });
+  return data.length > 0; // 하나라도 있으면 중복
+};
