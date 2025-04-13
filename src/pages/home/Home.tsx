@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import like from "@/assets/images/originLike.svg";
+import likeIcon from "@/assets/images/originLike.svg";
 import comment from "@/assets/images/comment.svg";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
 import Title, { StyledTitle } from "@/shared/component/Title";
@@ -7,23 +7,43 @@ import Dropbox from "@/shared/component/Dropbox";
 import { useEffect, useState } from "react";
 import backgroundImage from "@/assets/images/backGround.png";
 import { ReactSVG } from "react-svg";
-// import { useUserStore } from "@/stores/userStore";
-import { getPlaylistCard, PlaylistFullView } from "@/api/services/getPlaylistData";
+import { useUserStore } from "@/stores/userStore";
+import {
+  getPlaylistCard,
+  PlaylistFullView,
+} from "@/api/services/playlistFullView";
+import { getLike, Like, updateLike } from "@/api/like";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
   const [playlistCard, setPlaylistCard] = useState<PlaylistFullView[]>([]);
+  const [like, setLike] = useState<Like[]>([]);
 
+  // like가져오는 api
   useEffect(() => {
-    console.log("정렬:", sortOrder);
-  }, [sortOrder]);
+    const fetchLike = async () => {
+      try {
+        const likeData = await getLike();
+        setLike(likeData);
+        console.log("가져온 like데이터 확인: ", likeData);
+      } catch (error) {
+        console.error("좋아요 데이터 가져오기 실패", error);
+      }
+    };
+
+    fetchLike();
+  }, []);
 
   useEffect(() => {
     const fetchPlaylists = async () => {
       try {
-        const data = await getPlaylistCard();
-        setPlaylistCard(data);
-        console.log("가져온 플레이리스트 :::", data);
+        const result = await getPlaylistCard();
+        const witheLikeStatus = result.map((item) => ({
+          ...item,
+          is_active: false,
+        }));
+        setPlaylistCard(witheLikeStatus);
+        console.log("가져온 플레이리스트witheLikeStatus :::", witheLikeStatus);
       } catch (error) {
         console.error("플레이리스트 가져오기 실패", error);
       }
@@ -31,6 +51,25 @@ const Home = () => {
 
     fetchPlaylists();
   }, []);
+
+  const randomId = useUserStore((state) => state.user?.random_id);
+  console.log("랜덤아이디??", randomId);
+
+  //좋아요 상태 토글 함수
+  const handleLike = async (p_id: number) => {
+    if (!randomId) {
+      console.warn("로그인된 유저가 아닙니다.");
+      return;
+    }
+
+    console.log("하트 클릭");
+    const current = playlistCard.find((item) => item.p_id === p_id);
+    if (!current) return;
+
+    const newStatus = !current.is_active;
+
+    await updateLike(p_id, randomId, newStatus);
+  };
 
   // 정렬시키는 함수
   const sortedPlaylistCards = [...playlistCard].sort((a, b) => {
@@ -78,7 +117,12 @@ const Home = () => {
                 <span className="videoCount">동영상 {item.video_count}개</span>
                 <IconGroup>
                   <span className="like">
-                    <ReactSVG src={like} wrapper="span" className="likeSvg" />
+                    <ReactSVG
+                      src={likeIcon}
+                      wrapper="span"
+                      className={`likeSvg ${item.is_active ? "active" : "inactive"}`}
+                      onClick={() => handleLike(item.p_id)}
+                    />
                     {item.like_count}
                   </span>
                   <span className="comment">
@@ -195,14 +239,21 @@ const IconGroup = styled.div`
     gap: 4px;
   }
 
-  .likeSvg {
-    color: var(--primary); // ✅ 하트만 색상 적용
-  }
-
   .likeSvg svg {
     width: 14px;
     height: 14px;
     display: block;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+  }
+
+  /* 활성화된 상태일 때 색상 변경 */
+  .likeSvg.active svg {
+    color: var(--primary);
+  }
+
+  .likeSvg.inactive svg {
+    color: var(--text-secondary); // 비활성 색상 유지
   }
 
   .comment img {

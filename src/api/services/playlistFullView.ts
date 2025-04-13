@@ -8,10 +8,11 @@ export interface PlaylistFullView {
   is_delete: boolean;
   created_at: string;
 
-  user_id: number;
+  random_id: number;
   nickname: string;
   user_img: string;
 
+  is_active: boolean;
   like_count: number;
   comment_count: number;
 }
