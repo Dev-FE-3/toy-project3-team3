@@ -10,47 +10,20 @@ import useOtherUser from "@/pages/storage/hooks/useOtherUser";
 import useFollowCount from "@/api/services/useFollowCount";
 import Loading from "@/shared/component/Loading";
 import { useUserStore } from "@/stores/userStore";
-import useFollowStatus from "../followInfo/hooks/useFollowStatus";
+import useFollowStatus from "@/pages/followInfo/hooks/useFollowStatus";
+//import { supabase } from "@/lib/supabase";
+//import useFollowMutation from "@/api/services/useFollowMutation";
 
 const Storage = () => {
   const [activeTab, setActiveTab] = useState<"left" | "right">("left");
-  //const [isFollowing, setIsFollowing] = useState(false);
   const { randomId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-
-  // const currentUser = useUserStore((state) => state.user);
-  // const { data: otherUser } = useOtherUser(Number(randomId));
-  // const isMyPage = currentUser?.random_id === Number(randomId);
-  // const targetUser = isMyPage ? currentUser : otherUser;
-  // const userData = isMyPage ? currentUser : otherUser;
-  // const targetId = isMyPage
-  //   ? currentUser?.random_id
-  //   : (otherUser?.random_id ?? 0);
-  // const { followerCount, followingCount } = useFollowCount(targetId);
-
-  // if (!currentUser?.random_id || !targetId) {
-  //   return <Loading />;
-  // }
-
-  // const { isFollowing, followRowId, follow, unfollow, isLoading } =
-  //   useFollowStatus(currentUser?.random_id, targetId);
-
-  // const handleNavigate = (tab: "follower" | "following") => {
-  //   navigate(`/storage/${randomId}/follow-info?tab=${tab}`);
-  // };
-
-  // if (!targetUser || isLoading) {
-  //   return <Loading />;
-  // }
-
-  // const isProfilePage = location.pathname === "/profile";
 
   const currentUser = useUserStore((state) => state.user);
   const { data: otherUser } = useOtherUser(Number(randomId));
   const isMyPage = currentUser?.random_id === Number(randomId);
   const targetId = isMyPage ? currentUser?.random_id : otherUser?.random_id;
-
   const targetUser = isMyPage ? currentUser : otherUser;
   const userData = targetUser;
 
@@ -58,21 +31,23 @@ const Storage = () => {
 
   const {
     isFollowing,
-    followRowId,
-    handleFollow, // ✅ 이걸 써야 함
+    handleFollow,
     handleUnfollow,
     isLoading: isFollowLoading,
     isFollowPending,
     isUnfollowPending,
-  } = useFollowStatus(currentUser?.random_id, targetId);
+  } = useFollowStatus(targetId);
+
+  const getProfileImageUrl = (userImg?: string | null) => {
+    if (!userImg) return defaultProfile;
+    return userImg;
+  };
 
   const handleNavigate = (tab: "follower" | "following") => {
     navigate(`/storage/${randomId}/follow-info?tab=${tab}`);
   };
 
-  if (!targetUser || isFollowLoading) {
-    return <Loading />;
-  }
+  if (!targetUser || isFollowLoading) return <Loading />;
 
   const isProfilePage = location.pathname === "/profile";
 
@@ -86,7 +61,7 @@ const Storage = () => {
 
       <ProfileWrapper>
         <ProfileCardTop>
-          <ImageArea src={defaultProfile} />
+          <ImageArea src={getProfileImageUrl(userData?.user_img)} />
           <ProfileInfo>
             <NickName>{userData?.nickname}</NickName>
             <InfoItemWrapper>
@@ -115,9 +90,8 @@ const Storage = () => {
                 btnColor={isFollowing ? "white" : "pink"}
                 onClick={() => {
                   if (!currentUser?.random_id || !targetId) return;
-
-                  if (isFollowing && followRowId) {
-                    handleUnfollow(followRowId);
+                  if (isFollowing) {
+                    handleUnfollow();
                   } else {
                     handleFollow();
                   }
@@ -219,6 +193,7 @@ const ProfileCardTop = styled.div`
 const ImageArea = styled.img`
   width: 165px;
   height: 165px;
+  border-radius: 50%;
 `;
 
 const ProfileInfo = styled.div`

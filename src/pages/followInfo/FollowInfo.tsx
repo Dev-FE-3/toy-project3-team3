@@ -1,4 +1,4 @@
-import { useSearchParams, useParams } from "react-router-dom";
+import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Title from "@/shared/component/Title";
 import CommonInput from "@/shared/component/input";
@@ -11,13 +11,15 @@ import Loading from "@/shared/component/Loading";
 
 interface FollowItem {
   random_id: number;
-  nickname: string;
+  following_id: number;
+  nickname?: string;
   user_img?: string;
 }
 
 const FollowInfo = () => {
   const { randomId } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const tabParam = searchParams.get("tab");
   const initialTab =
@@ -39,6 +41,7 @@ const FollowInfo = () => {
     targetId,
     selectedTab,
   );
+
   const { data: users = [], isLoading: isUserLoading } = useQuery({
     queryKey: ["allUsers"],
     queryFn: getUser,
@@ -48,7 +51,12 @@ const FollowInfo = () => {
 
   // followList의 random_id에 해당하는 user만 필터링
   const matchedUsers = users.filter((user) =>
-    (followList as FollowItem[]).some((f) => f.random_id === user.random_id),
+    (followList as FollowItem[]).some(
+      (f) =>
+        selectedTab === "follower"
+          ? f.random_id === user.random_id // 나를 팔로우한 사람의 random_id
+          : f.following_id === user.random_id, // 내가 팔로우한 사람의 following_id
+    ),
   );
 
   return (
@@ -81,7 +89,10 @@ const FollowInfo = () => {
             <Loading />
           ) : (
             matchedUsers.map((user) => (
-              <ProfileArea key={user.random_id}>
+              <ProfileArea
+                key={user.random_id}
+                onClick={() => navigate(`/storage/${user.random_id}`)}
+              >
                 <ProfileImg src={user.user_img || defaultProfile} />
                 <ProfileName>{user.nickname}</ProfileName>
               </ProfileArea>
@@ -165,6 +176,7 @@ const ProfileArea = styled.div`
   gap: 30px;
   border-bottom: 1px solid var(--disabled-2);
   align-items: center;
+  cursor: pointer;
 
   &:last-child {
     border-bottom: none;
@@ -174,6 +186,7 @@ const ProfileArea = styled.div`
 const ProfileImg = styled.img`
   width: 70px;
   height: 70px;
+  border-radius: 50%;
 `;
 
 const ProfileName = styled.span`

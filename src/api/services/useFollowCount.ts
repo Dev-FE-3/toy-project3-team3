@@ -1,36 +1,27 @@
+// src/api/services/useFollowCount.ts
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
-import { getFollow } from "@/api/follow";
+import {
+  getFollowerCount,
+  getFollowingCount,
+} from "@/api/services/followService";
 
 const useFollowCount = (targetId?: number) => {
-  const {
-    data: followList = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["followList"],
-    queryFn: getFollow,
-    enabled: !!targetId, // ✅ targetId 있을 때만 요청
+  const { data: followerCount = 0, isLoading: isFollowerLoading } = useQuery({
+    queryKey: ["followerCount", targetId],
+    queryFn: () => getFollowerCount(targetId!),
+    enabled: !!targetId,
   });
 
-  const followerCount = useMemo(() => {
-    if (!targetId) return 0;
-    return followList.filter(
-      (f) => f.following_id === targetId && f.is_following,
-    ).length;
-  }, [followList, targetId]);
-
-  const followingCount = useMemo(() => {
-    if (!targetId) return 0;
-    return followList.filter((f) => f.randeom_id === targetId && f.is_following)
-      .length;
-  }, [followList, targetId]);
+  const { data: followingCount = 0, isLoading: isFollowingLoading } = useQuery({
+    queryKey: ["followingCount", targetId],
+    queryFn: () => getFollowingCount(targetId!),
+    enabled: !!targetId,
+  });
 
   return {
     followerCount,
     followingCount,
-    isLoading,
-    isError,
+    isLoading: isFollowerLoading || isFollowingLoading,
   };
 };
 

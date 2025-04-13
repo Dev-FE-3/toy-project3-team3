@@ -1,53 +1,66 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/api/axiosInstance";
-import useFollowMutation from "@/api/services/useFollowMutation";
+// src/pages/followInfo/hooks/useFollowStatus.ts
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getFollowStatus,
+  postFollow,
+  deleteFollow,
+} from "@/api/services/followService";
+import { useUserStore } from "@/stores/userStore";
 
-const useFollowStatus = (fromId?: number, toId?: number) => {
-  const queryClient = useQueryClient(); // ✅ 캐시 조작 또는 refetch를 위한 객체
-  const { follow, unfollow } = useFollowMutation();
+const useFollowStatus = (targetId?: number) => {
+  const queryClient = useQueryClient();
+  const { user } = useUserStore();
+  const fromId = user?.random_id;
+  const toId = targetId;
 
-  const enabled = !!fromId && !!toId;
-
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["followStatus", fromId, toId],
-    queryFn: async () => {
-      const res = await axiosInstance.get("/follow_table", {
-        params: {
-          random_id: `eq.${fromId}`,
-          following_id: `eq.${toId}`,
-          is_following: "eq.true",
-        },
-      });
-      return res.data[0] ?? null;
-    },
-    enabled,
+    queryFn: () => getFollowStatus(fromId, toId),
+    enabled: !!fromId && !!toId,
   });
 
-  // ✅ 버튼 클릭 시 내부에서 refetch까지 처리
+  const follow = useMutation({
+    mutationFn: postFollow,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["followStatus", fromId, toId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["followerCount", toId] });
+      queryClient.invalidateQueries({ queryKey: ["followingCount", fromId] });
+    },
+  });
+
+  const unfollow = useMutation({
+    mutationFn: (f_id: number) => deleteFollow(f_id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["followStatus", fromId, toId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["followerCount", toId] });
+      queryClient.invalidateQueries({ queryKey: ["followingCount", fromId] });
+    },
+  });
   const handleFollow = () => {
     if (!fromId || !toId) return;
-    return follow.mutate(
+
+    console.log("🔼 팔로우 요청", { fromId, toId });
+
+    follow.mutate(
       { fromId, toId },
       {
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["followStatus", fromId, toId],
-          });
-          queryClient.invalidateQueries({ queryKey: ["followCount", toId] }); // ✅
+        onError: (error) => {
+          console.error("❌ 팔로우 실패", error);
+        },
+        onSuccess: (data) => {
+          console.log("✅ 팔로우 성공", data);
         },
       },
     );
   };
 
-  const handleUnfollow = (fId: number) => {
-    return unfollow.mutate(fId, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["followStatus", fromId, toId],
-        });
-        queryClient.invalidateQueries({ queryKey: ["followCount", toId] }); // ✅
-      },
-    });
+  const handleUnfollow = () => {
+    if (!data?.f_id) return;
+    unfollow.mutate(data.f_id);
   };
 
   return {
@@ -58,7 +71,6 @@ const useFollowStatus = (fromId?: number, toId?: number) => {
     handleUnfollow,
     isFollowPending: follow.isPending,
     isUnfollowPending: unfollow.isPending,
-    refetch,
   };
 };
 
