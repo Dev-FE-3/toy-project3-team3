@@ -148,7 +148,7 @@ const Create = () => {
             id="playlistTitle"
             label="플레이리스트 제목"
             placeholder="제목을 입력해주세요"
-            width="478px"
+            width="520px"
           />
         </TitleInputWrapper>
 
@@ -157,7 +157,7 @@ const Create = () => {
             id="videoUrl"
             label="동영상 추가"
             placeholder="링크를 입력해주세요"
-            width="438px"
+            width="470px"
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
           />
@@ -269,14 +269,13 @@ const TitleInputWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 600px;
-  padding-right: 35px;
 `;
 
 const VideoInputWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: 20px;
   margin: 25px 0;
 `;
 
