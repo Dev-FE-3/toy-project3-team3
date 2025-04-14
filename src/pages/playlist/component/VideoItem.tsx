@@ -31,7 +31,7 @@ export default VideoItem;
 
 const ItemWrapper = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
   background-color: var(--background-color);
 `;
@@ -55,6 +55,7 @@ const TextBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  align-self: flex-start;
 `;
 
 const VideoTitle = styled.div`
@@ -73,10 +74,8 @@ const VideoSource = styled.div`
 `;
 
 const DeleteButton = styled.button`
-  font-size: 20px;
   color: var(--text-secondary);
   background: none;
   border: none;
   cursor: pointer;
-  color:;
 `;
