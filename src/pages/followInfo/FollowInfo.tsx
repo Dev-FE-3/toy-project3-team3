@@ -1,5 +1,5 @@
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Title from "@/shared/component/Title";
 import CommonInput from "@/shared/component/input";
 import styled from "@emotion/styled";
@@ -8,6 +8,7 @@ import useFollowList from "@/api/services/useFollowList";
 import { getUser } from "@/api/users.ts";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "@/shared/component/Loading";
+import debounce from "./utils/debounce";
 
 interface FollowItem {
   random_id: number;
@@ -49,13 +50,38 @@ const FollowInfo = () => {
 
   const isLoading = isFollowLoading || isUserLoading;
 
-  // followList의 random_id에 해당하는 user만 필터링
-  const matchedUsers = users.filter((user) =>
-    (followList as FollowItem[]).some(
-      (f) =>
-        selectedTab === "follower"
-          ? f.random_id === user.random_id // 나를 팔로우한 사람의 random_id
-          : f.following_id === user.random_id, // 내가 팔로우한 사람의 following_id
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState(users);
+
+  // 검색어 변경 → 필터링
+  const handleSearch = useCallback(
+    (value: string) => {
+      if (!value) {
+        setFilteredUsers(users);
+      } else {
+        const filtered = users.filter((user) =>
+          user.nickname?.toLowerCase().includes(value.toLowerCase()),
+        );
+        setFilteredUsers(filtered);
+      }
+    },
+    [users],
+  );
+
+  const debouncedSearch = useMemo(
+    () => debounce(handleSearch, 100),
+    [handleSearch],
+  );
+
+  useEffect(() => {
+    setFilteredUsers(users);
+  }, [users]);
+
+  const matchedUsers = filteredUsers.filter((user) =>
+    (followList as FollowItem[]).some((f) =>
+      selectedTab === "follower"
+        ? f.random_id === user.random_id
+        : f.following_id === user.random_id,
     ),
   );
 
@@ -81,6 +107,12 @@ const FollowInfo = () => {
           id="userName"
           placeholder="사용자를 검색해 주세요."
           width="468px"
+          value={searchTerm}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSearchTerm(value); // input 상태 업데이트
+            debouncedSearch(value); // 디바운스된 검색 실행
+          }}
         />
       </InputWrapper>
       {selectedTab === "follower" || selectedTab === "following" ? (

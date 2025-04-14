@@ -1,4 +1,3 @@
-// src/pages/followInfo/hooks/useFollowStatus.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getFollowStatus,
