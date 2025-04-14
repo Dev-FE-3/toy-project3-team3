@@ -10,13 +10,12 @@ import cancel from "@/assets/images/cancel.svg";
 import add from "@/assets/images/add.svg";
 import Modal from "@/shared/component/Modal";
 import Loading from "@/shared/component/Loading";
-import { toast } from "react-toastify";
 import VideoItem from "./component/VideoItem";
 import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
-import { uploadPlaylist } from "@/api/services/uploadPlaylist";
 import { useUserStore } from "@/stores/userStore";
-import { useMutation } from "@tanstack/react-query";
+import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
+import { useUploadPlaylist } from "@/pages/playlist/hooks/useUploadPlaylist";
 
 const Create = () => {
   const navigate = useNavigate();
@@ -54,13 +53,7 @@ const Create = () => {
     if (!video) return;
 
     try {
-      const response = await fetch(video.thumbnail!); //유튜브 썸네일 이미지를 브라우저에서 가져옴
-      const blob = await response.blob(); //blob 형태로 변환
-
-      const extension = blob.type.split("/")[1]; //확장자 추출
-      const fileName = `${video.title}.${extension}`;
-
-      const file = new File([blob], fileName, { type: blob.type }); //supabase에서 인식이 가능한 형태로 변경 (File객체로 감쌈)
+      const file = await convertImageToFile(video.thumbnail!, video.title);
       video.thumbnailFile = file;
     } catch (e) {
       console.error("썸네일 업로드 실패:", e);
@@ -95,56 +88,23 @@ const Create = () => {
     setSelectedIndex(null);
   };
 
-  const { mutate: uploadPlaylistMutate } = useMutation({
-    mutationFn: async () => {
-      const titleInput = document.getElementById(
-        "playlistTitle",
-      ) as HTMLInputElement;
-      const playlistTitle = titleInput?.value.trim();
-
-      if (!playlistTitle) throw new Error("플레이리스트 제목을 입력해주세요.");
-      if (videos.length === 0)
-        throw new Error("1개 이상의 영상을 추가해주세요.");
-
-      const thumbnailUrl = await uploadPlaylistThumbnail();
-
-      const videoData = await Promise.all(
-        videos.map(async (v) => {
-          let finalThumb = v.thumbnail;
-          if (v.thumbnailFile) {
-            finalThumb = await uploadVideoThumbnail(v.thumbnailFile);
-          }
-          return {
-            title: v.title,
-            channel_name: v.source,
-            thumbnail_url: finalThumb!,
-            video_id: v.videoId,
-          };
-        }),
-      );
-
-      return uploadPlaylist(
-        {
-          random_id: user!.random_id,
-          cover_img_path: thumbnailUrl,
-          playlist_title: playlistTitle,
-          video_count: videos.length,
-        },
-        videoData,
-      );
-    },
+  const { mutate: uploadPlaylistMutate } = useUploadPlaylist({
+    userId: user!.random_id,
+    videos,
+    uploadPlaylistThumbnail,
+    uploadVideoThumbnail,
     onSuccess: () => {
       unlock();
       navigate("/");
     },
-    onError: (error) => {
-      console.error("업로드 실패:", error.message || error);
-      toast.error(error.message || "업로드에 실패했습니다. 다시 시도해주세요.");
-    },
   });
 
   const handleUpload = () => {
-    uploadPlaylistMutate(); // useMutation을 실행시켜줌
+    const titleInput = document.getElementById(
+      "playlistTitle",
+    ) as HTMLInputElement;
+    const playlistTitle = titleInput?.value.trim();
+    uploadPlaylistMutate({ playlistTitle });
   };
 
   return (
