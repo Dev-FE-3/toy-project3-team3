@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export interface Follow {
   f_id: number;
-  randeom_id: number; // 팔로우를 누른 사람 (나 자신)
+  random_id: number; // 팔로우를 누른 사람 (나 자신)
   following_id: number; // 팔로우 당한 사람 (상대방)
   is_following: boolean; // 팔로우 여부 (soft delete 용도도 가능)
   created_at: string;

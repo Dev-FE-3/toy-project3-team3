@@ -75,12 +75,12 @@ const FollowInfo = () => {
   );
 
   useEffect(() => {
-    setFilteredUsers(users);
-  }, [users]);
-
-  useEffect(() => {
     debouncedSearch(searchTerm);
   }, [searchTerm, debouncedSearch]);
+
+  useEffect(() => {
+    setFilteredUsers(users); // `users`가 변경될 때마다 `filteredUsers` 초기화
+  }, [users]);
 
   const matchedUsers = filteredUsers.filter((user) =>
     (followList as FollowItem[]).some((f) =>

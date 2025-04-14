@@ -12,6 +12,7 @@ import Create from "@/pages/playlist/Create";
 import Storage from "@/pages/storage/Storage";
 import NavigateToMyStorage from "@/pages/storage/NavigateToMyStorage";
 import FollowInfo from "@/pages/followInfo/FollowInfo";
+import Play from "@/pages/play/Play";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,14 @@ const router = createBrowserRouter([
       {
         path: "/create",
         element: <Create />,
+      },
+      {
+        path: "/create",
+        element: <Create />,
+      },
+      {
+        path: "/play",
+        element: <Play />,
       },
     ],
   },
