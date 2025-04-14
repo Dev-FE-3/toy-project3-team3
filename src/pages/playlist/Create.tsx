@@ -206,11 +206,10 @@ const Create = () => {
           </AddButton>
         </VideoInputWrapper>
 
-        {loading && <Loading />}
-
         <VideoListWrapper>
           <SectionTitle>추가된 동영상 목록</SectionTitle>
           <ScrollableList>
+            {loading && <Loading />}
             {videos.map((video, index) => (
               <VideoItem
                 key={index}
