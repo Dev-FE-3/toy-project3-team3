@@ -4,6 +4,7 @@ import commentIcon from "@/assets/images/comment.svg";
 import backgroundImage from "@/assets/images/backGround.png";
 import { ReactSVG } from "react-svg";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   p_id: number;
@@ -29,6 +30,7 @@ const PlaylistCard = ({
   is_active,
   onLikeClick,
 }: Props) => {
+  const navigate = useNavigate();
   return (
     <CardWrapper>
       <Thumbnail>
@@ -44,6 +46,7 @@ const PlaylistCard = ({
                 src={user_img || defaultProfile}
                 alt="프로필"
                 className="defaultProfile"
+                onClick={() => navigate("/profile")} //스토리지로 이동시켜야함
               />
             </div>
             <span>{nickname}</span>
@@ -95,6 +98,7 @@ const ThumbnailImg = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
 `;
 
 const Description = styled.div`
@@ -133,6 +137,7 @@ const CreatorInfo = styled.div`
   gap: 10px;
   font-size: var(--font-size-primary);
   color: var(--text-secondary);
+  cursor: pointer;
 
   .profileImg {
     width: 25px;

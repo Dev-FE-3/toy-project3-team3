@@ -1,6 +1,6 @@
 import axiosInstance from "../axiosInstance";
 
-export interface PlaylistFullView {
+export interface playlistCardData {
   p_id: number;
   video_count: number;
   cover_img_path: string;
@@ -18,7 +18,7 @@ export interface PlaylistFullView {
 }
 
 
-export async function getPlaylistCard(): Promise<PlaylistFullView[]> {
-  const res = await axiosInstance.get<PlaylistFullView[]>("/playlist_full_view");
+export async function getPlaylistCardData(): Promise<playlistCardData[]> {
+  const res = await axiosInstance.get<playlistCardData[]>("/playlist_card_data");
   return res.data;
 }
