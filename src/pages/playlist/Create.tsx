@@ -265,16 +265,17 @@ const AddThumbnailButton = styled.button`
   align-items: center;
 `;
 const TitleInputWrapper = styled.div`
+  width: 520px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 600px;
+  align-items: flex-start;
 `;
 
 const VideoInputWrapper = styled.div`
+  width: 520px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   gap: 20px;
   margin: 25px 0;
 `;
