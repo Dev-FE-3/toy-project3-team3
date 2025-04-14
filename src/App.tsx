@@ -9,6 +9,8 @@ import ProtectedRoute from "@/shared/component/ProtectedRoute.tsx";
 import Login from "@/pages/auth/Login.tsx";
 import Signup from "@/pages/auth/Signup";
 import Create from "@/pages/playlist/Create";
+import Storage from "@/pages/storage/Storage";
+import Play from "@/pages/play/Play";
 
 const router = createBrowserRouter([
   {
@@ -36,8 +38,16 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
+        path: "/storage",
+        element: <Storage />,
+      },
+      {
         path: "/create",
         element: <Create />,
+      },
+      {
+        path: "/play",
+        element: <Play />,
       },
     ],
   },

@@ -22,6 +22,7 @@ const globalStyles = css`
 
     // font size
     --font-size-title: 28px;
+    --font-size-subtitle: 24px;
     --font-size-large: 18px;
     --font-size-primary: 16px;
     --font-size-small: 14px;

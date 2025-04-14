@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import GoBack from "@/assets/images/GoBack.svg";
 import { useNavigate } from "react-router-dom";
+import Icon from "@/shared/component/Icon";
 
 type TitleProps = {
   title?: string;
@@ -20,7 +21,7 @@ const Title = ({
   const defaultLeft = (
     <>
       {showBackButton && (
-        <BackIcon src={GoBack} alt="뒤로가기" onClick={() => navigate(-1)} />
+        <Icon src={GoBack} alt="뒤로가기" onClick={() => navigate(-1)} />
       )}
       {title && <StyledTitle>{title}</StyledTitle>}
     </>
@@ -51,11 +52,11 @@ const Left = styled.div`
   gap: 24px;
 `;
 
-const BackIcon = styled.img`
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-`;
+// const BackIcon = styled.img`
+//   width: 24px;
+//   height: 24px;
+//   cursor: pointer;
+// `;
 
 export const StyledTitle = styled.h1`
   font-size: var(--font-size-title);

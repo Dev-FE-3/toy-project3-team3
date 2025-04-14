@@ -95,7 +95,7 @@ const Create = () => {
     uploadVideoThumbnail,
     onSuccess: () => {
       unlock();
-      navigate("/");
+      navigate("/storage");
     },
   });
 
