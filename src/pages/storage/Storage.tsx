@@ -186,7 +186,7 @@ const ProfileWrapper = styled.div`
 
 const ProfileCardTop = styled.div`
   display: flex;
-  padding: 18px 40px;
+  padding: 18px 20px;
   gap: 100px;
 `;
 
@@ -194,6 +194,7 @@ const ImageArea = styled.img`
   width: 165px;
   height: 165px;
   border-radius: 50%;
+  object-fit: cover;
 `;
 
 const ProfileInfo = styled.div`

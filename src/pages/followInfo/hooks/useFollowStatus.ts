@@ -43,19 +43,7 @@ const useFollowStatus = (targetId?: number) => {
   const handleFollow = () => {
     if (!fromId || !toId) return;
 
-    console.log("🔼 팔로우 요청", { fromId, toId });
-
-    follow.mutate(
-      { fromId, toId },
-      {
-        onError: (error) => {
-          console.error("❌ 팔로우 실패", error);
-        },
-        onSuccess: (data) => {
-          console.log("✅ 팔로우 성공", data);
-        },
-      },
-    );
+    follow.mutate({ fromId, toId });
   };
 
   const handleUnfollow = () => {
