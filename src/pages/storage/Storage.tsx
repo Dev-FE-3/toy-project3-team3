@@ -6,13 +6,11 @@ import { useState } from "react";
 import Like from "@/assets/images/like.svg";
 import Comment from "@/assets/images/comment.svg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import useOtherUser from "@/pages/storage/hooks/useOtherUser";
+import useOtherUser from "@/api/services/useOtherUser";
 import useFollowCount from "@/api/services/useFollowCount";
 import Loading from "@/shared/component/Loading";
 import { useUserStore } from "@/stores/userStore";
 import useFollowStatus from "@/pages/followInfo/hooks/useFollowStatus";
-//import { supabase } from "@/lib/supabase";
-//import useFollowMutation from "@/api/services/useFollowMutation";
 
 const Storage = () => {
   const [activeTab, setActiveTab] = useState<"left" | "right">("left");

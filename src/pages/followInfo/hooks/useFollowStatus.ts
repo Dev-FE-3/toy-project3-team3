@@ -1,9 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  getFollowStatus,
-  postFollow,
-  deleteFollow,
-} from "@/api/services/followService";
+import { getFollowStatus, postFollow, deleteFollow } from "@/api/follow";
 import { useUserStore } from "@/stores/userStore";
 
 const useFollowStatus = (targetId?: number) => {

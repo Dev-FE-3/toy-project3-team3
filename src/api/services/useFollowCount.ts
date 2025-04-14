@@ -1,9 +1,5 @@
-// src/api/services/useFollowCount.ts
 import { useQuery } from "@tanstack/react-query";
-import {
-  getFollowerCount,
-  getFollowingCount,
-} from "@/api/services/followService";
+import { getFollowerCount, getFollowingCount } from "@/api/follow";
 
 const useFollowCount = (targetId?: number) => {
   const { data: followerCount = 0, isLoading: isFollowerLoading } = useQuery({

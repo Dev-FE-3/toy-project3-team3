@@ -78,6 +78,10 @@ const FollowInfo = () => {
     setFilteredUsers(users);
   }, [users]);
 
+  useEffect(() => {
+    debouncedSearch(searchTerm);
+  }, [searchTerm, debouncedSearch]);
+
   const matchedUsers = filteredUsers.filter((user) =>
     (followList as FollowItem[]).some((f) =>
       selectedTab === "follower"
