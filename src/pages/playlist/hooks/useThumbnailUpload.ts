@@ -6,7 +6,7 @@ export const useThumbnail = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null); // 미리보기용 브라우저 url
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null); //storage에 업로드 후 받은 url
 
-  //사용자가 화면에 이미지 업로드
+  //화면에 이미지 업로드
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -14,7 +14,7 @@ export const useThumbnail = () => {
     setThumbnailPreview(URL.createObjectURL(file)); //미리보기용
   };
 
-  //실제 업로드 로직 (storage에 업로드 및 public url을 반환)
+  //DB에 이미지 업로드 로직 (storage에 업로드 및 public url을 반환)
   const uploadToStorage = async (
     file: File, //thumbnailFile
     type: "playlist" | "video",
@@ -38,6 +38,7 @@ export const useThumbnail = () => {
     return data.publicUrl;
   };
 
+  //플레이리스트용 (public url 반환)
   const uploadPlaylistThumbnail = async (): Promise<string> => {
     if (!thumbnailFile) throw new Error("썸네일 파일이 없습니다.");
     const url = await uploadToStorage(thumbnailFile, "playlist");
@@ -45,6 +46,7 @@ export const useThumbnail = () => {
     return url;
   };
 
+  //영상용 (public url 반환)
   const uploadVideoThumbnail = async (file: File): Promise<string> => {
     return await uploadToStorage(file, "video");
   };

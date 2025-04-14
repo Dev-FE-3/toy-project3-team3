@@ -18,6 +18,14 @@ interface UseUploadPlaylistProps {
   onSuccess?: () => void;
 }
 
+/**
+ * 플레이리스트 생성에 필요한 데이터를 받아 업로드하는 커스텀 훅
+ * - 제목 유효성 및 비디오 개수 검사
+ * - 썸네일 업로드
+ * - 각 영상별 썸네일 업로드
+ * - 최종 데이터 정리 후 uploadPlaylist API 호출
+ * - 성공/에러 처리 포함
+ */
 export function useUploadPlaylist({
   userId,
   videos,
@@ -27,6 +35,7 @@ export function useUploadPlaylist({
 }: UseUploadPlaylistProps) {
   return useMutation({
     mutationFn: async ({ playlistTitle }: { playlistTitle: string }) => {
+      //제목 및 비디오 개수 검사
       if (!playlistTitle) throw new Error("플레이리스트 제목을 입력해주세요.");
       if (videos.length === 0)
         throw new Error("1개 이상의 영상을 추가해주세요.");
@@ -48,6 +57,7 @@ export function useUploadPlaylist({
         }),
       );
 
+      // 최종 플레이리스트 및 영상 정보 업로드
       return uploadPlaylist(
         {
           random_id: userId,

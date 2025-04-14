@@ -8,17 +8,20 @@ export type YoutubeVideo = {
   title: string;
   source: string;
   thumbnail: string;
-  thumbnailFile?: File;
+  thumbnailFile?: File; // 썸네일 이미지 파일 (업로드 시 사용)
 };
 
 export function useYoutubeInfo(videoUrl: string) {
   const fetchVideoInfo = async (): Promise<YoutubeVideo | null> => {
-    const videoId = extractVideoId(videoUrl);
+    const videoId = extractVideoId(videoUrl); // 링크에서 영상 ID 추출
     if (!videoId) {
       toast.error("유효하지 않은 링크입니다");
       return null;
     }
+
+    // 유튜브 API 호출로 영상 데이터 가져오기
     const data = await fetchYoutubeVideoData(videoId);
+
     return {
       videoId,
       title: data.title,
