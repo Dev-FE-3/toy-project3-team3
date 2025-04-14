@@ -11,12 +11,20 @@ import useFollowCount from "@/api/services/useFollowCount";
 import Loading from "@/shared/component/Loading";
 import { useUserStore } from "@/stores/userStore";
 import useFollowStatus from "@/pages/followInfo/hooks/useFollowStatus";
+import useLikedPlaylists from "@/api/services/useLikedPlaylists";
+import useMyPlaylists from "@/api/services/useMyPlaylists";
+import backgroundImage from "@/assets/images/backGround.png";
+import Dropbox from "@/shared/component/Dropbox";
+import Modal from "@/shared/component/Modal";
+import { softDeletePlaylist } from "@/api/playlist";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Storage = () => {
   const [activeTab, setActiveTab] = useState<"left" | "right">("left");
   const { randomId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const currentUser = useUserStore((state) => state.user);
   const { data: otherUser } = useOtherUser(Number(randomId));
@@ -26,6 +34,17 @@ const Storage = () => {
   const userData = targetUser;
 
   const { followerCount, followingCount } = useFollowCount(targetId);
+  const { data: myPlaylists = [], isLoading: isMyPlaylistsLoading } =
+    useMyPlaylists(targetId);
+
+  const { likedPlaylists = [], isLoading: isLikedPlaylistsLoading } =
+    useLikedPlaylists(targetId);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [selectedIdToDelete, setSelectedIdToDelete] = useState<number | null>(
+    null,
+  );
 
   const {
     isFollowing,
@@ -48,6 +67,15 @@ const Storage = () => {
   if (!targetUser || isFollowLoading) return <Loading />;
 
   const isProfilePage = location.pathname === "/profile";
+
+  const handleIconAction = async (action: string, p_id: number) => {
+    if (action === "수정하기") {
+      console.log("수정 기능 실행");
+    } else if (action === "삭제하기") {
+      setSelectedIdToDelete(p_id);
+      setIsModalOpen(true);
+    }
+  };
 
   return (
     <>
@@ -72,7 +100,7 @@ const Storage = () => {
                 <InfoLabel>팔로잉</InfoLabel>
               </InfoItem>
               <InfoItem>
-                <InfoCount>6</InfoCount>
+                <InfoCount>{myPlaylists.length}</InfoCount>
                 <InfoLabel>리스트</InfoLabel>
               </InfoItem>
             </InfoItemWrapper>
@@ -129,47 +157,67 @@ const Storage = () => {
           하트
         </TabRight>
       </TabMenu>
-      {activeTab === "left" ? (
-        <PlaylistArea>
-          <VideoWrapper>
-            <VideoArea />
+      <PlaylistArea>
+        {(activeTab === "left" ? myPlaylists : likedPlaylists)?.map((item) => (
+          <VideoWrapper key={item.p_id}>
+            <VideoArea src={item.cover_img_path || backgroundImage} />
             <Meta>
               <DetailArea>
-                <Count>동영상 3개</Count>
+                <Count>동영상 {item.video_count}개</Count>
                 <IconGroup>
                   <span className="Like">
-                    <img src={Like} alt="좋아요" /> 80
+                    <img src={Like} alt="좋아요" /> {item.like_count}
                   </span>
                   <span className="Comment">
-                    <img src={Comment} alt="댓글" /> 110
+                    <img src={Comment} alt="댓글" /> {item.comment_count}
                   </span>
+                  {isMyPage &&
+                    activeTab === "left" &&
+                    item.random_id === currentUser?.random_id && (
+                      <Dropbox
+                        variant="icon"
+                        onChange={(action) =>
+                          handleIconAction(action, item.p_id)
+                        }
+                      />
+                    )}
                 </IconGroup>
               </DetailArea>
-              <VideoTitle>내 리스트 예시입니다!</VideoTitle>
+              <VideoTitle>{item.playlist_title}</VideoTitle>
             </Meta>
           </VideoWrapper>
-        </PlaylistArea>
-      ) : (
-        <PlaylistArea>
-          <VideoWrapper>
-            <VideoArea />
-            <Meta>
-              <DetailArea>
-                <Count>동영상 3개</Count>
-                <IconGroup>
-                  <span className="Like">
-                    <img src={Like} alt="좋아요" /> 80
-                  </span>
-                  <span className="Comment">
-                    <img src={Comment} alt="댓글" /> 110
-                  </span>
-                </IconGroup>
-              </DetailArea>
-              <VideoTitle>좋아요 누른 콘텐츠 예시입니다!</VideoTitle>
-            </Meta>
-          </VideoWrapper>
-        </PlaylistArea>
-      )}
+        ))}
+
+        {(activeTab === "left" && isMyPlaylistsLoading) ||
+        (activeTab === "right" && isLikedPlaylistsLoading) ? (
+          <Loading />
+        ) : null}
+      </PlaylistArea>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setSelectedIdToDelete(null);
+          setIsModalOpen(false);
+        }}
+        onConfirm={async () => {
+          if (selectedIdToDelete !== null) {
+            try {
+              await softDeletePlaylist(selectedIdToDelete);
+              await queryClient.invalidateQueries({
+                queryKey: ["myPlaylists"],
+              });
+              setSelectedIdToDelete(null);
+              setIsModalOpen(false);
+            } catch (error) {
+              console.error("삭제 실패", error);
+            }
+          }
+        }}
+        message="플레이리스트를 삭제하시겠습니까?"
+        leftButtonText="아니오"
+        rightButtonText="네"
+      />
     </>
   );
 };
