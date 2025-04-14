@@ -85,6 +85,7 @@ const Create = () => {
 
   const handleModalConfirm = () => {
     if (modalType === "exit") {
+      unlock();
       navigate("/");
     } else if (modalType === "delete" && selectedIndex !== null) {
       handleDelete(selectedIndex);
