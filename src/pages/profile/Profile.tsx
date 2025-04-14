@@ -146,7 +146,7 @@ const Profile = () => {
             labelPosition="left"
             value={profileData.nickname}
             onChange={handleInputChange}
-            width="218px"
+            width="250px"
             isReadOnly={!isEditing}
           />
           <CommonInput
@@ -155,7 +155,7 @@ const Profile = () => {
             labelPosition="left"
             value={user?.email ?? ""}
             onChange={() => {}}
-            width="218px"
+            width="250px"
             isReadOnly
           />
           <CommonInput

@@ -8,7 +8,8 @@ import useFollowList from "@/api/services/useFollowList";
 import { getUser } from "@/api/users.ts";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "@/shared/component/Loading";
-import debounce from "./utils/debounce";
+import Reset from "@/assets/images/reset.svg";
+import debounce from "@/pages/followInfo/utils/debounce";
 
 interface FollowItem {
   random_id: number;
@@ -103,18 +104,30 @@ const FollowInfo = () => {
         </TabRight>
       </TabMenu>
       <InputWrapper>
-        <CommonInput
-          id="userName"
-          placeholder="사용자를 검색해 주세요."
-          width="468px"
-          value={searchTerm}
-          onChange={(e) => {
-            const value = e.target.value;
-            setSearchTerm(value); // input 상태 업데이트
-            debouncedSearch(value); // 디바운스된 검색 실행
-          }}
-        />
+        <InputContainer>
+          <CommonInput
+            id="userName"
+            placeholder="사용자를 검색해 주세요."
+            width="100%"
+            value={searchTerm}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchTerm(value);
+              debouncedSearch(value);
+            }}
+          />
+          <ResetButton
+            src={Reset}
+            alt="검색 초기화"
+            visible={searchTerm !== ""}
+            onClick={() => {
+              setSearchTerm("");
+              setFilteredUsers(users);
+            }}
+          />
+        </InputContainer>
       </InputWrapper>
+
       {selectedTab === "follower" || selectedTab === "following" ? (
         <ProfileListWrapper>
           {isLoading ? (
@@ -191,9 +204,23 @@ const InputWrapper = styled.div`
   margin-top: 25px;
   margin-bottom: 10px;
   display: flex;
-  flex-direction: column;
-  align-items: center; // 핵심! 가운데로 보내줌
   justify-content: center;
+`;
+
+const InputContainer = styled.div`
+  position: relative;
+  width: 400px; // CommonInput의 width와 동일
+`;
+
+const ResetButton = styled.img<{ visible: boolean }>`
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
 `;
 
 const ProfileListWrapper = styled.div`
