@@ -15,10 +15,8 @@ import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
 import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
 import { getPlaylistDetail } from "@/api/getPlaylistDetail";
-import { patchPlaylist } from "@/api/playlist";
-import { createVideo, deleteVideosByIds } from "@/api/video";
 import { Video } from "@/api/video";
-import { diffVideoList } from "./utils/diffVideoList";
+import { useUpdatePlaylist } from "./hooks/useUpdatePlaylist";
 
 const Modify = () => {
   const navigate = useNavigate();
@@ -122,57 +120,24 @@ const Modify = () => {
     setSelectedIndex(null);
   };
 
-  const handleUpdate = async () => {
-    const playlistTitle = title.trim();
-    if (!playlistTitle || !playlistId) return;
-
-    try {
-      const { deleted, added } = diffVideoList(originalVideos, videos);
-
-      // 플리 썸네일 업로드
-      let coverImgUrl = thumbnailPreview;
-      coverImgUrl = await uploadPlaylistThumbnail();
-
-      // 영상 썸네일 업로드
-      const uploadedVideos = await Promise.all(
-        added.map(async (v) => {
-          let thumbnailUrl = v.thumbnail_url;
-          if (v.thumbnailFile) {
-            try {
-              thumbnailUrl = await uploadVideoThumbnail(v.thumbnailFile);
-            } catch (e) {
-              console.error("영상 썸네일 업로드 실패:", e);
-            }
-          }
-          return {
-            title: v.title,
-            channel_name: v.channel_name,
-            thumbnail_url: thumbnailUrl,
-            video_id: v.video_id,
-            playlist_id: Number(playlistId),
-          };
-        }),
-      );
-
-      await Promise.all([
-        patchPlaylist({
-          p_id: Number(playlistId),
-          playlist_title: playlistTitle,
-          video_count: videos.length,
-          cover_img_path: coverImgUrl as string, // ✅ 썸네일도 함께 업데이트
-        }),
-        deleteVideosByIds(deleted.map((v) => v.v_id!)),
-        createVideo(uploadedVideos),
-      ]);
-
-      navigate("/storage");
-    } catch (e) {
-      console.error("수정 실패:", e);
-      alert("수정 중 오류가 발생했습니다.");
-    } finally {
+  const updateMutation = useUpdatePlaylist({
+    playlistId: Number(playlistId),
+    playlistTitle: title.trim(),
+    originalVideos,
+    updatedVideos: videos,
+    uploadPlaylistThumbnail,
+    uploadVideoThumbnail,
+    thumbnailPreview: thumbnailPreview ?? "",
+    onSuccess: () => {
       unlock();
-    }
-  };
+      navigate("/storage");
+    },
+    onError: (error) => {
+      console.error("수정 실패:", error);
+      alert("수정 중 오류가 발생했습니다.");
+      unlock();
+    },
+  });
 
   return (
     <Wrapper>
@@ -251,7 +216,11 @@ const Modify = () => {
           </ScrollableList>
         </VideoListWrapper>
         <ButtonWrapper>
-          <Button size="big" color="pink" onClick={handleUpdate}>
+          <Button
+            size="big"
+            color="pink"
+            onClick={() => updateMutation.mutate()}
+          >
             수정하기
           </Button>
         </ButtonWrapper>
