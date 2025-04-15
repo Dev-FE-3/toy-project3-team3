@@ -5,6 +5,7 @@ import { useMemo, useState, useRef, useCallback } from "react";
 
 import useHomeFeedPlaylists from "./hooks/useHomeFeedPlaylists";
 import PlaylistCard from "@/pages/homeAndSearch/component/PlaylistCard";
+import Loading from "@/shared/component/Loading";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
@@ -29,7 +30,6 @@ const Home = () => {
     });
   }, [playlists, sortOrder]);
 
-  // ✅ IntersectionObserver
   const observerRef = useRef<IntersectionObserver | null>(null);
   const lastItemRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -56,26 +56,28 @@ const Home = () => {
         }
       />
       <HomePage>
-        <ScrollableList>
-          {isLoading ? (
-            <div>로딩 중...</div>
-          ) : sortedPlaylistCards.length === 0 ? (
-            <div>팔로우한 유저가 없습니다 🥲</div>
-          ) : (
-            sortedPlaylistCards.map((item, index) => {
-              const isLast = index === sortedPlaylistCards.length - 1;
-              return (
-                <div ref={isLast ? lastItemRef : null} key={item.p_id}>
-                  <PlaylistCard
-                    {...item}
-                    is_active={false}
-                    onLikeClick={() => console.log(item.p_id)}
-                  />
-                </div>
-              );
-            })
-          )}
-        </ScrollableList>
+        <Container>
+          <ScrollableList>
+            {isLoading || isFetchingNextPage ? (
+              <Loading />
+            ) : sortedPlaylistCards.length === 0 ? (
+              <EmptyMessage>팔로우한 유저가 없습니다 🥲</EmptyMessage>
+            ) : (
+              sortedPlaylistCards.map((item, index) => {
+                const isLast = index === sortedPlaylistCards.length - 1;
+                return (
+                  <div ref={isLast ? lastItemRef : null} key={item.p_id}>
+                    <PlaylistCard
+                      {...item}
+                      is_active={false}
+                      onLikeClick={() => console.log(item.p_id)}
+                    />
+                  </div>
+                );
+              })
+            )}
+          </ScrollableList>
+        </Container>
       </HomePage>
     </>
   );
@@ -92,17 +94,23 @@ const HomePage = styled.div`
   height: 700px;
 `;
 
-// const Container = styled.div`
-//   //height: 300px;
-//   //height: (100%-600px);
-//   //height: calc(100vh-500px);
-//   //height: 850px;
-//   height: 700px;
-// `;
+const Container = styled.div`
+  //height: 300px;
+  //height: (100%-600px);
+  //height: calc(100vh-500px);
+  //height: 850px;
+  height: 700px;
+`;
 
 const ScrollableList = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+`;
+
+const EmptyMessage = styled.div`
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-top: 40px;
 `;
