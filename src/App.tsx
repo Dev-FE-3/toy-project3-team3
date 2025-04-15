@@ -49,6 +49,10 @@ const router = createBrowserRouter([
         path: "/play",
         element: <Play />,
       },
+      // { 디테일 페이지 만들면 연결시킴
+      //   path: "playlist/:p_id",
+      //   element: <Detail />,
+      // },
     ],
   },
   { path: "/login", element: <Login /> },

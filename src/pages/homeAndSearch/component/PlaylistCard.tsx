@@ -1,10 +1,11 @@
 import styled from "@emotion/styled";
-import likeIcon from "@/assets/images/originLike.svg";
+import { ReactSVG } from "react-svg";
+// import { useNavigate } from "react-router-dom";
+
+import likeIcon from "@/assets/images/Like.svg";
 import commentIcon from "@/assets/images/comment.svg";
 import backgroundImage from "@/assets/images/backGround.png";
-import { ReactSVG } from "react-svg";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
-import { useNavigate } from "react-router-dom";
 
 interface Props {
   p_id: number;
@@ -30,15 +31,22 @@ const PlaylistCard = ({
   is_active,
   onLikeClick,
 }: Props) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+
+  // const handleGoToDetail = () => {
+  //   navigate(`/playlist/${p_id}`);
+  // };
+
   return (
     <CardWrapper>
+      {/* <Thumbnail onClick={handleGoToDetail}> */}
       <Thumbnail>
         <ThumbnailImg src={cover_img_path || backgroundImage} />
       </Thumbnail>
 
       <Description>
         <TitleAndCreatorWrapper>
+          {/* <PlayListTitle onClick={handleGoToDetail}> */}
           <PlayListTitle>{playlist_title}</PlayListTitle>
           <CreatorInfo>
             <div className="profileImg">
@@ -46,7 +54,6 @@ const PlaylistCard = ({
                 src={user_img || defaultProfile}
                 alt="프로필"
                 className="defaultProfile"
-                onClick={() => navigate("/profile")} //스토리지로 이동시켜야함
               />
             </div>
             <span>{nickname}</span>
@@ -92,6 +99,7 @@ const Thumbnail = styled.div`
   border-radius: 10px;
   flex-shrink: 0;
   border-radius: 1px solid var(--text-primary);
+  cursor: pointer;
 `;
 
 const ThumbnailImg = styled.img`
@@ -120,6 +128,7 @@ const PlayListTitle = styled.div`
   font-weight: 400;
   color: var(--text-primary);
   line-height: 20px;
+  cursor: pointer;
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -179,13 +188,14 @@ const IconGroup = styled.div`
     transition: color 0.2s ease;
   }
 
-  /* 활성화된 상태일 때 색상 변경 */
   .likeSvg.active svg {
-    color: var(--primary);
+    color: var(--primary); /* 활성화: 원래 컬러 */
+    fill: var(--primary); /* 색상 채우기 */
   }
 
   .likeSvg.inactive svg {
-    color: var(--text-secondary); // 비활성 색상 유지
+    color: var(--text-secondary); /* 비활성화: 회색 외곽선 */
+    fill: none; /* 안은 비우기 */
   }
 
   .comment img {
