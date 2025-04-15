@@ -47,7 +47,7 @@ const router = createBrowserRouter([
         element: <Create />,
       },
       {
-        path: "/storage/edit/:playlistId",
+        path: "/edit/:playlistId",
         element: <Modify />,
       },
       {
