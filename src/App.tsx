@@ -56,10 +56,6 @@ const router = createBrowserRouter([
         element: <Create />,
       },
       {
-        path: "/create",
-        element: <Create />,
-      },
-      {
         path: "/play",
         element: <Play />,
       },
