@@ -116,7 +116,7 @@ export default Search;
 
 const InputWrapper = styled.div`
   position: relative;
-  width: 200px;
+  width: 250px;
 `;
 
 const ResetButton = styled.img<{ visible: boolean }>`
