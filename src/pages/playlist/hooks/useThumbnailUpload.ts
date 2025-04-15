@@ -54,6 +54,7 @@ export const useThumbnail = () => {
   return {
     thumbnailFile,
     thumbnailPreview,
+    setThumbnailPreview,
     thumbnailUrl,
     handleThumbnailChange,
     uploadPlaylistThumbnail,

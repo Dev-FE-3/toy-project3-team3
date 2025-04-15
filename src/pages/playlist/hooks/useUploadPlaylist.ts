@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { uploadPlaylist } from "@/api/services/uploadPlaylist";
 import { toast } from "react-toastify";
 
-type Video = {
+type UploadVideo = {
   videoId: string;
   title: string;
   source: string;
@@ -12,7 +12,7 @@ type Video = {
 
 interface UseUploadPlaylistProps {
   userId: number;
-  videos: Video[];
+  videos: UploadVideo[];
   uploadPlaylistThumbnail: () => Promise<string>;
   uploadVideoThumbnail: (file: File) => Promise<string>;
   onSuccess?: () => void;

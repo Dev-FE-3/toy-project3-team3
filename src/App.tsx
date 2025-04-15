@@ -11,6 +11,7 @@ import Signup from "@/pages/auth/Signup";
 import Create from "@/pages/playlist/Create";
 import Storage from "@/pages/storage/Storage";
 import Play from "@/pages/play/Play";
+import Modify from "./pages/playlist/Modify";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/create",
         element: <Create />,
+      },
+      {
+        path: "/storage/edit/:playlistId",
+        element: <Modify />,
       },
       {
         path: "/play",

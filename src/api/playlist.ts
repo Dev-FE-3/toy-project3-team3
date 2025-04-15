@@ -33,9 +33,27 @@ export async function createPlaylist(playlistData: {
 }
 
 //수정하기
-export async function patchPlaylist(): Promise<Playlist[]> {
-  const response = await axiosInstance.patch<Playlist[]>("/playlist_table");
-  return response.data;
+interface PatchPlaylistData {
+  p_id: number;
+  playlist_title?: string;
+  cover_img_path?: string;
+  video_count?: number;
+}
+
+export async function patchPlaylist({
+  p_id,
+  ...updateData
+}: PatchPlaylistData): Promise<Playlist> {
+  const response = await axiosInstance.patch<Playlist[]>(
+    `/playlist_table?p_id=eq.${p_id}`,
+    [updateData], // Supabase는 배열로 전달해야 함
+    {
+      headers: {
+        Prefer: "return=representation", // 응답으로 수정된 row 받아오기
+      },
+    },
+  );
+  return response.data[0];
 }
 
 //삭제하기
