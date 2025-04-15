@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPlaylistCardData } from "@/api/services/playlistCardData";
+import { getPlaylistCardData } from "@/api/playlistCardData";
 import { getMyLikedPlaylistIds } from "@/api/like";
 //import { useUserStore } from "@/stores/userStore";
 import { useMemo } from "react";

@@ -145,13 +145,13 @@ const Storage = () => {
       </ProfileWrapper>
       <TabMenu>
         <TabLeft
-          isActive={activeTab === "left"} // 상태에 따라 스타일 변경
+          isActive={activeTab === "left"}
           onClick={() => setActiveTab("left")}
         >
           리스트
         </TabLeft>
         <TabRight
-          isActive={activeTab === "right"} // 상태에 따라 스타일 변경
+          isActive={activeTab === "right"}
           onClick={() => setActiveTab("right")}
         >
           하트

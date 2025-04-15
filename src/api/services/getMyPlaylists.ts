@@ -1,5 +1,5 @@
 import axiosInstance from "@/api/axiosInstance";
-import { playlistCardData } from "@/api/services/playlistCardData";
+import { playlistCardData } from "@/api/playlistCardData";
 
 // 내가 만든 플레이리스트
 export async function getMyPlaylists(
