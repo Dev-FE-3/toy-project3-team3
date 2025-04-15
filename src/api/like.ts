@@ -21,9 +21,25 @@ export async function createLike(): Promise<Like[]> {
 }
 
 //수정하기
-export async function patchLike(): Promise<Like[]> {
-  const response = await axiosInstance.patch<Like[]>("/likes_table")
-  return response.data;
+export async function updateLike(
+  p_id: number,
+  randomId: number,
+  is_active: boolean,
+) {
+  const patch = await axiosInstance.patch(
+    "/likes_table",
+    {
+      is_active,
+    },
+    {
+      params: {
+        playlist_id: `eq.${p_id}`,
+        random_id: `eq.${randomId}`,
+      },
+    },
+  );
+
+  return patch.data;
 }
 
 //현재로서 사용하지 않음
