@@ -17,7 +17,9 @@ import backgroundImage from "@/assets/images/backGround.png";
 import Dropbox from "@/shared/component/Dropbox";
 import Modal from "@/shared/component/Modal";
 import { softDeletePlaylist } from "@/api/playlist";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { getMyLikedPlaylistIds } from "@/api/like";
+import { ReactSVG } from "react-svg";
 
 const Storage = () => {
   const [activeTab, setActiveTab] = useState<"left" | "right">("left");
@@ -39,6 +41,12 @@ const Storage = () => {
 
   const { likedPlaylists = [], isLoading: isLikedPlaylistsLoading } =
     useLikedPlaylists(targetId);
+
+  const { data: likedIds = [] } = useQuery({
+    queryKey: ["myLikedIds", currentUser?.random_id],
+    queryFn: () => getMyLikedPlaylistIds(currentUser!.random_id),
+    enabled: !!currentUser?.random_id,
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -158,35 +166,46 @@ const Storage = () => {
         </TabRight>
       </TabMenu>
       <PlaylistArea>
-        {(activeTab === "left" ? myPlaylists : likedPlaylists)?.map((item) => (
-          <VideoWrapper key={item.p_id}>
-            <VideoArea src={item.cover_img_path || backgroundImage} />
-            <Meta>
-              <DetailArea>
-                <Count>동영상 {item.video_count}개</Count>
-                <IconGroup>
-                  <span className="Like">
-                    <img src={Like} alt="좋아요" /> {item.like_count}
-                  </span>
-                  <span className="Comment">
-                    <img src={Comment} alt="댓글" /> {item.comment_count}
-                  </span>
-                  {isMyPage &&
-                    activeTab === "left" &&
-                    item.random_id === currentUser?.random_id && (
-                      <Dropbox
-                        variant="icon"
-                        onChange={(action) =>
-                          handleIconAction(action, item.p_id)
-                        }
+        {(activeTab === "left" ? myPlaylists : likedPlaylists)?.map((item) => {
+          const isLiked = likedIds.includes(item.p_id);
+
+          return (
+            <VideoWrapper key={item.p_id}>
+              <VideoArea src={item.cover_img_path || backgroundImage} />
+              <Meta>
+                <DetailArea>
+                  <Count>동영상 {item.video_count}개</Count>
+                  <IconGroup>
+                    <span className="like">
+                      <ReactSVG
+                        src={Like}
+                        wrapper="span"
+                        className={`likeSvg ${isLiked ? "active" : "inactive"}`}
                       />
-                    )}
-                </IconGroup>
-              </DetailArea>
-              <VideoTitle>{item.playlist_title}</VideoTitle>
-            </Meta>
-          </VideoWrapper>
-        ))}
+                      {item.like_count}
+                    </span>
+
+                    <span className="Comment">
+                      <img src={Comment} alt="댓글" />
+                      {item.comment_count}
+                    </span>
+                    {isMyPage &&
+                      activeTab === "left" &&
+                      item.random_id === currentUser?.random_id && (
+                        <Dropbox
+                          variant="icon"
+                          onChange={(action) =>
+                            handleIconAction(action, item.p_id)
+                          }
+                        />
+                      )}
+                  </IconGroup>
+                </DetailArea>
+                <VideoTitle>{item.playlist_title}</VideoTitle>
+              </Meta>
+            </VideoWrapper>
+          );
+        })}
 
         {(activeTab === "left" && isMyPlaylistsLoading) ||
         (activeTab === "right" && isLikedPlaylistsLoading) ? (
@@ -405,6 +424,21 @@ const IconGroup = styled.div`
     img {
       width: 14px;
       height: 14px;
+    }
+    .likeSvg svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+      color: var(--text-secondary); /* 기본 회색 */
+    }
+
+    .likeSvg.active svg {
+      color: var(--primary); /* 좋아요 눌렀을 때 */
+    }
+
+    .likeSvg.inactive svg {
+      stroke: var(--text-secondary); /* 비활성 테두리 */
+      fill: none; /* 비활성 내부는 비워둠 */
     }
   }
 `;
