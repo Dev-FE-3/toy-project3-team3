@@ -28,7 +28,7 @@ export const getPlaylistCardData = async (
   context?: QueryFunctionContext,
 ): Promise<PlaylistPageResponse> => {
   const pageParam = (context?.pageParam as number) ?? 1;
-  const limit = 10;
+  const limit = 3;
   const offset = (pageParam - 1) * limit;
 
   const res = await axiosInstance.get("/playlist_card_data", {
@@ -38,42 +38,42 @@ export const getPlaylistCardData = async (
   const data = res.data;
   const nextPage = data.length === limit ? pageParam + 1 : undefined;
 
-  console.log("data:::", data, "nextPage:::", nextPage);
+  console.log("11data:::", data, "nextPage:::", nextPage);
 
   return { data, nextPage };
 };
 
-// 팔로우 api이용해서 팔로잉중인 random_id를 받아서 조건으로 가져올 예정
-export const getFilteredPlaylistCardData = async ({
-  pageParam = 1,
-  randomIds,
-}: {
-  pageParam?: number;
-  randomIds: number[];
-}): Promise<PlaylistPageResponse> => {
-  const limit = 10;
-  const offset = (pageParam - 1) * limit;
+// // 팔로우 api이용해서 팔로잉중인 random_id를 받아서 조건으로 가져올 예정
+// export const getFilteredPlaylistCardData = async ({
+//   pageParam = 1,
+//   randomIds,
+// }: {
+//   pageParam?: number;
+//   randomIds: number[];
+// }): Promise<PlaylistPageResponse> => {
+//   const limit = 6;
+//   const offset = (pageParam - 1) * limit;
 
-  if (!randomIds.length) {
-    return { data: [], nextPage: undefined };
-  }
+//   if (!randomIds.length) {
+//     return { data: [], nextPage: undefined };
+//   }
 
-  // Supabase(PostgREST)는 `in` 연산을 `in.(1,2,3)` 형태로 보냄
-  const randomIdFilter = `in.(${randomIds.join(",")})`;
+//   // Supabase(PostgREST)는 `in` 연산을 `in.(1,2,3)` 형태로 보냄
+//   const randomIdFilter = `in.(${randomIds.join(",")})`;
 
-  const res = await axiosInstance.get<PlaylistCardData[]>(
-    "/playlist_card_data",
-    {
-      params: {
-        limit,
-        offset,
-        random_id: randomIdFilter,
-      },
-    },
-  );
+//   const res = await axiosInstance.get<PlaylistCardData[]>(
+//     "/playlist_card_data",
+//     {
+//       params: {
+//         limit,
+//         offset,
+//         random_id: randomIdFilter,
+//       },
+//     },
+//   );
 
-  const data = res.data;
-  const nextPage = data.length === limit ? pageParam + 1 : undefined;
+//   const data = res.data;
+//   const nextPage = data.length === limit ? pageParam + 1 : undefined;
 
-  return { data, nextPage };
-};
+//   return { data, nextPage };
+// };

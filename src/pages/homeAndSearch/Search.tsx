@@ -1,8 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Dropbox from "@/shared/component/Dropbox";
 import Title, { StyledTitle } from "@/shared/component/Title";
-// import { useUserStore } from "@/stores/userStore";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useRef, useCallback } from "react";
 import { getPlaylistCardData, PlaylistCardData } from "@/api/playlistCardData";
 import styled from "@emotion/styled";
 import CommonInput from "@/shared/component/input";
@@ -23,9 +22,7 @@ const Search = () => {
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
 
-  // 로그인 유저 가져오기
-  // const randomId = useUserStore((state) => state.user?.random_id);
-  // console.log("랜덤아이디??", randomId);
+  console.log("📦 useInfiniteQuery로 받은 data: ", data);
 
   // 페이지 전체 데이터 평탄화 + 좋아요 상태 추가
   const playlistCard: (PlaylistCardData & { is_active: boolean })[] =
@@ -52,21 +49,32 @@ const Search = () => {
     });
   }, [playlistCard, sortOrder]);
 
-  // 스크롤 이벤트로 무한스크롤 구현 (Intersection Observer 등도 가능)
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollBottom =
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 100;
+  //IntersectionOvserver 정의
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
-      if (scrollBottom && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    };
+  //마지막 요소 감지하는 ref
+  const lastItemRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isFetchingNextPage) return;
+      if (observerRef.current) observerRef.current.disconnect();
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasNextPage) {
+            fetchNextPage(); // 다음 페이지 요청
+          }
+        },
+        {
+          root: null,
+          rootMargin: "0px",
+          threshold: 1.0, // ✅ 100% 다 보여야 감지됨 (기본값은 0)
+        },
+      );
+
+      if (node) observerRef.current.observe(node);
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage],
+  );
 
   return (
     <>
@@ -88,21 +96,27 @@ const Search = () => {
       <SearchPage className="searchPage">
         <Container>
           <ScrollableList className="scrollableList">
-            {sortedPlaylistCards.map((item) => (
-              <PlaylistCard
-                key={item.p_id}
-                p_id={item.p_id}
-                cover_img_path={item.cover_img_path}
-                playlist_title={item.playlist_title}
-                video_count={item.video_count}
-                user_img={item.user_img}
-                nickname={item.nickname}
-                like_count={item.like_count}
-                comment_count={item.comment_count}
-                is_active={item.is_active}
-                onLikeClick={() => console.log(item.is_active)}
-              />
-            ))}
+            {sortedPlaylistCards.map((item, index) => {
+              const isLast = index === sortedPlaylistCards.length - 1;
+
+              return (
+                <div ref={isLast ? lastItemRef : null} key={item.p_id}>
+                  <PlaylistCard
+                    key={item.p_id}
+                    p_id={item.p_id}
+                    cover_img_path={item.cover_img_path}
+                    playlist_title={item.playlist_title}
+                    video_count={item.video_count}
+                    user_img={item.user_img}
+                    nickname={item.nickname}
+                    like_count={item.like_count}
+                    comment_count={item.comment_count}
+                    is_active={item.is_active}
+                    onLikeClick={() => console.log(item.is_active)}
+                  />
+                </div>
+              );
+            })}
           </ScrollableList>
         </Container>
       </SearchPage>
@@ -114,13 +128,13 @@ export default Search;
 
 const SearchPage = styled.div`
   display: flex;
-  padding: 20px 40px;
   flex-direction: column;
+  padding: 20px 40px;
   align-items: flex-start;
   overflow-y: auto;
 `;
 const Container = styled.div`
-  height: 600px;
+  height: 300px;
 `;
 
 const ScrollableList = styled.div`
