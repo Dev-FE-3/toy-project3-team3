@@ -78,7 +78,7 @@ const Storage = () => {
 
   const handleIconAction = async (action: string, p_id: number) => {
     if (action === "수정하기") {
-      console.log("수정 기능 실행");
+      navigate(`/edit/${p_id}`);
     } else if (action === "삭제하기") {
       setSelectedIdToDelete(p_id);
       setIsModalOpen(true);

@@ -13,9 +13,7 @@ import Loading from "@/shared/component/Loading";
 import VideoItem from "./component/VideoItem";
 import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
-import { useUserStore } from "@/stores/userStore";
 import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
-import { useUploadPlaylist } from "@/pages/playlist/hooks/useUploadPlaylist";
 import { getPlaylistDetail } from "@/api/getPlaylistDetail";
 import { patchPlaylist } from "@/api/playlist";
 import { createVideo, deleteVideosByIds } from "@/api/video";
@@ -29,20 +27,19 @@ const Modify = () => {
   const {
     thumbnailPreview,
     handleThumbnailChange,
+    setThumbnailPreview,
     uploadPlaylistThumbnail,
     uploadVideoThumbnail,
   } = useThumbnail();
 
-  const user = useUserStore((s) => s.user); //store에서 사용자 정보 가져오기
   const [videoUrl, setVideoUrl] = useState("");
   const [videos, setVideos] = useState<Video[]>([]);
-  const [originalVideos] = useState<Video[]>([]);
+  const [originalVideos, setOriginalVideos] = useState<Video[]>([]);
   const [title, setTitle] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"exit" | "delete" | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { refetch, isFetching } = useYoutubeInfo(videoUrl);
-  const { setThumbnailPreview } = useThumbnail();
 
   useEffect(() => {
     lock();
@@ -53,20 +50,20 @@ const Modify = () => {
 
     const fetch = async () => {
       const data = await getPlaylistDetail(Number(playlistId));
-      setTitle(data.playlist_title);
-      setVideos(
-        data.videos.map((v) => ({
-          v_id: v.v_id,
-          title: v.title,
-          playlist_id: v.playlist_id,
-          channel_name: v.channel_name,
-          thumbnail_url: v.thumbnail_url,
-          created_at: v.created_at,
-          video_id: v.video_id,
-          thumbnailFile: undefined, // optional이라 OK
-        })),
-      );
+      const formattedVideos = data.videos.map((v) => ({
+        v_id: v.v_id,
+        title: v.title,
+        playlist_id: v.playlist_id,
+        channel_name: v.channel_name,
+        thumbnail_url: v.thumbnail_url,
+        created_at: v.created_at,
+        video_id: v.video_id,
+        thumbnailFile: undefined,
+      }));
 
+      setTitle(data.playlist_title);
+      setVideos(formattedVideos);
+      setOriginalVideos(formattedVideos);
       setThumbnailPreview(data.cover_img_path);
     };
 
@@ -86,7 +83,7 @@ const Modify = () => {
     setVideos((prev) => [
       ...prev,
       {
-        v_id: -1, // 임시 ID
+        v_id: Date.now() + Math.random(), // ❗ 임시 고유값으로 대체 (아직 DB에 들어가있지 않지만, react에서 구분하기 위해서 사용)
         video_id: video.videoId,
         title: video.title,
         channel_name: video.source,
@@ -116,7 +113,7 @@ const Modify = () => {
   const handleModalConfirm = () => {
     if (modalType === "exit") {
       unlock();
-      navigate("/");
+      navigate("/storage");
     } else if (modalType === "delete" && selectedIndex !== null) {
       handleDelete(selectedIndex);
     }
@@ -125,51 +122,56 @@ const Modify = () => {
     setSelectedIndex(null);
   };
 
-  useUploadPlaylist({
-    userId: user!.random_id,
-    videos: videos.map((v) => ({
-      videoId: v.video_id,
-      title: v.title,
-      source: v.channel_name,
-      thumbnail: v.thumbnail_url,
-      thumbnailFile: v.thumbnailFile,
-    })),
-    uploadPlaylistThumbnail,
-    uploadVideoThumbnail,
-    onSuccess: () => {
-      unlock();
-      navigate("/storage");
-    },
-  });
-
   const handleUpdate = async () => {
     const playlistTitle = title.trim();
     if (!playlistTitle || !playlistId) return;
 
-    const { deleted, added } = diffVideoList(
-      originalVideos.map((v) => ({ ...v, video_id: String(v.video_id) })),
-      videos,
-    );
+    try {
+      const { deleted, added } = diffVideoList(originalVideos, videos);
 
-    await Promise.all([
-      patchPlaylist({
-        p_id: Number(playlistId),
-        playlist_title: playlistTitle,
-      }),
-      deleteVideosByIds(deleted.map((v) => v.v_id!)),
-      createVideo(
-        added.map((v) => ({
-          title: v.title,
-          channel_name: v.channel_name,
-          thumbnail_url: v.thumbnail_url,
-          video_id: v.video_id,
-          playlist_id: Number(playlistId),
-        })),
-      ),
-    ]);
+      // 플리 썸네일 업로드
+      let coverImgUrl = thumbnailPreview;
+      coverImgUrl = await uploadPlaylistThumbnail();
 
-    unlock();
-    navigate("/storage");
+      // 영상 썸네일 업로드
+      const uploadedVideos = await Promise.all(
+        added.map(async (v) => {
+          let thumbnailUrl = v.thumbnail_url;
+          if (v.thumbnailFile) {
+            try {
+              thumbnailUrl = await uploadVideoThumbnail(v.thumbnailFile);
+            } catch (e) {
+              console.error("영상 썸네일 업로드 실패:", e);
+            }
+          }
+          return {
+            title: v.title,
+            channel_name: v.channel_name,
+            thumbnail_url: thumbnailUrl,
+            video_id: v.video_id,
+            playlist_id: Number(playlistId),
+          };
+        }),
+      );
+
+      await Promise.all([
+        patchPlaylist({
+          p_id: Number(playlistId),
+          playlist_title: playlistTitle,
+          video_count: videos.length,
+          cover_img_path: coverImgUrl as string, // ✅ 썸네일도 함께 업데이트
+        }),
+        deleteVideosByIds(deleted.map((v) => v.v_id!)),
+        createVideo(uploadedVideos),
+      ]);
+
+      navigate("/storage");
+    } catch (e) {
+      console.error("수정 실패:", e);
+      alert("수정 중 오류가 발생했습니다.");
+    } finally {
+      unlock();
+    }
   };
 
   return (
@@ -239,7 +241,7 @@ const Modify = () => {
             {isFetching && <Loading />}
             {videos.map((video, index) => (
               <VideoItem
-                key={index}
+                key={video.v_id}
                 thumbnail={video.thumbnail_url}
                 title={video.title}
                 source={video.channel_name}
