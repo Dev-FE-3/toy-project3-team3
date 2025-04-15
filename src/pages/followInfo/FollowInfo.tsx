@@ -1,5 +1,5 @@
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Title from "@/shared/component/Title";
 import CommonInput from "@/shared/component/input";
 import styled from "@emotion/styled";
@@ -9,7 +9,7 @@ import { getUser } from "@/api/users.ts";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "@/shared/component/Loading";
 import Reset from "@/assets/images/reset.svg";
-import debounce from "@/pages/followInfo/utils/debounce";
+import useDebounce from "@/shared/hooks/useDebounce";
 
 interface FollowItem {
   random_id: number;
@@ -52,35 +52,14 @@ const FollowInfo = () => {
   const isLoading = isFollowLoading || isUserLoading;
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState(users);
+  const debouncedSearchTerm = useDebounce(searchTerm, 100);
 
-  // 검색어 변경 → 필터링
-  const handleSearch = useCallback(
-    (value: string) => {
-      if (!value) {
-        setFilteredUsers(users);
-      } else {
-        const filtered = users.filter((user) =>
-          user.nickname?.toLowerCase().includes(value.toLowerCase()),
-        );
-        setFilteredUsers(filtered);
-      }
-    },
-    [users],
-  );
-
-  const debouncedSearch = useMemo(
-    () => debounce(handleSearch, 100),
-    [handleSearch],
-  );
-
-  useEffect(() => {
-    debouncedSearch(searchTerm);
-  }, [searchTerm, debouncedSearch]);
-
-  useEffect(() => {
-    setFilteredUsers(users); // `users`가 변경될 때마다 `filteredUsers` 초기화
-  }, [users]);
+  const filteredUsers = useMemo(() => {
+    if (!debouncedSearchTerm) return users;
+    return users.filter((user) =>
+      user.nickname?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+    );
+  }, [debouncedSearchTerm, users]);
 
   const matchedUsers = filteredUsers.filter((user) =>
     (followList as FollowItem[]).some((f) =>
@@ -114,20 +93,13 @@ const FollowInfo = () => {
             placeholder="사용자를 검색해 주세요."
             width="100%"
             value={searchTerm}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSearchTerm(value);
-              debouncedSearch(value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <ResetButton
             src={Reset}
             alt="검색 초기화"
             visible={searchTerm !== ""}
-            onClick={() => {
-              setSearchTerm("");
-              setFilteredUsers(users);
-            }}
+            onClick={() => setSearchTerm("")}
           />
         </InputContainer>
       </InputWrapper>
