@@ -71,6 +71,8 @@ const Profile = styled.img`
   width: 42px;
   height: 42px;
   border-radius: 50%;
+  object-fit: cover;
+
   cursor: pointer;
   :hover {
     width: 44px;

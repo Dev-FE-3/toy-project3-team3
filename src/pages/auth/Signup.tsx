@@ -50,6 +50,7 @@ const Signup = () => {
       email,
       password,
       random_id: randomId,
+      nickname: String(randomId),
     });
 
     if (insertError) {

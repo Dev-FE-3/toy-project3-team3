@@ -114,6 +114,7 @@ const Label = styled.label<{
 
 const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
   height: 40px;
+  height: 40px;
   width: ${({ labelPosition, width }) =>
     labelPosition === "left" ? width : "100%"};
   border: 1px solid var(--disabled);
@@ -122,6 +123,7 @@ const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
   padding: 0 15px;
   font-size: var(--font-size-primary);
   color: var(--text-primary);
+  box-sizing: border-box;
   box-sizing: border-box;
 
   &:focus {
@@ -147,7 +149,7 @@ const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
 
 const TextArea = styled.textarea<{ width?: string }>`
   height: 60px;
-  width: ${({ width }) => width ?? "228px"};
+  width: ${({ width }) => width ?? "250px"};
   border: 1px solid var(--disabled);
   border-radius: 20px;
   background-color: var(--background-color);
@@ -155,6 +157,7 @@ const TextArea = styled.textarea<{ width?: string }>`
   font-size: var(--font-size-primary);
   color: var(--text-primary);
   resize: none;
+  box-sizing: border-box;
 
   &:focus {
     border: 1px solid var(--primary);
