@@ -13,7 +13,6 @@ export interface Playlist {
 //가져오기
 export async function getPlaylist(): Promise<Playlist[]> {
   const response = await axiosInstance.get<Playlist[]>("/playlist_table");
-  const response = await axiosInstance.get<Playlist[]>("/playlist_table");
   return response.data;
 }
 
