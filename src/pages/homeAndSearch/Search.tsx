@@ -85,24 +85,26 @@ const Search = () => {
         }
       />
 
-      <SearchPage>
-        <ScrollableList>
-          {sortedPlaylistCards.map((item) => (
-            <PlaylistCard
-              key={item.p_id}
-              p_id={item.p_id}
-              cover_img_path={item.cover_img_path}
-              playlist_title={item.playlist_title}
-              video_count={item.video_count}
-              user_img={item.user_img}
-              nickname={item.nickname}
-              like_count={item.like_count}
-              comment_count={item.comment_count}
-              is_active={item.is_active}
-              onLikeClick={() => console.log(item.is_active)}
-            />
-          ))}
-        </ScrollableList>
+      <SearchPage className="searchPage">
+        <Container>
+          <ScrollableList className="scrollableList">
+            {sortedPlaylistCards.map((item) => (
+              <PlaylistCard
+                key={item.p_id}
+                p_id={item.p_id}
+                cover_img_path={item.cover_img_path}
+                playlist_title={item.playlist_title}
+                video_count={item.video_count}
+                user_img={item.user_img}
+                nickname={item.nickname}
+                like_count={item.like_count}
+                comment_count={item.comment_count}
+                is_active={item.is_active}
+                onLikeClick={() => console.log(item.is_active)}
+              />
+            ))}
+          </ScrollableList>
+        </Container>
       </SearchPage>
     </>
   );
@@ -117,9 +119,11 @@ const SearchPage = styled.div`
   align-items: flex-start;
   overflow-y: auto;
 `;
+const Container = styled.div`
+  height: 600px;
+`;
 
 const ScrollableList = styled.div`
-  height: (100% - 120) px;
   overflow-y: auto; // 스크롤은 전체 페이지에서 생기게
   overflow-x: hidden; // 가로 스크롤 제거
   display: flex;

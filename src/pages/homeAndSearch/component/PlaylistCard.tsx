@@ -87,7 +87,7 @@ export default PlaylistCard;
 
 const CardWrapper = styled.div`
   display: flex;
-  width: 519px;
+  width: 510px;
   height: 135px;
   margin-bottom: 15px;
   gap: 15px;
