@@ -5,26 +5,24 @@ import { useMemo, useState, useRef, useCallback } from "react";
 import { getPlaylistCardData, PlaylistCardData } from "@/api/playlistCardData";
 import styled from "@emotion/styled";
 import CommonInput from "@/shared/component/input";
-import PlaylistCard from "./component/PlaylistCard";
+import PlaylistCard from "@/pages/homeAndSearch/component/PlaylistCard";
+import useDebounce from "@/shared/hooks/useDebounce";
+import Reset from "@/assets/images/reset.svg";
 
 const Search = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    // status,
-  } = useInfiniteQuery({
-    queryKey: ["playlistCardData"],
-    queryFn: getPlaylistCardData,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-  });
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebounce(searchInput, 300);
 
-  console.log("📦 useInfiniteQuery로 받은 data: ", data);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["playlistCardData", sortOrder, debouncedSearch],
+      queryFn: ({ pageParam = 1 }) =>
+        getPlaylistCardData(pageParam, sortOrder, debouncedSearch),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => lastPage.nextPage,
+    });
 
-  // 페이지 전체 데이터 평탄화 + 좋아요 상태 추가
   const playlistCard: (PlaylistCardData & { is_active: boolean })[] =
     useMemo(() => {
       if (!data) return [];
@@ -36,23 +34,8 @@ const Search = () => {
       );
     }, [data]);
 
-  // 정렬된 데이터
-  const sortedPlaylistCards = useMemo(() => {
-    return [...playlistCard].sort((a, b) => {
-      if (sortOrder === "최신순") {
-        return (
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-      } else {
-        return b.like_count - a.like_count;
-      }
-    });
-  }, [playlistCard, sortOrder]);
-
-  //IntersectionOvserver 정의
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  //마지막 요소 감지하는 ref
   const lastItemRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (isFetchingNextPage) return;
@@ -67,7 +50,7 @@ const Search = () => {
         {
           root: null,
           rootMargin: "0px",
-          threshold: 1.0, // ✅ 100% 다 보여야 감지됨 (기본값은 0)
+          threshold: 1.0,
         },
       );
 
@@ -82,10 +65,20 @@ const Search = () => {
         leftContent={
           <>
             <StyledTitle>탐색</StyledTitle>
-            <CommonInput
-              placeholder="영상 제목을 검색해주세요."
-              width="200px"
-            />
+            <InputWrapper>
+              <CommonInput
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="키워드를 검색해주세요"
+                width="200px"
+              />
+              <ResetButton
+                src={Reset}
+                alt="검색 초기화"
+                visible={searchInput !== ""}
+                onClick={() => setSearchInput("")}
+              />
+            </InputWrapper>
           </>
         }
         rightContent={
@@ -93,25 +86,15 @@ const Search = () => {
         }
       />
 
-      <SearchPage className="searchPage">
+      <SearchPage>
         <Container>
-          <ScrollableList className="scrollableList">
-            {sortedPlaylistCards.map((item, index) => {
-              const isLast = index === sortedPlaylistCards.length - 1;
-
+          <ScrollableList>
+            {playlistCard.map((item, index) => {
+              const isLast = index === playlistCard.length - 1;
               return (
                 <div ref={isLast ? lastItemRef : null} key={item.p_id}>
                   <PlaylistCard
-                    key={item.p_id}
-                    p_id={item.p_id}
-                    cover_img_path={item.cover_img_path}
-                    playlist_title={item.playlist_title}
-                    video_count={item.video_count}
-                    user_img={item.user_img}
-                    nickname={item.nickname}
-                    like_count={item.like_count}
-                    comment_count={item.comment_count}
-                    is_active={item.is_active}
+                    {...item}
                     onLikeClick={() => console.log(item.is_active)}
                   />
                 </div>
@@ -126,6 +109,22 @@ const Search = () => {
 
 export default Search;
 
+const InputWrapper = styled.div`
+  position: relative;
+  width: 200px;
+`;
+
+const ResetButton = styled.img<{ visible: boolean }>`
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
+`;
+
 const SearchPage = styled.div`
   display: flex;
   flex-direction: column;
@@ -133,13 +132,18 @@ const SearchPage = styled.div`
   align-items: flex-start;
   overflow-y: auto;
 `;
+
 const Container = styled.div`
-  height: 300px;
+  //height: 300px;
+  //height: (100%-600px);
+  //height: calc(100vh-500px);
+  //height: 850px;
+  height: 700px;
 `;
 
 const ScrollableList = styled.div`
-  overflow-y: auto; // 스크롤은 전체 페이지에서 생기게
-  overflow-x: hidden; // 가로 스크롤 제거
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 `;
