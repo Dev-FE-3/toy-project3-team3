@@ -1,8 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "@/shared/Layout.tsx";
 import GlobalStyle from "@/shared/styles/GlobalStyle.tsx";
-import Home from "@/pages/home/Home.tsx";
-import Search from "@/pages/search/Search.tsx";
+import Home from "@/pages/homeAndSearch/Home";
 import Guide from "@/pages/guide/Guide.tsx";
 import Profile from "@/pages/profile/Profile.tsx";
 import ProtectedRoute from "@/shared/component/ProtectedRoute.tsx";
@@ -11,6 +10,7 @@ import Signup from "@/pages/auth/Signup";
 import Create from "@/pages/playlist/Create";
 import Storage from "@/pages/storage/Storage";
 import Play from "@/pages/play/Play";
+import Search from "./pages/homeAndSearch/Search";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +49,10 @@ const router = createBrowserRouter([
         path: "/play",
         element: <Play />,
       },
+      // { 디테일 페이지 만들면 연결시킴
+      //   path: "playlist/:p_id",
+      //   element: <Detail />,
+      // },
     ],
   },
   { path: "/login", element: <Login /> },
