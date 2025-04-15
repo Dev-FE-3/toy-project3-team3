@@ -6,13 +6,18 @@ import { getPlaylistCardData, PlaylistCardData } from "@/api/playlistCardData";
 import styled from "@emotion/styled";
 import CommonInput from "@/shared/component/input";
 import PlaylistCard from "@/pages/homeAndSearch/component/PlaylistCard";
+import useLikedPlaylistIds from "@/pages/homeAndSearch/hooks/useLikedPlaylistIds";
 import useDebounce from "@/shared/hooks/useDebounce";
 import Reset from "@/assets/images/reset.svg";
+import { useUserStore } from "@/stores/userStore";
 
 const Search = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearch = useDebounce(searchInput, 300);
+
+  const currentUser = useUserStore((state) => state.user);
+  const { data: likedIds = [] } = useLikedPlaylistIds(currentUser?.random_id);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
@@ -29,10 +34,10 @@ const Search = () => {
       return data.pages.flatMap((page) =>
         page.data.map((item) => ({
           ...item,
-          is_active: false, // 추후 상태 반영 예정
+          is_active: likedIds.includes(item.p_id),
         })),
       );
-    }, [data]);
+    }, [data, likedIds]);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -70,7 +75,7 @@ const Search = () => {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="키워드를 검색해주세요"
-                width="200px"
+                width="250px"
               />
               <ResetButton
                 src={Reset}

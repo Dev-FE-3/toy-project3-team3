@@ -5,10 +5,15 @@ import { useMemo, useState, useRef, useCallback } from "react";
 
 import useHomeFeedPlaylists from "./hooks/useHomeFeedPlaylists";
 import PlaylistCard from "@/pages/homeAndSearch/component/PlaylistCard";
+import useLikedPlaylistIds from "@/pages/homeAndSearch/hooks/useLikedPlaylistIds";
 import Loading from "@/shared/component/Loading";
+import { useUserStore } from "@/stores/userStore";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
+
+  const randomId = useUserStore((state) => state.user?.random_id);
+  const { data: likedIds = [] } = useLikedPlaylistIds(randomId);
 
   const {
     playlists,
@@ -18,8 +23,15 @@ const Home = () => {
     hasNextPage,
   } = useHomeFeedPlaylists();
 
+  const playlistWithLikeState = useMemo(() => {
+    return playlists.map((item) => ({
+      ...item,
+      is_active: likedIds.includes(item.p_id),
+    }));
+  }, [playlists, likedIds]);
+
   const sortedPlaylistCards = useMemo(() => {
-    return [...playlists].sort((a, b) => {
+    return [...playlistWithLikeState].sort((a, b) => {
       if (sortOrder === "최신순") {
         return (
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -28,7 +40,7 @@ const Home = () => {
         return b.like_count - a.like_count;
       }
     });
-  }, [playlists, sortOrder]);
+  }, [playlistWithLikeState, sortOrder]);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
   const lastItemRef = useCallback(
@@ -56,27 +68,29 @@ const Home = () => {
         }
       />
       <HomePage>
-        <Container>
-          <ScrollableList>
-            {isLoading || isFetchingNextPage ? (
-              <Loading />
-            ) : sortedPlaylistCards.length === 0 ? (
-              <EmptyMessage>팔로우한 유저가 없습니다 🥲</EmptyMessage>
-            ) : (
-              sortedPlaylistCards.map((item, index) => {
+        <Container isEmpty={sortedPlaylistCards.length === 0}>
+          {isLoading ? (
+            <Loading />
+          ) : sortedPlaylistCards.length === 0 ? (
+            <EmptyMessage>
+              관심 있는 이용자를 팔로우하여 <br />
+              나만의 타임라인을 구성하세요 😄
+            </EmptyMessage>
+          ) : (
+            <ScrollableList>
+              {sortedPlaylistCards.map((item, index) => {
                 const isLast = index === sortedPlaylistCards.length - 1;
                 return (
                   <div ref={isLast ? lastItemRef : null} key={item.p_id}>
                     <PlaylistCard
                       {...item}
-                      is_active={false}
                       onLikeClick={() => console.log(item.p_id)}
                     />
                   </div>
                 );
-              })
-            )}
-          </ScrollableList>
+              })}
+            </ScrollableList>
+          )}
         </Container>
       </HomePage>
     </>
@@ -94,12 +108,12 @@ const HomePage = styled.div`
   height: 700px;
 `;
 
-const Container = styled.div`
-  //height: 300px;
-  //height: (100%-600px);
-  //height: calc(100vh-500px);
-  //height: 850px;
+const Container = styled.div<{ isEmpty?: boolean }>`
   height: 700px;
+  width: 100%;
+  display: ${({ isEmpty }) => (isEmpty ? "flex" : "block")};
+  justify-content: center;
+  align-items: center;
 `;
 
 const ScrollableList = styled.div`
@@ -110,7 +124,13 @@ const ScrollableList = styled.div`
 `;
 
 const EmptyMessage = styled.div`
-  font-size: 16px;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-size-subtitle);
   color: var(--text-secondary);
-  margin-top: 40px;
+  margin: 0 auto;
+  line-height: normal;
 `;
