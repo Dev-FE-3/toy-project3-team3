@@ -25,7 +25,7 @@ interface IconDropdownProps extends CommonProps {
 type DropboxProps = TextDropdownProps | IconDropdownProps;
 
 const Dropbox: React.FC<DropboxProps> = (props) => {
-  const { variant, onChange, iconSize = 12 } = props;
+  const { variant, onChange, iconSize = 14 } = props;
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

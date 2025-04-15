@@ -41,3 +41,25 @@ export async function deleteAllUser(): Promise<User[]> {
   const response = await axiosInstance.delete<User[]>("/user_table");
   return response.data;
 }
+
+// 닉네임 중복 체크
+export const isNicknameDuplicated = async (nickname: string) => {
+  const { data } = await axiosInstance.get("/user_table", {
+    params: {
+      nickname: `eq.${nickname}`,
+      select: "id",
+    },
+  });
+  return data.length > 0; // 하나라도 있으면 중복
+};
+
+// 랜덤 아이디로 유저 찾기
+export async function getUserByRandomId(
+  randomId: number,
+): Promise<User | null> {
+  const response = await axiosInstance.get<User[]>(
+    `/user_table?random_id=eq.${randomId}`,
+  );
+
+  return response.data.length > 0 ? response.data[0] : null;
+}

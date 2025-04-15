@@ -1,4 +1,3 @@
-// src/api/services/getCurrentUser.ts
 import { getUser } from "@/api/users";
 import { User } from "@/api/users";
 import { supabase } from "@/lib/supabase";
@@ -25,7 +24,7 @@ const getCurrentUser = async (): Promise<User> => {
     throw new Error("user_table에서 해당 유저를 찾을 수 없습니다");
   }
 
-  // 👇 authUserId를 포함해서 리턴
+  // authUserId를 포함해서 리턴
   return currentUser;
 };
 

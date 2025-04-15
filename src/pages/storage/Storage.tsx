@@ -5,222 +5,238 @@ import Button from "@/shared/component/Button";
 import { useState } from "react";
 import Like from "@/assets/images/like.svg";
 import Comment from "@/assets/images/comment.svg";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import useOtherUser from "@/api/services/useOtherUser";
+import useFollowCount from "@/api/services/useFollowCount";
+import Loading from "@/shared/component/Loading";
+import { useUserStore } from "@/stores/userStore";
+import useFollowStatus from "@/pages/followInfo/hooks/useFollowStatus";
+import useLikedPlaylists from "@/api/services/useLikedPlaylists";
+import useMyPlaylists from "@/api/services/useMyPlaylists";
+import backgroundImage from "@/assets/images/backGround.png";
+import Dropbox from "@/shared/component/Dropbox";
+import Modal from "@/shared/component/Modal";
+import { softDeletePlaylist } from "@/api/playlist";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { getMyLikedPlaylistIds } from "@/api/like";
+import { ReactSVG } from "react-svg";
 
 const Storage = () => {
   const [activeTab, setActiveTab] = useState<"left" | "right">("left");
+  const { randomId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const currentUser = useUserStore((state) => state.user);
+  const { data: otherUser } = useOtherUser(Number(randomId));
+  const isMyPage = currentUser?.random_id === Number(randomId);
+  const targetId = isMyPage ? currentUser?.random_id : otherUser?.random_id;
+  const targetUser = isMyPage ? currentUser : otherUser;
+  const userData = targetUser;
+
+  const { followerCount, followingCount } = useFollowCount(targetId);
+  const { data: myPlaylists = [], isLoading: isMyPlaylistsLoading } =
+    useMyPlaylists(targetId);
+
+  const { likedPlaylists = [], isLoading: isLikedPlaylistsLoading } =
+    useLikedPlaylists(targetId);
+
+  const { data: likedIds = [] } = useQuery({
+    queryKey: ["myLikedIds", currentUser?.random_id],
+    queryFn: () => getMyLikedPlaylistIds(currentUser!.random_id),
+    enabled: !!currentUser?.random_id,
+  });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [selectedIdToDelete, setSelectedIdToDelete] = useState<number | null>(
+    null,
+  );
+
+  const {
+    isFollowing,
+    handleFollow,
+    handleUnfollow,
+    isLoading: isFollowLoading,
+    isFollowPending,
+    isUnfollowPending,
+  } = useFollowStatus(targetId);
+
+  const getProfileImageUrl = (userImg?: string | null) => {
+    if (!userImg) return defaultProfile;
+    return userImg;
+  };
+
+  const handleNavigate = (tab: "follower" | "following") => {
+    navigate(`/storage/${randomId}/follow-info?tab=${tab}`);
+  };
+
+  if (!targetUser || isFollowLoading) return <Loading />;
+
+  const isProfilePage = location.pathname === "/profile";
+
+  const handleIconAction = async (action: string, p_id: number) => {
+    if (action === "수정하기") {
+      console.log("수정 기능 실행");
+    } else if (action === "삭제하기") {
+      setSelectedIdToDelete(p_id);
+      setIsModalOpen(true);
+    }
+  };
 
   return (
     <>
-      <Title title="보관함" />
+      {isMyPage ? (
+        <Title title="보관함" />
+      ) : (
+        <Title title="보관함" showBackButton />
+      )}
+
       <ProfileWrapper>
         <ProfileCardTop>
-          <ImageArea src={defaultProfile} />
+          <ImageArea src={getProfileImageUrl(userData?.user_img)} />
           <ProfileInfo>
-            <NickName>내 계정</NickName>
+            <NickName>{userData?.nickname}</NickName>
             <InfoItemWrapper>
-              <InfoItem>
-                <InfoCount>6</InfoCount>
-                <InfoLabel>팔로우</InfoLabel>
+              <InfoItem onClick={() => handleNavigate("follower")}>
+                <InfoCount>{followerCount}</InfoCount>
+                <InfoLabel>팔로워</InfoLabel>
               </InfoItem>
-              <InfoItem>
-                <InfoCount>30</InfoCount>
+              <InfoItem onClick={() => handleNavigate("following")}>
+                <InfoCount>{followingCount}</InfoCount>
                 <InfoLabel>팔로잉</InfoLabel>
               </InfoItem>
               <InfoItem>
-                <InfoCount>6</InfoCount>
+                <InfoCount>{myPlaylists.length}</InfoCount>
                 <InfoLabel>리스트</InfoLabel>
               </InfoItem>
             </InfoItemWrapper>
-            <Button
-              size="small"
-              btnColor="pink"
-              onClick={() => console.log("중간 버튼 클릭됨")}
-            >
-              프로필 수정
-            </Button>
+            {isMyPage ? (
+              !isProfilePage && (
+                <Button size="small" onClick={() => navigate("/profile")}>
+                  프로필 수정
+                </Button>
+              )
+            ) : (
+              <Button
+                size="small"
+                btnColor={isFollowing ? "white" : "pink"}
+                onClick={() => {
+                  if (!currentUser?.random_id || !targetId) return;
+                  if (isFollowing) {
+                    handleUnfollow();
+                  } else {
+                    handleFollow();
+                  }
+                }}
+                disabled={
+                  isFollowPending ||
+                  isUnfollowPending ||
+                  !currentUser?.random_id ||
+                  !targetId
+                }
+              >
+                {isFollowPending || isUnfollowPending
+                  ? "처리 중..."
+                  : isFollowing
+                    ? "팔로잉"
+                    : "팔로우"}
+              </Button>
+            )}
           </ProfileInfo>
         </ProfileCardTop>
         <ProfileCardBottom>
-          <BioArea>아이돌 좋아</BioArea>
-          <HashTagArea>#에스파</HashTagArea>
+          <BioArea>{userData?.sort_intro}</BioArea>
+          <HashTagArea>{userData?.artist_hash_tag}</HashTagArea>
         </ProfileCardBottom>
       </ProfileWrapper>
       <TabMenu>
         <TabLeft
-          isActive={activeTab === "left"} // 상태에 따라 스타일 변경
+          isActive={activeTab === "left"}
           onClick={() => setActiveTab("left")}
         >
           리스트
         </TabLeft>
         <TabRight
-          isActive={activeTab === "right"} // 상태에 따라 스타일 변경
+          isActive={activeTab === "right"}
           onClick={() => setActiveTab("right")}
         >
           하트
         </TabRight>
       </TabMenu>
       <PlaylistArea>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
-        <VideoWrapper>
-          <VideoArea />
-          <Meta>
-            <DetailArea>
-              <Count>동영상 5개</Count>
-              <IconGroup>
-                <span className="Like">
-                  <img src={Like} alt="좋아요" /> 50
-                </span>
-                <span className="Comment">
-                  <img src={Comment} alt="댓글" /> 235
-                </span>
-              </IconGroup>
-            </DetailArea>
-            <VideoTitle>
-              보이넥스트도어 동영상 제목 입니다. 제목이 길죠? 제목이 더 길면
-              어떨까요...
-            </VideoTitle>
-          </Meta>
-        </VideoWrapper>
+        {(activeTab === "left" ? myPlaylists : likedPlaylists)?.map((item) => {
+          const isLiked = likedIds.includes(item.p_id);
+
+          return (
+            <VideoWrapper key={item.p_id}>
+              <VideoArea src={item.cover_img_path || backgroundImage} />
+              <Meta>
+                <DetailArea>
+                  <Count>동영상 {item.video_count}개</Count>
+                  <IconGroup>
+                    <span className="like">
+                      <ReactSVG
+                        src={Like}
+                        wrapper="span"
+                        className={`likeSvg ${isLiked ? "active" : "inactive"}`}
+                      />
+                      {item.like_count}
+                    </span>
+
+                    <span className="Comment">
+                      <img src={Comment} alt="댓글" />
+                      {item.comment_count}
+                    </span>
+                    {isMyPage &&
+                      activeTab === "left" &&
+                      item.random_id === currentUser?.random_id && (
+                        <Dropbox
+                          variant="icon"
+                          onChange={(action) =>
+                            handleIconAction(action, item.p_id)
+                          }
+                        />
+                      )}
+                  </IconGroup>
+                </DetailArea>
+                <VideoTitle>{item.playlist_title}</VideoTitle>
+              </Meta>
+            </VideoWrapper>
+          );
+        })}
+
+        {(activeTab === "left" && isMyPlaylistsLoading) ||
+        (activeTab === "right" && isLikedPlaylistsLoading) ? (
+          <Loading />
+        ) : null}
       </PlaylistArea>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setSelectedIdToDelete(null);
+          setIsModalOpen(false);
+        }}
+        onConfirm={async () => {
+          if (selectedIdToDelete !== null) {
+            try {
+              await softDeletePlaylist(selectedIdToDelete);
+              await queryClient.invalidateQueries({
+                queryKey: ["myPlaylists"],
+              });
+              setSelectedIdToDelete(null);
+              setIsModalOpen(false);
+            } catch (error) {
+              console.error("삭제 실패", error);
+            }
+          }
+        }}
+        message="플레이리스트를 삭제하시겠습니까?"
+        leftButtonText="아니오"
+        rightButtonText="네"
+      />
     </>
   );
 };
@@ -235,13 +251,15 @@ const ProfileWrapper = styled.div`
 
 const ProfileCardTop = styled.div`
   display: flex;
-  padding: 18px 40px;
+  padding: 18px 20px;
   gap: 100px;
 `;
 
 const ImageArea = styled.img`
   width: 165px;
   height: 165px;
+  border-radius: 50%;
+  object-fit: cover;
 `;
 
 const ProfileInfo = styled.div`
@@ -323,7 +341,7 @@ const TabLeft = styled.div<{ isActive: boolean }>`
       ? `3px solid var(--primary)`
       : `3px solid var(--disabled-2)`};
   color: ${(props) =>
-    props.isActive ? `var(--primary)` : `var(--disabled-2)`};
+    props.isActive ? `var(--primary)` : `var(--text-primary)`};
   &:hover {
     background-color: var(--profile-background);
     transition: background-color 0.3s ease-in-out;
@@ -406,6 +424,21 @@ const IconGroup = styled.div`
     img {
       width: 14px;
       height: 14px;
+    }
+    .likeSvg svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+      color: var(--text-secondary); /* 기본 회색 */
+    }
+
+    .likeSvg.active svg {
+      color: var(--primary); /* 좋아요 눌렀을 때 */
+    }
+
+    .likeSvg.inactive svg {
+      stroke: var(--text-secondary); /* 비활성 테두리 */
+      fill: none; /* 비활성 내부는 비워둠 */
     }
   }
 `;

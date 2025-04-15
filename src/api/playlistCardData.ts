@@ -18,7 +18,7 @@ export interface PlaylistCardData {
   comment_count: number;
 }
 
-interface PlaylistPageResponse {
+export interface PlaylistPageResponse {
   data: PlaylistCardData[];
   nextPage?: number;
 }
