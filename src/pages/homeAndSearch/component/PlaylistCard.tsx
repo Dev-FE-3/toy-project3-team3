@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
 import { ReactSVG } from "react-svg";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import likeIcon from "@/assets/images/Like.svg";
 import commentIcon from "@/assets/images/comment.svg";
 import backgroundImage from "@/assets/images/backGround.png";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
+// import { useUserStore } from "@/stores/userStore";
 
 interface Props {
   p_id: number;
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const PlaylistCard = ({
+  p_id,
   cover_img_path,
   playlist_title,
   video_count,
@@ -31,24 +33,26 @@ const PlaylistCard = ({
   is_active,
   onLikeClick,
 }: Props) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const handleGoToDetail = () => {
-  //   navigate(`/playlist/${p_id}`);
-  // };
+  // 로그인 유저 가져오기
+  // const randomId = useUserStore((state) => state.user?.random_id);
+  const handleGoToStorage = () => {
+    console.log("만든 사람 보관함으로 이동시키기");
+  };
 
   return (
     <CardWrapper>
-      {/* <Thumbnail onClick={handleGoToDetail}> */}
-      <Thumbnail>
+      <Thumbnail onClick={() => navigate(`/playlist/${p_id}`)}>
         <ThumbnailImg src={cover_img_path || backgroundImage} />
       </Thumbnail>
 
       <Description>
         <TitleAndCreatorWrapper>
-          {/* <PlayListTitle onClick={handleGoToDetail}> */}
-          <PlayListTitle>{playlist_title}</PlayListTitle>
-          <CreatorInfo>
+          <PlayListTitle onClick={() => navigate(`/playlist/${p_id}`)}>
+            {playlist_title}
+          </PlayListTitle>
+          <CreatorInfo onClick={handleGoToStorage}>
             <div className="profileImg">
               <img
                 src={user_img || defaultProfile}
