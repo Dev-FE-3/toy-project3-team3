@@ -1,47 +1,47 @@
-import { QueryFunctionContext } from "@tanstack/react-query";
-import axiosInstance from "./axiosInstance";
+// import { QueryFunctionContext } from "@tanstack/react-query";
+// import axiosInstance from "./axiosInstance";
 
-export interface PlaylistCardData {
-  p_id: number;
-  video_count: number;
-  cover_img_path: string;
-  playlist_title: string;
-  is_delete: boolean;
-  created_at: string;
+// export interface PlaylistCardData {
+//   p_id: number;
+//   video_count: number;
+//   cover_img_path: string;
+//   playlist_title: string;
+//   is_delete: boolean;
+//   created_at: string;
 
-  random_id: number;
-  nickname: string;
-  user_img: string;
+//   random_id: number;
+//   nickname: string;
+//   user_img: string;
 
-  // is_active: boolean;
-  like_count: number;
-  comment_count: number;
-}
+//   // is_active: boolean;
+//   like_count: number;
+//   comment_count: number;
+// }
 
-export interface PlaylistPageResponse {
-  data: PlaylistCardData[];
-  nextPage?: number;
-}
+// export interface PlaylistPageResponse {
+//   data: PlaylistCardData[];
+//   nextPage?: number;
+// }
 
-// 전체 플레이리스트 카드 + 무한스크롤
-export const getPlaylistCardData = async (
-  context?: QueryFunctionContext,
-): Promise<PlaylistPageResponse> => {
-  const pageParam = (context?.pageParam as number) ?? 1;
-  const limit = 3;
-  const offset = (pageParam - 1) * limit;
+// // 전체 플레이리스트 카드 + 무한스크롤
+// export const getPlaylistCardData = async (
+//   context?: QueryFunctionContext,
+// ): Promise<PlaylistPageResponse> => {
+//   const pageParam = (context?.pageParam as number) ?? 1;
+//   const limit = 3;
+//   const offset = (pageParam - 1) * limit;
 
-  const res = await axiosInstance.get("/playlist_card_data", {
-    params: { limit, offset },
-  });
+//   const res = await axiosInstance.get("/playlist_card_data", {
+//     params: { limit, offset },
+//   });
 
-  const data = res.data;
-  const nextPage = data.length === limit ? pageParam + 1 : undefined;
+//   const data = res.data;
+//   const nextPage = data.length === limit ? pageParam + 1 : undefined;
 
-  console.log("11data:::", data, "nextPage:::", nextPage);
+//   console.log("11data:::", data, "nextPage:::", nextPage);
 
-  return { data, nextPage };
-};
+//   return { data, nextPage };
+// };
 
 // // 팔로우 api이용해서 팔로잉중인 random_id를 받아서 조건으로 가져올 예정
 // export const getFilteredPlaylistCardData = async ({
@@ -77,3 +77,29 @@ export const getPlaylistCardData = async (
 
 //   return { data, nextPage };
 // };
+
+import axiosInstance from "@/api/axiosInstance";
+
+export interface playlistCardData {
+  p_id: number;
+  video_count: number;
+  cover_img_path: string;
+  playlist_title: string;
+  is_delete: boolean;
+  created_at: string;
+
+  random_id: number;
+  nickname: string;
+  user_img: string;
+
+  is_active: boolean;
+  like_count: number;
+  comment_count: number;
+}
+
+export async function getPlaylistCardData(): Promise<playlistCardData[]> {
+  const res = await axiosInstance.get<playlistCardData[]>(
+    "/playlist_card_data",
+  );
+  return res.data;
+}
