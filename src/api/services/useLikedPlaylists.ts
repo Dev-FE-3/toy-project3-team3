@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPlaylistCardData } from "@/api/playlistCardData";
+import { getAllPlaylistCardData } from "@/api/playlistCardData";
 import { getMyLikedPlaylistIds } from "@/api/like";
 import { useMemo } from "react";
 
 const useLikedPlaylists = (randomId?: number) => {
   const { data: allPlaylists = [], ...restPlaylists } = useQuery({
     queryKey: ["allPlaylists"],
-    queryFn: getPlaylistCardData,
+    queryFn: getAllPlaylistCardData,
   });
 
   const { data: likedIds = [], ...restLikes } = useQuery({

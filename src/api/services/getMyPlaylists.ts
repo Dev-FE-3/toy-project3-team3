@@ -1,11 +1,11 @@
 import axiosInstance from "@/api/axiosInstance";
-import { playlistCardData } from "@/api/playlistCardData";
+import { PlaylistCardData } from "@/api/playlistCardData";
 
 // 내가 만든 플레이리스트
 export async function getMyPlaylists(
   randomId: number,
-): Promise<playlistCardData[]> {
-  const { data } = await axiosInstance.get<playlistCardData[]>(
+): Promise<PlaylistCardData[]> {
+  const { data } = await axiosInstance.get<PlaylistCardData[]>(
     "/playlist_card_data",
     {
       params: {
