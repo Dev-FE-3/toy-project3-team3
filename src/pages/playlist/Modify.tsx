@@ -134,10 +134,6 @@ const Modify = () => {
       unlock();
       navigate("/storage");
     },
-    onError: (error) => {
-      console.error("수정 실패:", error);
-      unlock();
-    },
   });
 
   return (
