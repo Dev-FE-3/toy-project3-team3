@@ -6,7 +6,6 @@ import likeIcon from "@/assets/images/Like.svg";
 import commentIcon from "@/assets/images/comment.svg";
 import backgroundImage from "@/assets/images/backGround.png";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
-// import { useUserStore } from "@/stores/userStore";
 
 interface Props {
   p_id: number;
@@ -18,7 +17,7 @@ interface Props {
   like_count: number;
   comment_count: number;
   is_active: boolean;
-  onLikeClick: () => void;
+  random_id: number;
 }
 
 const PlaylistCard = ({
@@ -31,14 +30,12 @@ const PlaylistCard = ({
   like_count,
   comment_count,
   is_active,
-  onLikeClick,
+  random_id,
 }: Props) => {
   const navigate = useNavigate();
 
-  // 로그인 유저 가져오기
-  // const randomId = useUserStore((state) => state.user?.random_id);
   const handleGoToStorage = () => {
-    console.log("만든 사람 보관함으로 이동시키기");
+    navigate(`/storage/${random_id}`);
   };
 
   return (
@@ -72,7 +69,6 @@ const PlaylistCard = ({
                 src={likeIcon}
                 wrapper="span"
                 className={`likeSvg ${is_active ? "active" : "inactive"}`}
-                onClick={onLikeClick}
               />
               {like_count}
             </span>

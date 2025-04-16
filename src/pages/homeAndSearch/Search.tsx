@@ -98,10 +98,7 @@ const Search = () => {
               const isLast = index === playlistCard.length - 1;
               return (
                 <div ref={isLast ? lastItemRef : null} key={item.p_id}>
-                  <PlaylistCard
-                    {...item}
-                    onLikeClick={() => console.log(item.is_active)}
-                  />
+                  <PlaylistCard {...item} />
                 </div>
               );
             })}
