@@ -18,7 +18,8 @@ import { useParams } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleVideoFromPlaylist } from "@/api/playlistFullView";
-// import { getPlaylistFullView, PlaylistFullView } from "@/api/playlistFullView";
+import { usePlaylistMeta } from "@/shared/hooks/usePlaylistMeta";
+import { ReactSVG } from "react-svg";
 
 const Play = () => {
   const [commentText, setCommentText] = useState("");
@@ -27,6 +28,7 @@ const Play = () => {
   const playlistId = Number(p_id);
   const videoId = video_id ?? ""; // ❗ undefined인 경우 빈 문자열로 대체
   const user = useUserStore((state) => state.user);
+  const { isLiked, likeCount, commentCount } = usePlaylistMeta(playlistId);
 
   const queryClient = useQueryClient();
 
@@ -100,10 +102,15 @@ const Play = () => {
         </ProfileWrapper>
         <IconGroup>
           <span className="like">
-            <img src={Like} alt="좋아요" /> 50
+            <ReactSVG
+              src={Like}
+              wrapper="span"
+              className={`likeSvg ${isLiked ? "active" : "inactive"}`}
+            />
+            <span>{likeCount}</span>
           </span>
           <span className="comment">
-            <img src={commentIcon} alt="댓글" /> 235
+            <img src={commentIcon} alt="댓글" /> {commentCount}
           </span>
         </IconGroup>
       </Meta>
@@ -168,7 +175,16 @@ const VideoWrapper = styled.div`
 const VideoTitle = styled.span`
   font-size: var(--font-size-subtitle);
   font-weight: 500;
-  margin-left: 50px;
+  margin: 0 50px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  word-break: break-word;
+  white-space: normal;
 `;
 
 // 하단 프로필, 좋아요, 댓글 수 담는 박스 - 내용은 space between!
@@ -203,20 +219,65 @@ const ProfileName = styled.span`
 // 우측 정렬할 아이콘 그룹
 const IconGroup = styled.div`
   display: flex;
-  gap: 10px;
-  color: var(--text-secondary);
+  gap: 20px;
+  align-items: center;
 
-  span {
+  .like,
+  .comment {
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     gap: 4px;
+  }
 
-    img {
-      width: 28px;
-      height: 28px;
-    }
+  /* 활성화된 좋아요 스타일 */
+  .likeSvg.active svg {
+    color: var(--primary); /* 활성화 시 컬러 */
+    stroke: none;
+    fill: var(--primary); /* 내부도 채우기 */
+  }
+
+  /* 비활성화된 좋아요 스타일 (명시적 처리) */
+  .likeSvg.inactive svg {
+    color: var(--text-secondary);
+    stroke: var(--text-secondary);
+    fill: none;
+  }
+
+  .comment img {
+    width: 28px;
+    height: 28px;
+    display: block;
   }
 `;
+
+// const IconGroup = styled.div`
+//   display: flex;
+//   gap: 10px;
+//   color: var(--text-secondary);
+
+//   span {
+//     display: flex;
+//     align-items: center;
+//     gap: 4px;
+
+//     img {
+//       width: 28px;
+//       height: 28px;
+//       filter: grayscale(100%); // 기본 상태: 흐리게
+//       transition:
+//         filter 0.2s ease,
+//         transform 0.2s ease;
+//     }
+
+//     img.liked {
+//       filter: none; // 좋아요 눌렀을 때는 원래 색상
+//       transform: scale(1.1); // 약간 커지게 (선택)
+//     }
+//   }
+// `;
+
 
 // 내가 쓸 댓글 부분 wrapper
 const CommentWriteWrapper = styled.div`
