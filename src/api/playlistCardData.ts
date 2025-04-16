@@ -18,11 +18,25 @@ export interface PlaylistCardData {
   comment_count: number;
 }
 
-interface PlaylistPageResponse {
+export interface PlaylistPageResponse {
   data: PlaylistCardData[];
   nextPage?: number;
 }
 
+export async function getAllPlaylistCardData(): Promise<PlaylistCardData[]> {
+  const res = await axiosInstance.get<PlaylistCardData[]>(
+    "/playlist_card_data",
+    {
+      params: {
+        is_delete: "eq.false",
+      },
+    },
+  );
+
+  return res.data;
+}
+
+// 전체 플레이리스트 카드 + 무한스크롤
 export const getPlaylistCardData = async (
   pageParam: number = 1,
   sortOrder: string = "최신순",

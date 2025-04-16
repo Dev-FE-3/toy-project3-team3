@@ -7,14 +7,14 @@ import useProfileImage from "@/shared/hooks/useProfileImage";
 import Dropbox from "@/shared/component/Dropbox";
 import Title from "@/shared/component/Title";
 import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
-import useUser from "@/shared/hooks/useUser.ts";
 import Cancel from "@/assets/images/cancel.svg";
 import Modal from "@/shared/component/Modal";
 import { useNavigate } from "react-router-dom";
 import useLockStore from "@/stores/lockStore";
-import Loading from "@/shared/component/Loading";
 import useUploadDeleteProfileImage from "./hooks/useUploadDeleteProfileImage";
 import { toast } from "react-toastify";
+import { useUserStore } from "@/stores/userStore";
+import { isNicknameDuplicated } from "@/api/users";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Profile = () => {
     artist_hash_tag: "",
   });
 
-  const { user, isLoading: isUserLoading, isError: isUserError } = useUser(); // 유저 정보
+  const user = useUserStore((state) => state.user);
   const { profileImage, refetch: refetchImage } = useProfileImage(); // 프로필 이미지 fetch
 
   const imageMutation = useUploadDeleteProfileImage(refetchImage);
@@ -82,16 +82,24 @@ const Profile = () => {
     setProfileData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!user?.id) return;
+
+    // 닉네임 중복 체크
+    if (profileData.nickname !== user.nickname) {
+      const isDuplicate = await isNicknameDuplicated(profileData.nickname);
+      if (isDuplicate) {
+        toast.error("이미 사용 중인 닉네임입니다.");
+        return;
+      }
+    }
+
     updateMutation.mutate({
       id: user.id,
       updatedFields: profileData,
     });
   };
 
-  if (isUserLoading) return <Loading />;
-  if (isUserError) return toast.error("유저 정보를 불러오지 못 했습니다.");
   if (!user) return toast.error("유저 정보가 존재하지 않습니다.");
 
   return (
@@ -138,7 +146,7 @@ const Profile = () => {
             labelPosition="left"
             value={profileData.nickname}
             onChange={handleInputChange}
-            width="218px"
+            width="250px"
             isReadOnly={!isEditing}
           />
           <CommonInput
@@ -147,7 +155,7 @@ const Profile = () => {
             labelPosition="left"
             value={user?.email ?? ""}
             onChange={() => {}}
-            width="218px"
+            width="250px"
             isReadOnly
           />
           <CommonInput
@@ -160,16 +168,46 @@ const Profile = () => {
             onChange={handleInputChange}
             isReadOnly={!isEditing}
           />
-          <CommonInput
-            id="artist_hash_tag"
-            label="관심 아티스트"
-            placeholder="관심 아티스트를 입력해 주세요."
-            labelPosition="left"
-            isTextarea
-            value={profileData.artist_hash_tag}
-            onChange={handleInputChange}
-            isReadOnly={!isEditing}
-          />
+          {isEditing ? (
+            <CommonInput
+              id="artist_hash_tag"
+              label="관심 아티스트"
+              placeholder="관심 아티스트를 입력해 주세요."
+              labelPosition="left"
+              isTextarea
+              value={profileData.artist_hash_tag}
+              onChange={handleInputChange}
+              isReadOnly={false}
+            />
+          ) : (
+            <div
+              style={{ display: "flex", gap: "50px", alignItems: "flex-start" }}
+            >
+              <label
+                style={{
+                  minWidth: "110px",
+                  fontWeight: "bold",
+                  fontSize: "var(--font-size-large)",
+                  color: "var(--text-primary)",
+                  textAlign: "right",
+                  marginTop: "10px",
+                }}
+              >
+                관심 아티스트
+              </label>
+              <StyledReadOnlyTag>
+                {profileData.artist_hash_tag.split(" ").map((word, idx) =>
+                  word.startsWith("#") ? (
+                    <span className="hashtag" key={idx}>
+                      {word + " "}
+                    </span>
+                  ) : (
+                    word + " "
+                  ),
+                )}
+              </StyledReadOnlyTag>
+            </div>
+          )}
         </FormWrapper>
       </ProfileDataWrapper>
       <ButtonWrapper>
@@ -250,4 +288,35 @@ const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 18px;
+`;
+
+const StyledReadOnlyTag = styled.div`
+  width: 250px;
+  min-height: 60px;
+  padding: 5px 5px;
+  border-radius: 20px;
+  background-color: transparent;
+  color: var(--text-primary);
+  font-size: var(--font-size-primary);
+  border: 1px solid transparent;
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  span.hashtag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--primary);
+    color: white;
+
+    height: 26px;
+    padding: 0 10px;
+    margin-right: 6px;
+
+    border-radius: 999px; /* pill 모양 */
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1;
+  }
 `;
