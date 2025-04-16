@@ -148,7 +148,17 @@ const Storage = () => {
         </ProfileCardTop>
         <ProfileCardBottom>
           <BioArea>{userData?.sort_intro}</BioArea>
-          <HashTagArea>{userData?.artist_hash_tag}</HashTagArea>
+          <HashTagArea>
+            {userData?.artist_hash_tag?.split(" ").map((word, i) =>
+              word.startsWith("#") ? (
+                <span key={i} className="hashtag">
+                  {word}
+                </span>
+              ) : (
+                <span key={i}> {word} </span>
+              ),
+            )}
+          </HashTagArea>
         </ProfileCardBottom>
       </ProfileWrapper>
       <TabMenu>
@@ -246,7 +256,7 @@ export default Storage;
 const ProfileWrapper = styled.div`
   width: 600px;
   height: 280px;
-  padding: 10px 40px 10px 40px;
+  padding: 0px 40px;
 `;
 
 const ProfileCardTop = styled.div`
@@ -301,11 +311,11 @@ const InfoLabel = styled.span`
 `;
 
 const ProfileCardBottom = styled.div`
-  margin-top: 13px;
+  margin-top: 10px;
   margin-left: 8px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 `;
 
 const BioArea = styled.span`
@@ -315,10 +325,33 @@ const BioArea = styled.span`
   line-height: 18px;
 `;
 
-const HashTagArea = styled.span`
-  font-size: var(--font-size-primary);
-  color: var(--primary);
-  font-weight: 400;
+const HashTagArea = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center; // 🔥 세로 중앙 정렬
+  gap: 8px;
+  margin-top: 4px;
+
+  .hashtag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: var(--font-size-primary);
+    font-weight: 500;
+    line-height: 1; // 🔥 줄간격 최소화로 위아래 여백 균등
+  }
+
+  span:not(.hashtag) {
+    font-size: var(--font-size-primary);
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center; // 🔥 비해시태그 텍스트도 정렬 맞춤
+    line-height: 1;
+  }
 `;
 
 const TabMenu = styled.div`
