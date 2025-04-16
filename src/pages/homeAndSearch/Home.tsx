@@ -5,10 +5,10 @@ import Dropbox from "@/shared/component/Dropbox";
 import { useEffect, useState } from "react";
 
 import { useUserStore } from "@/stores/userStore";
-import {
-  getPlaylistCardData,
-  playlistCardData,
-} from "@/api/services/playlistCardData";
+// import {
+//   getPlaylistCardData,
+//   playlistCardData,
+// } from "@/api/services/playlistCardData";
 import PlaylistCard from "./component/PlaylistCard";
 
 const Home = () => {

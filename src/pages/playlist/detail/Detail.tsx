@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getPlaylistWithVideos } from "@/api/playlistWithvideos";
 import { useLikeStatus } from "./hooks/useLikeStatus";
+import { ReactSVG } from "react-svg";
 
 const Detail = () => {
   // 로그인된 유저의 random_id를 userId로 사용 (DB 컬럼명은 random_id)
@@ -57,12 +58,14 @@ const Detail = () => {
           title={playlistData.playlist_title}
           rightContent={
             <>
-              <LikeIcon
-                src={Like}
-                alt="좋아요"
-                onClick={handleLikeToggle}
-                isLiked={isLiked}
-              />
+              <LikeIcon>
+                <ReactSVG
+                  src={Like}
+                  onClick={handleLikeToggle}
+                  wrapper="span"
+                  className={`likeSvg ${isLiked ? "active" : "inactive"}`}
+                />
+              </LikeIcon>
               <Dropbox
                 variant="icon"
                 iconSize={24}
@@ -84,10 +87,16 @@ const Detail = () => {
           </span>
           <IconGroup>
             <span className="like">
-              <img src={Like} alt="좋아요" /> {likeCount}
+              <ReactSVG
+                src={Like}
+                wrapper="span"
+                className={`likeSvg ${isLiked ? "active" : "inactive"}`}
+              />
+              {likeCount}
             </span>
             <span className="comment">
-              <img src={comment} alt="댓글" /> 235
+              <img src={comment} alt="댓글" />
+              235
             </span>
           </IconGroup>
         </Meta>
@@ -121,15 +130,27 @@ const DetailPage = styled.div`
   padding: 20px 40px;
 `;
 
-const LikeIcon = styled.img<{ isLiked: boolean }>`
+const LikeIcon = styled.div`
   width: 24px;
   height: 24px;
   cursor: pointer;
 
-  path {
-    fill: ${({ isLiked }) => (isLiked ? "var(--primary)" : "none")};
-    stroke: ${({ isLiked }) =>
-      isLiked ? "var(--primary)" : "var(--text-secondary)"};
+  .likeSvg svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+  }
+
+  .likeSvg.active svg {
+    color: var(--primary); /* 활성화: 원래 컬러 */
+    fill: var(--primary); /* 색상 채우기 */
+  }
+
+  .likeSvg.inactive svg {
+    color: var(--text-secondary); /* 비활성화: 회색 외곽선 */
+    fill: none; /* 안은 비우기 */
   }
 `;
 
@@ -154,18 +175,55 @@ const Meta = styled.div`
 const IconGroup = styled.div`
   display: flex;
   gap: 10px;
+  align-items: center;
 
-  span {
+  .like,
+  .comment {
     display: flex;
     align-items: center;
     gap: 4px;
+  }
 
-    img {
-      width: 14px;
-      height: 14px;
-    }
+  .likeSvg svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+  }
+
+  .likeSvg.active svg {
+    color: var(--primary); /* 활성화: 원래 컬러 */
+    fill: var(--primary); /* 색상 채우기 */
+  }
+
+  .likeSvg.inactive svg {
+    color: var(--text-secondary); /* 비활성화: 회색 외곽선 */
+    fill: none; /* 안은 비우기 */
+  }
+
+  .comment img {
+    width: 14px;
+    height: 14px;
+    display: block;
   }
 `;
+
+// const IconGroup = styled.div`
+//   display: flex;
+//   gap: 10px;
+
+//   span {
+//     display: flex;
+//     align-items: center;
+//     gap: 4px;
+
+//     img {
+//       width: 14px;
+//       height: 14px;
+//     }
+//   }
+// `;
 
 const VideoListWrapper = styled.div`
   border-top: 1px solid var(--text-secondary);
