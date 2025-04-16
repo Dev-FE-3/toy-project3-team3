@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { ReactSVG } from "react-svg";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import likeIcon from "@/assets/images/Like.svg";
 import commentIcon from "@/assets/images/comment.svg";
@@ -17,10 +17,11 @@ interface Props {
   like_count: number;
   comment_count: number;
   is_active: boolean;
-  onLikeClick: () => void;
+  random_id: number;
 }
 
 const PlaylistCard = ({
+  p_id,
   cover_img_path,
   playlist_title,
   video_count,
@@ -29,26 +30,26 @@ const PlaylistCard = ({
   like_count,
   comment_count,
   is_active,
-  onLikeClick,
+  random_id,
 }: Props) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const handleGoToDetail = () => {
-  //   navigate(`/playlist/${p_id}`);
-  // };
+  const handleGoToStorage = () => {
+    navigate(`/storage/${random_id}`);
+  };
 
   return (
     <CardWrapper>
-      {/* <Thumbnail onClick={handleGoToDetail}> */}
-      <Thumbnail>
+      <Thumbnail onClick={() => navigate(`/playlist/${p_id}`)}>
         <ThumbnailImg src={cover_img_path || backgroundImage} />
       </Thumbnail>
 
       <Description>
         <TitleAndCreatorWrapper>
-          {/* <PlayListTitle onClick={handleGoToDetail}> */}
-          <PlayListTitle>{playlist_title}</PlayListTitle>
-          <CreatorInfo>
+          <PlayListTitle onClick={() => navigate(`/playlist/${p_id}`)}>
+            {playlist_title}
+          </PlayListTitle>
+          <CreatorInfo onClick={handleGoToStorage}>
             <div className="profileImg">
               <img
                 src={user_img || defaultProfile}
@@ -68,7 +69,6 @@ const PlaylistCard = ({
                 src={likeIcon}
                 wrapper="span"
                 className={`likeSvg ${is_active ? "active" : "inactive"}`}
-                onClick={onLikeClick}
               />
               {like_count}
             </span>
@@ -184,18 +184,16 @@ const IconGroup = styled.div`
     width: 14px;
     height: 14px;
     display: block;
-    color: var(--text-secondary);
-    transition: color 0.2s ease;
+    color: var(--text-secondary); /* 기본 회색 */
   }
 
   .likeSvg.active svg {
-    color: var(--primary); /* 활성화: 원래 컬러 */
-    fill: var(--primary); /* 색상 채우기 */
+    color: var(--primary); /* 좋아요 눌렀을 때 */
   }
 
   .likeSvg.inactive svg {
-    color: var(--text-secondary); /* 비활성화: 회색 외곽선 */
-    fill: none; /* 안은 비우기 */
+    stroke: var(--text-secondary); /* 비활성 테두리 */
+    fill: none; /* 비활성 내부는 비워둠 */
   }
 
   .comment img {

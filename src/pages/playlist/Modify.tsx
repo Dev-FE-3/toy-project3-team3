@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ReactSVG } from "react-svg";
 import styled from "@emotion/styled";
 import useLockStore from "@/stores/lockStore";
@@ -14,40 +14,60 @@ import VideoItem from "./component/VideoItem";
 import { toast } from "react-toastify";
 import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
-import { useUserStore } from "@/stores/userStore";
 import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
-import { useUploadPlaylist } from "@/pages/playlist/hooks/useUploadPlaylist";
+import { getPlaylistDetail } from "@/api/getPlaylistDetail";
+import { Video } from "@/api/video";
+import { useUpdatePlaylist } from "./hooks/useUpdatePlaylist";
 
-const Create = () => {
+const Modify = () => {
   const navigate = useNavigate();
+  const { playlistId } = useParams();
   const { lock, unlock } = useLockStore();
   const {
     thumbnailPreview,
     handleThumbnailChange,
+    setThumbnailPreview,
     uploadPlaylistThumbnail,
     uploadVideoThumbnail,
   } = useThumbnail();
 
-  const user = useUserStore((s) => s.user); //store에서 사용자 정보 가져오기
   const [videoUrl, setVideoUrl] = useState("");
-  const [videos, setVideos] = useState<
-    {
-      videoId: string;
-      title: string;
-      source: string;
-      thumbnail?: string; //유튜브 썸네일 url
-      thumbnailFile?: File; //blob 이미지 (스토리지에 업로드할 파일)
-    }[]
-  >([]);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [originalVideos, setOriginalVideos] = useState<Video[]>([]);
+  const [title, setTitle] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"exit" | "delete" | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
   const { refetch, isFetching } = useYoutubeInfo(videoUrl);
 
   useEffect(() => {
     lock();
   }, [lock, navigate]);
+
+  useEffect(() => {
+    if (!playlistId) return;
+
+    const fetch = async () => {
+      const data = await getPlaylistDetail(Number(playlistId));
+      const formattedVideos = data.videos.map((v) => ({
+        v_id: v.v_id,
+        title: v.title,
+        playlist_id: v.playlist_id,
+        channel_name: v.channel_name,
+        thumbnail_url: v.thumbnail_url,
+        created_at: v.created_at,
+        video_id: v.video_id,
+        thumbnailFile: undefined,
+      }));
+
+      setTitle(data.playlist_title);
+      setVideos(formattedVideos);
+      setOriginalVideos(formattedVideos);
+      setThumbnailPreview(data.cover_img_path);
+    };
+
+    fetch();
+  }, [playlistId, setThumbnailPreview]);
 
   const handleAddVideo = async () => {
     const { data: video } = await refetch();
@@ -59,7 +79,19 @@ const Create = () => {
     } catch (e) {
       console.error("썸네일 업로드 실패:", e);
     }
-    setVideos((prev) => [...prev, video]);
+    setVideos((prev) => [
+      ...prev,
+      {
+        v_id: Date.now() + Math.random(), // ❗ 임시 고유값으로 대체 (아직 DB에 들어가있지 않지만, react에서 구분하기 위해서 사용)
+        video_id: video.videoId,
+        title: video.title,
+        channel_name: video.source,
+        thumbnail_url: video.thumbnail,
+        created_at: new Date().toISOString(),
+        playlist_id: Number(playlistId),
+        thumbnailFile: video.thumbnailFile,
+      },
+    ]);
     setVideoUrl("");
   };
 
@@ -80,7 +112,7 @@ const Create = () => {
   const handleModalConfirm = () => {
     if (modalType === "exit") {
       unlock();
-      navigate("/");
+      navigate(-1);
     } else if (modalType === "delete" && selectedIndex !== null) {
       handleDelete(selectedIndex);
     }
@@ -89,30 +121,25 @@ const Create = () => {
     setSelectedIndex(null);
   };
 
-  const { mutate: uploadPlaylistMutate } = useUploadPlaylist({
-    userId: user!.random_id,
-    videos,
+  const updateMutation = useUpdatePlaylist({
+    playlistId: Number(playlistId),
+    playlistTitle: title.trim(),
+    originalVideos,
+    updatedVideos: videos,
     uploadPlaylistThumbnail,
     uploadVideoThumbnail,
+    thumbnailPreview: thumbnailPreview ?? "",
     onSuccess: () => {
-      toast.success("좋아요! 새로운 플레이리스트가 생성되었어요 🎶");
+      toast.success("업데이트 성공! 멋진 변화를 주셨네요 ✨");
       unlock();
       navigate("/storage");
     },
   });
 
-  const handleUpload = () => {
-    const titleInput = document.getElementById(
-      "playlistTitle",
-    ) as HTMLInputElement;
-    const playlistTitle = titleInput?.value.trim();
-    uploadPlaylistMutate({ playlistTitle });
-  };
-
   return (
     <Wrapper>
       <Title
-        title="플레이리스트 생성"
+        title="플레이리스트 수정"
         rightContent={
           <img
             src={cancel}
@@ -151,6 +178,8 @@ const Create = () => {
             label="플레이리스트 제목"
             placeholder="제목을 입력해주세요"
             width="520px"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </TitleInputWrapper>
 
@@ -174,18 +203,22 @@ const Create = () => {
             {isFetching && <Loading />}
             {videos.map((video, index) => (
               <VideoItem
-                key={index}
-                thumbnail={video.thumbnail}
+                key={video.v_id}
+                thumbnail={video.thumbnail_url}
                 title={video.title}
-                source={video.source}
+                source={video.channel_name}
                 onDelete={() => handleDeleteRequest(index)}
               />
             ))}
           </ScrollableList>
         </VideoListWrapper>
         <ButtonWrapper>
-          <Button size="big" color="pink" onClick={handleUpload}>
-            업로드 하기
+          <Button
+            size="big"
+            color="pink"
+            onClick={() => updateMutation.mutate()}
+          >
+            수정하기
           </Button>
         </ButtonWrapper>
       </Container>
@@ -214,7 +247,8 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Modify;
+
 const Wrapper = styled.div`
   height: 100vh;
   display: flex;

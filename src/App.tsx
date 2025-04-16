@@ -9,10 +9,12 @@ import Login from "@/pages/auth/Login.tsx";
 import Signup from "@/pages/auth/Signup";
 import Create from "@/pages/playlist/Create";
 import Storage from "@/pages/storage/Storage";
-import NavigateToMyStorage from "@/pages/storage/NavigateToMyStorage";
+import NavigateToMyStorage from "@/pages/storage/hooks/NavigateToMyStorage";
 import FollowInfo from "@/pages/followInfo/FollowInfo";
 import Play from "@/pages/play/Play";
-import Search from "./pages/homeAndSearch/Search";
+import Search from "@/pages/homeAndSearch/Search";
+import Modify from "@/pages/playlist/Modify";
+import Detail from "@/pages/playlist/detail/Detail";
 
 const router = createBrowserRouter([
   {
@@ -56,13 +58,17 @@ const router = createBrowserRouter([
         element: <Create />,
       },
       {
+        path: "/edit/:playlistId",
+        element: <Modify />,
+      },
+      {
         path: "/play",
         element: <Play />,
       },
-      // { 디테일 페이지 만들면 연결시킴
-      //   path: "playlist/:p_id",
-      //   element: <Detail />,
-      // },
+      {
+        path: "playlist/:p_id",
+        element: <Detail />,
+      },
     ],
   },
   { path: "/login", element: <Login /> },

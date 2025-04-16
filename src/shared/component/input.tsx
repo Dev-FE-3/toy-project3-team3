@@ -114,6 +114,7 @@ const Label = styled.label<{
 
 const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
   height: 40px;
+  height: 40px;
   width: ${({ labelPosition, width }) =>
     labelPosition === "left" ? width : "100%"};
   border: 1px solid var(--disabled);
@@ -122,6 +123,7 @@ const Input = styled.input<{ labelPosition: LabelPosition; width: string }>`
   padding: 0 15px;
   font-size: var(--font-size-primary);
   color: var(--text-primary);
+  box-sizing: border-box;
   box-sizing: border-box;
 
   &:focus {

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyPlaylists } from "@/api/services/getMyPlaylists"; // ✅ 너가 만든 API 함수 import
+import { getMyPlaylists } from "@/api/services/getMyPlaylists";
 
 const useMyPlaylists = (randomId?: number) => {
   return useQuery({
