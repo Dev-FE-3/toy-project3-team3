@@ -5,17 +5,26 @@ import Dropbox from "@/shared/component/Dropbox";
 import { useUserStore } from '@/stores/userStore';
 import backgroundImage from "@/assets/images/backGround.png";
 import comment from "@/assets/images/comment.svg";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPlaylistWithVideos } from "@/api/playlistWithvideos";
 import { useLikeStatus } from "./hooks/useLikeStatus";
 import { ReactSVG } from "react-svg";
+import { useState } from "react";
+import Modal from "@/shared/component/Modal";
+import { softDeletePlaylist } from "@/api/playlist";
 
 const Detail = () => {
   // 로그인된 유저의 random_id를 userId로 사용 (DB 컬럼명은 random_id)
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const userId = useUserStore((state) => state.user?.random_id);
   const { p_id } = useParams<{ p_id: string }>();
   const playlistId = Number(p_id);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedIdToDelete, setSelectedIdToDelete] = useState<number | null>(
+    null,
+  );
 
   // 1. 플레이리스트 정보 조회
   const {
@@ -41,12 +50,14 @@ const Detail = () => {
   if (isLoading) return <div>로딩 중...</div>;
   if (error || !playlistData) return <div>에러 발생 또는 데이터 없음</div>;
 
-  const handleIconAction = (action: string) => {
+  // 메뉴 동작
+  const handleIconAction = (action: string, p_id: number) => {
     if (!userId) return;
     if (action === "수정하기") {
-      console.log("✏️ 수정 페이지로 이동");
+      console.log("수정 기능 실행");
     } else if (action === "삭제하기") {
-      console.log("🗑️ 삭제 처리 로직 실행");
+      setSelectedIdToDelete(p_id);
+      setIsModalOpen(true);
     }
   };
 
@@ -69,7 +80,7 @@ const Detail = () => {
               <Dropbox
                 variant="icon"
                 iconSize={24}
-                onChange={handleIconAction}
+                onChange={(action) => handleIconAction(action, playlistId)}
               />
             </>
           }
@@ -101,7 +112,7 @@ const Detail = () => {
           </IconGroup>
         </Meta>
 
-        <VideoListWrapper>
+        <VideoListWrapper onClick={() => navigate(`/play/${playlistId}`)}>
           {playlistData.videos.map((item) => (
             <VideoCardWrapper key={item.v_id}>
               <Thumbnail
@@ -116,6 +127,33 @@ const Detail = () => {
           ))}
         </VideoListWrapper>
       </DetailPage>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setSelectedIdToDelete(null);
+          setIsModalOpen(false);
+        }}
+        onConfirm={async () => {
+          if (selectedIdToDelete !== null) {
+            try {
+              await softDeletePlaylist(selectedIdToDelete);
+              await queryClient.invalidateQueries({
+                queryKey: ["myPlaylists"],
+              });
+              setSelectedIdToDelete(null);
+              setIsModalOpen(false);
+
+              navigate(-1); // ✅ 삭제 후 이전 페이지로 이동
+            } catch (error) {
+              console.error("삭제 실패", error);
+            }
+          }
+        }}
+        message="플레이리스트를 삭제하시겠습니까?"
+        leftButtonText="아니오"
+        rightButtonText="네"
+      />
     </>
   );
 };
@@ -209,27 +247,11 @@ const IconGroup = styled.div`
   }
 `;
 
-// const IconGroup = styled.div`
-//   display: flex;
-//   gap: 10px;
-
-//   span {
-//     display: flex;
-//     align-items: center;
-//     gap: 4px;
-
-//     img {
-//       width: 14px;
-//       height: 14px;
-//     }
-//   }
-// `;
-
 const VideoListWrapper = styled.div`
   border-top: 1px solid var(--text-secondary);
   flex-direction: column;
   display: flex;
- 
+  cursor: pointer;
   margin-bottom: 15px;
   gap: 15px;
 `;
