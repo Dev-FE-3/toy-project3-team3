@@ -386,6 +386,10 @@ const VideoWrapper = styled.div`
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   object-fit: cover;
+  &:hover {
+    background-color: var(--profile-background);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+  }
 `;
 
 const VideoArea = styled.img`
