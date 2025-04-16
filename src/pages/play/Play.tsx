@@ -49,11 +49,13 @@ const Play = () => {
     queryFn: () => getCommentWithUserInfo(playlistId),
     enabled: !!playlistId,
   });
+
   // ✅ 댓글 작성
   const mutation = useMutation({
     mutationFn: createComment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", playlistId] }); // 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ["commentCount", playlistId] }); // 댓글 수 갱신
       setCommentText(""); // 입력창 초기화
     },
     onError: (error) => {
@@ -83,7 +85,6 @@ const Play = () => {
 
   const videoList = videoListData?.videos ?? [];
   const currentIndex = videoList.findIndex((v) => v.video_id === videoId);
-
   const prevVideo = videoList[currentIndex - 1];
   const nextVideo = videoList[currentIndex + 1];
   const totalCount = videoList.length;
