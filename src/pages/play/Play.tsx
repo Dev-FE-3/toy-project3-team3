@@ -14,14 +14,19 @@ import {
   createComment,
   getCommentWithUserInfo,
 } from "@/api/comment";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleVideoFromPlaylist } from "@/api/playlistFullView";
 import { usePlaylistMeta } from "@/shared/hooks/usePlaylistMeta";
 import { ReactSVG } from "react-svg";
+import {
+  getPlaylistWithVideos,
+  PlaylistWithVideos,
+} from "@/api/playlistWithvideos";
 
 const Play = () => {
+  const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState("");
   const userId = useUserStore((state) => state.user?.random_id);
   const { p_id, video_id } = useParams<{ p_id: string; video_id: string }>();
@@ -29,8 +34,7 @@ const Play = () => {
   const videoId = video_id ?? ""; // ❗ undefined인 경우 빈 문자열로 대체
   const user = useUserStore((state) => state.user);
   const { isLiked, likeCount, commentCount } = usePlaylistMeta(playlistId);
-
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // ✅ 비디오 정보 가져오기
   const { data: videoData, isLoading: isPlaylistLoading } = useQuery({
@@ -69,6 +73,20 @@ const Play = () => {
       comment: commentText,
     });
   };
+
+  // ✅ 영상 리모트
+  const { data: videoListData } = useQuery<PlaylistWithVideos | null>({
+    queryKey: ["playlistWithVideos", playlistId],
+    queryFn: () => getPlaylistWithVideos(playlistId),
+    enabled: !!playlistId,
+  });
+
+  const videoList = videoListData?.videos ?? [];
+  const currentIndex = videoList.findIndex((v) => v.video_id === videoId);
+
+  const prevVideo = videoList[currentIndex - 1];
+  const nextVideo = videoList[currentIndex + 1];
+  const totalCount = videoList.length;
 
   // ✅ 조건 분기 처리
   if (isPlaylistLoading) {
@@ -141,16 +159,39 @@ const Play = () => {
       </CommentListWrapper>
 
       <PlayListInfoWrapper>
-        <PlayListInfo>에스파 입덕 영상 모음 [1/10]</PlayListInfo>
+        <PlayListInfo>
+          {videoData?.playlist_title} [{currentIndex + 1}/{totalCount}]
+        </PlayListInfo>
+
         <PlayListIconGroup>
-          <Icon src={GoBack} size="small" colorType="white" alt="이전" />
-          <img src={List} alt="목록" style={{ width: 24, height: 24 }} />
+          <Icon
+            src={GoBack}
+            size="small"
+            colorType="white"
+            alt="이전"
+            onClick={() => {
+              if (prevVideo) {
+                navigate(`/play/${p_id}/${prevVideo.video_id}`);
+              }
+            }}
+          />
+          <img
+            src={List}
+            alt="목록"
+            style={{ width: 24, height: 24, cursor: "pointer" }}
+            onClick={() => navigate(`/playlist/${p_id}`)}
+          />
           <Icon
             src={GoBack}
             size="small"
             colorType="white"
             alt="다음"
             rotate={180}
+            onClick={() => {
+              if (nextVideo) {
+                navigate(`/play/${p_id}/${nextVideo.video_id}`);
+              }
+            }}
           />
         </PlayListIconGroup>
       </PlayListInfoWrapper>
