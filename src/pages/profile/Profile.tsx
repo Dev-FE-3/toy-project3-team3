@@ -168,16 +168,46 @@ const Profile = () => {
             onChange={handleInputChange}
             isReadOnly={!isEditing}
           />
-          <CommonInput
-            id="artist_hash_tag"
-            label="관심 아티스트"
-            placeholder="관심 아티스트를 입력해 주세요."
-            labelPosition="left"
-            isTextarea
-            value={profileData.artist_hash_tag}
-            onChange={handleInputChange}
-            isReadOnly={!isEditing}
-          />
+          {isEditing ? (
+            <CommonInput
+              id="artist_hash_tag"
+              label="관심 아티스트"
+              placeholder="관심 아티스트를 입력해 주세요."
+              labelPosition="left"
+              isTextarea
+              value={profileData.artist_hash_tag}
+              onChange={handleInputChange}
+              isReadOnly={false}
+            />
+          ) : (
+            <div
+              style={{ display: "flex", gap: "50px", alignItems: "flex-start" }}
+            >
+              <label
+                style={{
+                  minWidth: "110px",
+                  fontWeight: "bold",
+                  fontSize: "var(--font-size-large)",
+                  color: "var(--text-primary)",
+                  textAlign: "right",
+                  marginTop: "10px",
+                }}
+              >
+                관심 아티스트
+              </label>
+              <StyledReadOnlyTag>
+                {profileData.artist_hash_tag.split(" ").map((word, idx) =>
+                  word.startsWith("#") ? (
+                    <span className="hashtag" key={idx}>
+                      {word + " "}
+                    </span>
+                  ) : (
+                    word + " "
+                  ),
+                )}
+              </StyledReadOnlyTag>
+            </div>
+          )}
         </FormWrapper>
       </ProfileDataWrapper>
       <ButtonWrapper>
@@ -258,4 +288,35 @@ const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 18px;
+`;
+
+const StyledReadOnlyTag = styled.div`
+  width: 250px;
+  min-height: 60px;
+  padding: 5px 5px;
+  border-radius: 20px;
+  background-color: transparent;
+  color: var(--text-primary);
+  font-size: var(--font-size-primary);
+  border: 1px solid transparent;
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  span.hashtag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--primary);
+    color: white;
+
+    height: 26px;
+    padding: 0 10px;
+    margin-right: 6px;
+
+    border-radius: 999px; /* pill 모양 */
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1;
+  }
 `;

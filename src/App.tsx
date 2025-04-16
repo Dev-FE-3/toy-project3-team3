@@ -9,7 +9,7 @@ import Login from "@/pages/auth/Login.tsx";
 import Signup from "@/pages/auth/Signup";
 import Create from "@/pages/playlist/Create";
 import Storage from "@/pages/storage/Storage";
-import NavigateToMyStorage from "@/pages/storage/NavigateToMyStorage";
+import NavigateToMyStorage from "@/pages/storage/hooks/NavigateToMyStorage";
 import FollowInfo from "@/pages/followInfo/FollowInfo";
 import Play from "@/pages/play/Play";
 import Search from "./pages/homeAndSearch/Search";

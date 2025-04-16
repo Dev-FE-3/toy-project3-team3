@@ -1,50 +1,63 @@
 import styled from "@emotion/styled";
-
 import Title, { StyledTitle } from "@/shared/component/Title";
 import Dropbox from "@/shared/component/Dropbox";
-import { useEffect, useState } from "react";
+import { useMemo, useState, useRef, useCallback } from "react";
 
+import useHomeFeedPlaylists from "./hooks/useHomeFeedPlaylists";
+import PlaylistCard from "@/pages/homeAndSearch/component/PlaylistCard";
+import useLikedPlaylistIds from "@/pages/homeAndSearch/hooks/useLikedPlaylistIds";
+import Loading from "@/shared/component/Loading";
 import { useUserStore } from "@/stores/userStore";
-import { getPlaylistCardData } from "@/api/playlistCardData";
-import PlaylistCard from "./component/PlaylistCard";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
-  const [playlistCard, setPlaylistCard] = useState<playlistCardData[]>([]);
 
-  // playlist테이블, user테이블 join한 데이터 가져오는 api 실행
-  useEffect(() => {
-    const fetchPlaylists = async () => {
-      try {
-        const result = await getPlaylistCardData();
-        const witheLikeStatus = result.map((item) => ({
-          ...item,
-          is_active: false, //일단 모든 좋아요 표시를 false로 해둠-> 고민이 필요함
-        }));
-        setPlaylistCard(witheLikeStatus);
-        console.log("가져온 플레이리스트witheLikeStatus :::", witheLikeStatus);
-      } catch (error) {
-        console.error("플레이리스트 가져오기 실패", error);
-      }
-    };
-
-    fetchPlaylists();
-  }, []);
-
-  // 로그인 유저 가져오기
   const randomId = useUserStore((state) => state.user?.random_id);
-  console.log("랜덤아이디??", randomId);
+  const { data: likedIds = [] } = useLikedPlaylistIds(randomId);
 
-  // 정렬시키는 함수
-  const sortedPlaylistCards = [...playlistCard].sort((a, b) => {
-    if (sortOrder === "최신순") {
-      return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-    } else {
-      return b.like_count - a.like_count;
-    }
-  });
+  const {
+    playlists,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useHomeFeedPlaylists();
+
+  const playlistWithLikeState = useMemo(() => {
+    return playlists.map((item) => ({
+      ...item,
+      is_active: likedIds.includes(item.p_id),
+    }));
+  }, [playlists, likedIds]);
+
+  const sortedPlaylistCards = useMemo(() => {
+    return [...playlistWithLikeState].sort((a, b) => {
+      if (sortOrder === "최신순") {
+        return (
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      } else {
+        return b.like_count - a.like_count;
+      }
+    });
+  }, [playlistWithLikeState, sortOrder]);
+
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const lastItemRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isFetchingNextPage) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage();
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage],
+  );
 
   return (
     <>
@@ -54,23 +67,31 @@ const Home = () => {
           <Dropbox variant="text" value={sortOrder} onChange={setSortOrder} />
         }
       />
-
       <HomePage>
-        {sortedPlaylistCards.map((item) => (
-          <PlaylistCard
-            key={item.p_id}
-            p_id={item.p_id}
-            cover_img_path={item.cover_img_path}
-            playlist_title={item.playlist_title}
-            video_count={item.video_count}
-            user_img={item.user_img}
-            nickname={item.nickname}
-            like_count={item.like_count}
-            comment_count={item.comment_count}
-            is_active={item.is_active}
-            onLikeClick={() => console.log(item.is_active)}
-          />
-        ))}
+        <Container isEmpty={sortedPlaylistCards.length === 0}>
+          {isLoading ? (
+            <Loading />
+          ) : sortedPlaylistCards.length === 0 ? (
+            <EmptyMessage>
+              관심 있는 이용자를 팔로우하여 <br />
+              나만의 타임라인을 구성하세요 😄
+            </EmptyMessage>
+          ) : (
+            <ScrollableList>
+              {sortedPlaylistCards.map((item, index) => {
+                const isLast = index === sortedPlaylistCards.length - 1;
+                return (
+                  <div ref={isLast ? lastItemRef : null} key={item.p_id}>
+                    <PlaylistCard
+                      {...item}
+                      onLikeClick={() => console.log(item.p_id)}
+                    />
+                  </div>
+                );
+              })}
+            </ScrollableList>
+          )}
+        </Container>
       </HomePage>
     </>
   );
@@ -80,7 +101,36 @@ export default Home;
 
 const HomePage = styled.div`
   display: flex;
-  padding: 20px 40px;
   flex-direction: column;
+  padding: 20px 40px;
   align-items: flex-start;
+  overflow-y: auto;
+  height: 700px;
+`;
+
+const Container = styled.div<{ isEmpty?: boolean }>`
+  height: 700px;
+  width: 100%;
+  display: ${({ isEmpty }) => (isEmpty ? "flex" : "block")};
+  justify-content: center;
+  align-items: center;
+`;
+
+const ScrollableList = styled.div`
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+`;
+
+const EmptyMessage = styled.div`
+  width: 100%;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-size-subtitle);
+  color: var(--text-secondary);
+  margin: 0 auto;
+  line-height: normal;
 `;
