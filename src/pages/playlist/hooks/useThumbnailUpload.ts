@@ -21,7 +21,7 @@ export const useThumbnail = () => {
   ): Promise<string> => {
     const extension = file.name.split(".").pop() || "jpg";
 
-    // ✅ 🔥 파일명을 더 고유하게!
+    //파일명을 더 고유하게!
     const random = Math.random().toString(36).substring(2, 8);
     const safeFileName = `${Date.now()}-${random}.${extension}`;
     const pathPrefix =

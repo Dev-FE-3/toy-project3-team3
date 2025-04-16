@@ -111,7 +111,7 @@ const Modify = () => {
   const handleModalConfirm = () => {
     if (modalType === "exit") {
       unlock();
-      navigate("/storage");
+      navigate(-1);
     } else if (modalType === "delete" && selectedIndex !== null) {
       handleDelete(selectedIndex);
     }

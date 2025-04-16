@@ -20,12 +20,12 @@ interface PlaylistWithVideos {
   videos: Video[];
 }
 
-/** 단일 플레이리스트 + 영상 목록 불러오기 (View 사용) */
+/** 단일 플레이리스트 + 영상 목록 불러오기 */
 export async function getPlaylistDetail(
   playlistId: number,
 ): Promise<PlaylistWithVideos> {
   const response = await axiosInstance.get(
     `/playlist_with_videos?p_id=eq.${playlistId}`,
   );
-  return response.data[0]; // 단일 플레이리스트만 받는다고 가정
+  return response.data[0];
 }
