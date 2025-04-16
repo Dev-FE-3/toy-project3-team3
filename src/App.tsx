@@ -13,6 +13,7 @@ import NavigateToMyStorage from "@/pages/storage/hooks/NavigateToMyStorage";
 import FollowInfo from "@/pages/followInfo/FollowInfo";
 import Play from "@/pages/play/Play";
 import Search from "./pages/homeAndSearch/Search";
+import Modify from "./pages/playlist/Modify";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
       {
         path: "/create",
         element: <Create />,
+      },
+      {
+        path: "/edit/:playlistId",
+        element: <Modify />,
       },
       {
         path: "/play",
