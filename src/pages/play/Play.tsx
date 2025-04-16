@@ -9,47 +9,94 @@ import commentIcon from "@/assets/images/comment.svg";
 import List from "@/assets/images/List.svg";
 import Icon from "@/shared/component/Icon";
 import { useState } from "react";
-import { createComment } from "@/api/comment";
+import {
+  CommentWithUserInfo,
+  createComment,
+  getCommentWithUserInfo,
+} from "@/api/comment";
 import { useParams } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getSingleVideoFromPlaylist } from "@/api/playlistFullView";
+// import { getPlaylistFullView, PlaylistFullView } from "@/api/playlistFullView";
 
 const Play = () => {
   const [commentText, setCommentText] = useState("");
   const userId = useUserStore((state) => state.user?.random_id);
-  const { p_id } = useParams<{ p_id: string }>();
+  const { p_id, video_id } = useParams<{ p_id: string; video_id: string }>();
   const playlistId = Number(p_id);
+  const videoId = video_id ?? ""; // ❗ undefined인 경우 빈 문자열로 대체
+  const user = useUserStore((state) => state.user);
 
-  const handleSubmit = async () => {
-    if (!commentText.trim()) return alert("댓글을 입력해주세요."); // 토스트 알림으로 수정
+  const queryClient = useQueryClient();
 
-    if (!userId || !playlistId) {
-      return alert("로그인 정보 또는 플레이리스트 정보가 없습니다.");
-    }
+  // ✅ 비디오 정보 가져오기
+  const { data: videoData, isLoading: isPlaylistLoading } = useQuery({
+    queryKey: ["singleVideo", playlistId, videoId],
+    queryFn: () => getSingleVideoFromPlaylist(playlistId, videoId),
+    enabled: !!playlistId && !!videoId,
+  });
 
-    try {
-      await createComment({
-        playlist_id: playlistId,
-        random_id: userId,
-        comment: commentText,
-      });
-
-      setCommentText(""); // 입력 초기화
-      alert("댓글이 등록되었습니다."); // 또는 toast 메시지
-      // refetch()
-    } catch (error) {
-      console.error("댓글 등록 실패", error);
+  // ✅ 댓글 목록 가져오기
+  const { data: commentList = [] } = useQuery<CommentWithUserInfo[]>({
+    queryKey: ["comments", playlistId],
+    queryFn: () => getCommentWithUserInfo(playlistId),
+    enabled: !!playlistId,
+  });
+  // ✅ 댓글 작성
+  const mutation = useMutation({
+    mutationFn: createComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", playlistId] }); // 목록 갱신
+      setCommentText(""); // 입력창 초기화
+    },
+    onError: (error) => {
+      console.error("댓글 작성 실패", error);
       alert("댓글 등록 중 오류가 발생했습니다.");
-    }
+    },
+  });
+
+  // ✅ 댓글 제출
+  const handleSubmit = () => {
+    if (!commentText.trim()) return alert("댓글을 입력해주세요.");
+    if (!userId || !playlistId) return alert("로그인 정보 없음");
+
+    mutation.mutate({
+      playlist_id: playlistId,
+      random_id: userId,
+      comment: commentText,
+    });
   };
+
+  // ✅ 조건 분기 처리
+  if (isPlaylistLoading) {
+    return <p>플레이리스트 정보를 불러오는 중...</p>;
+  }
+
   return (
     <>
-      <Title showBackButton title="여기에 플레이리스트 제목" />
-      <VideoWrapper />
-      <VideoTitle>제목을 불러올 부분</VideoTitle>
+      <Title showBackButton title={videoData?.playlist_title} />
+      <VideoWrapper className="playContainer">
+        {videoData?.video_id && (
+          <iframe
+            width="100%"
+            height="100%"
+            src={`https://www.youtube.com/embed/${videoData.video_id}`}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
+        )}
+      </VideoWrapper>
+      <VideoTitle>{videoData?.title}</VideoTitle>
       <Meta>
         <ProfileWrapper>
-          <ProfileImage src={DefaultProfile} />
-          <ProfileName>만든 사람</ProfileName>
+          <ProfileImage
+            src={user?.user_img || DefaultProfile}
+            onError={(e) => (e.currentTarget.src = DefaultProfile)}
+          />
+          <ProfileName>{videoData?.nickname}</ProfileName>
         </ProfileWrapper>
         <IconGroup>
           <span className="like">
@@ -61,7 +108,7 @@ const Play = () => {
         </IconGroup>
       </Meta>
       <CommentWriteWrapper>
-        <ProfileImage src={DefaultProfile} />
+        <ProfileImage src={user?.user_img || DefaultProfile} />
         <CommonInput
           id="comment"
           placeholder="댓글을 입력해주세요."
@@ -73,48 +120,17 @@ const Play = () => {
         <SubmitIcon src={Submit} alt="제출" onClick={handleSubmit} />
       </CommentWriteWrapper>
       <CommentListWrapper>
-        <CommentIndividualWrapper>
-          <ProfileImage src={DefaultProfile} />
-          <CommentIndividual>
-            <CommentWriter>작성자</CommentWriter>
-            <CommentContent>
-              댓글 내용 진짜 진짜 진짜 진짜 길어지면 어떻게 나올지 한 번
-              보여보겠습니다. 쓴 길이만큼 엄~~~~~청 길어지는 거 확인했습니다~~
-            </CommentContent>
-          </CommentIndividual>
-        </CommentIndividualWrapper>
-
-        <CommentIndividualWrapper>
-          <ProfileImage src={DefaultProfile} />
-          <CommentIndividual>
-            <CommentWriter>작성자2</CommentWriter>
-            <CommentContent>댓글 내용</CommentContent>
-          </CommentIndividual>
-        </CommentIndividualWrapper>
-
-        <CommentIndividualWrapper>
-          <ProfileImage src={DefaultProfile} />
-          <CommentIndividual>
-            <CommentWriter>작성자3</CommentWriter>
-            <CommentContent>댓글 내용</CommentContent>
-          </CommentIndividual>
-        </CommentIndividualWrapper>
-
-        <CommentIndividualWrapper>
-          <ProfileImage src={DefaultProfile} />
-          <CommentIndividual>
-            <CommentWriter>작성자4</CommentWriter>
-            <CommentContent>댓글 내용</CommentContent>
-          </CommentIndividual>
-        </CommentIndividualWrapper>
-
-        <CommentIndividualWrapper>
-          <ProfileImage src={DefaultProfile} />
-          <CommentIndividual>
-            <CommentWriter>작성자5</CommentWriter>
-            <CommentContent>댓글 내용</CommentContent>
-          </CommentIndividual>
-        </CommentIndividualWrapper>
+        {commentList.map((item) => {
+          return (
+            <CommentIndividualWrapper key={item.c_id}>
+              <ProfileImage src={item.user_img || DefaultProfile} />
+              <CommentIndividual>
+                <CommentWriter>{item.nickname}</CommentWriter>
+                <CommentContent>{item.comment}</CommentContent>
+              </CommentIndividual>
+            </CommentIndividualWrapper>
+          );
+        })}
       </CommentListWrapper>
 
       <PlayListInfoWrapper>
