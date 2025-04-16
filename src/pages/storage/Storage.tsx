@@ -93,135 +93,143 @@ const Storage = () => {
         <Title title="보관함" showBackButton />
       )}
 
-      <ProfileWrapper>
-        <ProfileCardTop>
-          <ImageArea src={getProfileImageUrl(userData?.user_img)} />
-          <ProfileInfo>
-            <NickName>{userData?.nickname}</NickName>
-            <InfoItemWrapper>
-              <InfoItem onClick={() => handleNavigate("follower")}>
-                <InfoCount>{followerCount}</InfoCount>
-                <InfoLabel>팔로워</InfoLabel>
-              </InfoItem>
-              <InfoItem onClick={() => handleNavigate("following")}>
-                <InfoCount>{followingCount}</InfoCount>
-                <InfoLabel>팔로잉</InfoLabel>
-              </InfoItem>
-              <InfoItem>
-                <InfoCount>{myPlaylists.length}</InfoCount>
-                <InfoLabel>리스트</InfoLabel>
-              </InfoItem>
-            </InfoItemWrapper>
-            {isMyPage ? (
-              !isProfilePage && (
-                <Button size="small" onClick={() => navigate("/profile")}>
-                  프로필 수정
-                </Button>
-              )
-            ) : (
-              <Button
-                size="small"
-                btnColor={isFollowing ? "white" : "pink"}
-                onClick={() => {
-                  if (!currentUser?.random_id || !targetId) return;
-                  if (isFollowing) {
-                    handleUnfollow();
-                  } else {
-                    handleFollow();
-                  }
-                }}
-                disabled={
-                  isFollowPending ||
-                  isUnfollowPending ||
-                  !currentUser?.random_id ||
-                  !targetId
-                }
-              >
-                {isFollowPending || isUnfollowPending
-                  ? "처리 중..."
-                  : isFollowing
-                    ? "팔로잉"
-                    : "팔로우"}
-              </Button>
-            )}
-          </ProfileInfo>
-        </ProfileCardTop>
-        <ProfileCardBottom>
-          <BioArea>{userData?.sort_intro}</BioArea>
-          <HashTagArea>
-            {userData?.artist_hash_tag?.split(" ").map((word, i) =>
-              word.startsWith("#") ? (
-                <span key={i} className="hashtag">
-                  {word}
-                </span>
-              ) : (
-                <span key={i}> {word} </span>
-              ),
-            )}
-          </HashTagArea>
-        </ProfileCardBottom>
-      </ProfileWrapper>
-      <TabMenu>
-        <TabLeft
-          isActive={activeTab === "left"}
-          onClick={() => setActiveTab("left")}
-        >
-          리스트
-        </TabLeft>
-        <TabRight
-          isActive={activeTab === "right"}
-          onClick={() => setActiveTab("right")}
-        >
-          하트
-        </TabRight>
-      </TabMenu>
-      <PlaylistArea>
-        {(activeTab === "left" ? myPlaylists : likedPlaylists)?.map((item) => {
-          const isLiked = likedIds.includes(item.p_id);
-
-          return (
-            <VideoWrapper key={item.p_id}>
-              <VideoArea src={item.cover_img_path || backgroundImage} />
-              <Meta>
-                <DetailArea>
-                  <Count>동영상 {item.video_count}개</Count>
-                  <IconGroup>
-                    <span className="like">
-                      <ReactSVG
-                        src={Like}
-                        wrapper="span"
-                        className={`likeSvg ${isLiked ? "active" : "inactive"}`}
-                      />
-                      {item.like_count}
+      <StorageWrapper>
+        <FixedHeaderArea>
+          <ProfileWrapper>
+            <ProfileCardTop>
+              <ImageArea src={getProfileImageUrl(userData?.user_img)} />
+              <ProfileInfo>
+                <NickName>{userData?.nickname}</NickName>
+                <InfoItemWrapper>
+                  <InfoItem onClick={() => handleNavigate("follower")}>
+                    <InfoCount>{followerCount}</InfoCount>
+                    <InfoLabel>팔로워</InfoLabel>
+                  </InfoItem>
+                  <InfoItem onClick={() => handleNavigate("following")}>
+                    <InfoCount>{followingCount}</InfoCount>
+                    <InfoLabel>팔로잉</InfoLabel>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoCount>{myPlaylists.length}</InfoCount>
+                    <InfoLabel>리스트</InfoLabel>
+                  </InfoItem>
+                </InfoItemWrapper>
+                {isMyPage ? (
+                  !isProfilePage && (
+                    <Button size="small" onClick={() => navigate("/profile")}>
+                      프로필 수정
+                    </Button>
+                  )
+                ) : (
+                  <Button
+                    size="small"
+                    btnColor={isFollowing ? "white" : "pink"}
+                    onClick={() => {
+                      if (!currentUser?.random_id || !targetId) return;
+                      if (isFollowing) {
+                        handleUnfollow();
+                      } else {
+                        handleFollow();
+                      }
+                    }}
+                    disabled={
+                      isFollowPending ||
+                      isUnfollowPending ||
+                      !currentUser?.random_id ||
+                      !targetId
+                    }
+                  >
+                    {isFollowPending || isUnfollowPending
+                      ? "처리 중..."
+                      : isFollowing
+                        ? "팔로잉"
+                        : "팔로우"}
+                  </Button>
+                )}
+              </ProfileInfo>
+            </ProfileCardTop>
+            <ProfileCardBottom>
+              <BioArea>{userData?.sort_intro}</BioArea>
+              <HashTagArea>
+                {userData?.artist_hash_tag?.split(" ").map((word, i) =>
+                  word.startsWith("#") ? (
+                    <span key={i} className="hashtag">
+                      {word}
                     </span>
+                  ) : (
+                    <span key={i}> {word} </span>
+                  ),
+                )}
+              </HashTagArea>
+            </ProfileCardBottom>
+          </ProfileWrapper>
 
-                    <span className="Comment">
-                      <img src={Comment} alt="댓글" />
-                      {item.comment_count}
-                    </span>
-                    {isMyPage &&
-                      activeTab === "left" &&
-                      item.random_id === currentUser?.random_id && (
-                        <Dropbox
-                          variant="icon"
-                          onChange={(action) =>
-                            handleIconAction(action, item.p_id)
-                          }
-                        />
-                      )}
-                  </IconGroup>
-                </DetailArea>
-                <VideoTitle>{item.playlist_title}</VideoTitle>
-              </Meta>
-            </VideoWrapper>
-          );
-        })}
+          <TabMenu>
+            <TabLeft
+              isActive={activeTab === "left"}
+              onClick={() => setActiveTab("left")}
+            >
+              리스트
+            </TabLeft>
+            <TabRight
+              isActive={activeTab === "right"}
+              onClick={() => setActiveTab("right")}
+            >
+              하트
+            </TabRight>
+          </TabMenu>
+        </FixedHeaderArea>
 
-        {(activeTab === "left" && isMyPlaylistsLoading) ||
-        (activeTab === "right" && isLikedPlaylistsLoading) ? (
-          <Loading />
-        ) : null}
-      </PlaylistArea>
+        <ScrollablePlaylistArea>
+          {(activeTab === "left" ? myPlaylists : likedPlaylists)?.map(
+            (item) => {
+              const isLiked = likedIds.includes(item.p_id);
+
+              return (
+                <VideoWrapper key={item.p_id}>
+                  <VideoArea src={item.cover_img_path || backgroundImage} />
+                  <Meta>
+                    <DetailArea>
+                      <Count>동영상 {item.video_count}개</Count>
+                      <IconGroup>
+                        <span className="like">
+                          <ReactSVG
+                            src={Like}
+                            wrapper="span"
+                            className={`likeSvg ${isLiked ? "active" : "inactive"}`}
+                          />
+                          {item.like_count}
+                        </span>
+
+                        <span className="Comment">
+                          <img src={Comment} alt="댓글" />
+                          {item.comment_count}
+                        </span>
+                        {isMyPage &&
+                          activeTab === "left" &&
+                          item.random_id === currentUser?.random_id && (
+                            <Dropbox
+                              variant="icon"
+                              onChange={(action) =>
+                                handleIconAction(action, item.p_id)
+                              }
+                            />
+                          )}
+                      </IconGroup>
+                    </DetailArea>
+                    <VideoTitle>{item.playlist_title}</VideoTitle>
+                  </Meta>
+                </VideoWrapper>
+              );
+            },
+          )}
+
+          {(activeTab === "left" && isMyPlaylistsLoading) ||
+          (activeTab === "right" && isLikedPlaylistsLoading) ? (
+            <Loading />
+          ) : null}
+        </ScrollablePlaylistArea>
+      </StorageWrapper>
 
       <Modal
         isOpen={isModalOpen}
@@ -401,16 +409,45 @@ const TabRight = styled.div<{ isActive: boolean }>`
   }
 `;
 
-const PlaylistArea = styled.div`
+const StorageWrapper = styled.div`
   display: flex;
-  gap: 15px 0;
-  padding: 15px 40px 85px 40px;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+`;
+
+const FixedHeaderArea = styled.div`
+  flex-shrink: 0;
+`;
+
+const ScrollablePlaylistArea = styled.div`
+  flex: 1;
   overflow-y: auto;
+  padding: 15px 40px;
+  display: flex;
   flex-wrap: wrap;
-  max-height: 800px;
+  gap: 15px 0;
   justify-content: space-between;
   align-items: flex-start;
+  position: relative;
+
+  &::after {
+    content: "";
+    flex-basis: 100%;
+    height: 120px; // ✅ 이게 하단 여백 역할!
+  }
 `;
+
+// const PlaylistArea = styled.div`
+//   display: flex;
+//   gap: 15px 0;
+//   padding: 15px 40px 85px 40px;
+//   overflow-y: auto;
+//   flex-wrap: wrap;
+//   max-height: 800px;
+//   justify-content: space-between;
+//   align-items: flex-start;
+// `;
 
 const VideoWrapper = styled.div`
   width: 250px;
