@@ -20,7 +20,10 @@ export const useThumbnail = () => {
     type: "playlist" | "video",
   ): Promise<string> => {
     const extension = file.name.split(".").pop() || "jpg";
-    const safeFileName = `${Date.now()}.${extension}`;
+
+    // ✅ 🔥 파일명을 더 고유하게!
+    const random = Math.random().toString(36).substring(2, 8);
+    const safeFileName = `${Date.now()}-${random}.${extension}`;
     const pathPrefix =
       type === "playlist" ? "playlist_cover_img" : "video_cover_img";
     const filePath = `${pathPrefix}/${safeFileName}`;
