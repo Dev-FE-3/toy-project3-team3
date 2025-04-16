@@ -43,6 +43,7 @@ const Detail = () => {
     isLoading: isLikeLoading,
     handleLikeToggle,
     likeCount,
+    commentCount,
   } = useLikeStatus(userId, playlistId);
 
   const isLoading = isPlaylistLoading || isLikeLoading;
@@ -107,7 +108,7 @@ const Detail = () => {
             </span>
             <span className="comment">
               <img src={comment} alt="댓글" />
-              235
+              {commentCount}
             </span>
           </IconGroup>
         </Meta>
