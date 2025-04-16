@@ -43,9 +43,9 @@ const Storage = () => {
     useLikedPlaylists(targetId);
 
   const { data: likedIds = [] } = useQuery({
-    queryKey: ["myLikedIds", currentUser?.random_id],
-    queryFn: () => getMyLikedPlaylistIds(currentUser!.random_id),
-    enabled: !!currentUser?.random_id,
+    queryKey: ["likedIdsByUser", targetId],
+    queryFn: () => getMyLikedPlaylistIds(targetId!), // ✅ 중요: currentUser 말고 targetId!
+    enabled: !!targetId,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);

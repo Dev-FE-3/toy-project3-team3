@@ -13,7 +13,7 @@ export interface PlaylistCardData {
   nickname: string;
   user_img: string;
 
-  // is_active: boolean;
+  is_active: boolean;
   like_count: number;
   comment_count: number;
 }
@@ -21,6 +21,13 @@ export interface PlaylistCardData {
 export interface PlaylistPageResponse {
   data: PlaylistCardData[];
   nextPage?: number;
+}
+
+export async function getAllPlaylistCardData(): Promise<PlaylistCardData[]> {
+  const res = await axiosInstance.get<PlaylistCardData[]>(
+    "/playlist_card_data",
+  );
+  return res.data;
 }
 
 // 전체 플레이리스트 카드 + 무한스크롤
