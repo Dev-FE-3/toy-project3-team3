@@ -13,7 +13,7 @@ export interface PlaylistCardData {
   nickname: string;
   user_img: string;
 
-  // is_active: boolean;
+  is_active: boolean;
   like_count: number;
   comment_count: number;
 }

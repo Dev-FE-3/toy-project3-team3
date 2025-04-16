@@ -11,7 +11,6 @@ export interface Like {
 //가져오기
 export async function getLike(): Promise<Like[]> {
   const response = await axiosInstance.get<Like[]>("/likes_table");
-  const response = await axiosInstance.get<Like[]>("/likes_table");
   return response.data;
 }
 
@@ -49,7 +48,6 @@ export async function updateLikeActive(l_id: number, is_active: boolean) {
 //현재로서 사용하지 않음
 export async function deleteLike(): Promise<Like[]> {
   const response = await axiosInstance.delete<Like[]>("/likes_table");
-  const response = await axiosInstance.delete<Like[]>("/likes_table");
   return response.data;
 }
 
@@ -66,4 +64,19 @@ export async function getLikeCountByPlaylist(
   });
 
   return res.data.length;
+}
+
+export async function getMyLikedPlaylistIds(
+  randomId: number,
+): Promise<number[]> {
+  const { data } = await axiosInstance.get("/likes_table", {
+    params: {
+      random_id: `eq.${randomId}`,
+      is_active: "eq.true",
+      select: "playlist_id",
+    },
+  });
+
+  // 결과: [1, 3, 7] 이런 식으로 반환
+  return data.map((item: { playlist_id: number }) => item.playlist_id);
 }

@@ -5,22 +5,19 @@ import Dropbox from "@/shared/component/Dropbox";
 import { useEffect, useState } from "react";
 
 import { useUserStore } from "@/stores/userStore";
-import {
-  getPlaylistCardData,
-  playlistCardData,
-} from "@/api/services/playlistCardData";
 import PlaylistCard from "./component/PlaylistCard";
+import { getPlaylistCardData, PlaylistCardData } from "@/api/playlistCardData";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
-  const [playlistCard, setPlaylistCard] = useState<playlistCardData[]>([]);
+  const [playlistCard, setPlaylistCard] = useState<PlaylistCardData[]>([]);
 
   // playlist테이블, user테이블 join한 데이터 가져오는 api 실행
   useEffect(() => {
     const fetchPlaylists = async () => {
       try {
         const result = await getPlaylistCardData();
-        const witheLikeStatus = result.map((item) => ({
+        const witheLikeStatus = result.data.map((item) => ({
           ...item,
           is_active: false, //일단 모든 좋아요 표시를 false로 해둠-> 고민이 필요함
         }));
