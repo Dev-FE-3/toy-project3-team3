@@ -134,7 +134,6 @@ const Modify = () => {
     },
     onError: (error) => {
       console.error("수정 실패:", error);
-      alert("수정 중 오류가 발생했습니다.");
       unlock();
     },
   });

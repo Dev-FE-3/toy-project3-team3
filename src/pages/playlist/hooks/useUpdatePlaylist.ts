@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { patchPlaylist } from "@/api/playlist";
 import { createVideo, deleteVideosByIds, Video } from "@/api/video";
 import { diffVideoList } from "@/pages/playlist/utils/diffVideoList";
+import { toast } from "react-toastify";
 
 export interface VideoWithFile extends Video {
   thumbnailFile?: File;
@@ -28,7 +29,6 @@ export const useUpdatePlaylist = ({
   uploadVideoThumbnail,
   thumbnailPreview,
   onSuccess,
-  onError,
 }: UseUpdatePlaylistProps) => {
   return useMutation({
     mutationFn: async () => {
@@ -78,6 +78,9 @@ export const useUpdatePlaylist = ({
       ]);
     },
     onSuccess,
-    onError,
+    onError: (error) => {
+      console.error("업데이트 실패:", error.message || error);
+      toast.error("업데이트에 실패했습니다. 다시 시도해주세요.");
+    },
   });
 };
