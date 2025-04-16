@@ -26,7 +26,7 @@ const Header = () => {
   const isProfilePage = location.pathname === "/profile";
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper data-testid="header">
       <Link to="/" onClick={(e) => isLocked && e.preventDefault()}>
         <Logo src={IdolLink} alt="IdolLink Logo" />
       </Link>
