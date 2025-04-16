@@ -17,15 +17,45 @@ export async function getPlaylist(): Promise<Playlist[]> {
 }
 
 //만들기
-export async function createPlaylist(): Promise<Playlist[]> {
-  const response = await axiosInstance.post<Playlist[]>("/playlist_table");
-  return response.data;
+export async function createPlaylist(playlistData: {
+  cover_img_path: string;
+  playlist_title: string;
+  video_count: number;
+}): Promise<Playlist> {
+  const response = await axiosInstance.post<Playlist[]>(
+    "/playlist_table",
+    [playlistData], // Supabase는 배열 형태로 받아야 insert 됨
+    {
+      headers: {
+        Prefer: "return=representation", // p_id받으려면 필요
+      },
+    },
+  );
+  return response.data[0];
 }
 
 //수정하기
-export async function patchPlaylist(): Promise<Playlist[]> {
-  const response = await axiosInstance.patch<Playlist[]>("/playlist_table");
-  return response.data;
+interface PatchPlaylistData {
+  p_id: number;
+  playlist_title?: string;
+  cover_img_path?: string;
+  video_count?: number;
+}
+
+export async function patchPlaylist({
+  p_id,
+  ...updateData
+}: PatchPlaylistData): Promise<Playlist> {
+  const response = await axiosInstance.patch<Playlist[]>(
+    `/playlist_table?p_id=eq.${p_id}`,
+    [updateData], // Supabase는 배열로 전달해야 함
+    {
+      headers: {
+        Prefer: "return=representation", // 응답으로 수정된 row 받아오기
+      },
+    },
+  );
+  return response.data[0];
 }
 
 // 내가 만든 플레이리스트 soft delete (is_delete: true)

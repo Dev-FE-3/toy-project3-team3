@@ -188,18 +188,16 @@ const IconGroup = styled.div`
     width: 14px;
     height: 14px;
     display: block;
-    color: var(--text-secondary);
-    transition: color 0.2s ease;
+    color: var(--text-secondary); /* 기본 회색 */
   }
 
   .likeSvg.active svg {
-    color: var(--primary); /* 활성화: 원래 컬러 */
-    fill: var(--primary); /* 색상 채우기 */
+    color: var(--primary); /* 좋아요 눌렀을 때 */
   }
 
   .likeSvg.inactive svg {
-    color: var(--text-secondary); /* 비활성화: 회색 외곽선 */
-    fill: none; /* 안은 비우기 */
+    stroke: var(--text-secondary); /* 비활성 테두리 */
+    fill: none; /* 비활성 내부는 비워둠 */
   }
 
   .comment img {
