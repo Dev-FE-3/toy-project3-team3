@@ -12,9 +12,9 @@ import Storage from "@/pages/storage/Storage";
 import NavigateToMyStorage from "@/pages/storage/hooks/NavigateToMyStorage";
 import FollowInfo from "@/pages/followInfo/FollowInfo";
 import Play from "@/pages/play/Play";
-import Search from "./pages/homeAndSearch/Search";
-import Modify from "./pages/playlist/Modify";
-import Detail from "./pages/playlist/detail/Detail";
+import Search from "@/pages/homeAndSearch/Search";
+import Modify from "@/pages/playlist/Modify";
+import Detail from "@/pages/playlist/detail/Detail";
 
 const router = createBrowserRouter([
   {
