@@ -9,8 +9,10 @@ export interface Comment {
 }
 
 //가져오기
-export async function getComment(): Promise<Comment[]> {
-  const response = await axiosInstance.get<Comment[]>("/comments_table")
+export async function getComment(p_id: number): Promise<Comment[]> {
+  const response = await axiosInstance.get<Comment[]>(
+    `/comments_table?p_id=eq.${p_id}&order=created_at.desc`,
+  );
   return response.data;
 }
 
@@ -33,8 +35,20 @@ export async function getCommentCountByPlaylist(playlistId: number): Promise<num
 
 
 //만들기
-export async function createComment(): Promise<Comment[]> {
-  const response = await axiosInstance.post<Comment[]>("/comments_table");
+export async function createComment(payload: {
+  playlist_id: number;
+  random_id: number;
+  commentText: string;
+}): Promise<Comment[]> {
+  const response = await axiosInstance.post<Comment[]>(
+    "/comments_table",
+    [payload],
+    {
+      headers: {
+        Prefer: "return=representation",
+      },
+    },
+  );
   return response.data;
 }
 

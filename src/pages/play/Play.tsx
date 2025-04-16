@@ -3,13 +3,44 @@ import Title from "@/shared/component/Title";
 import CommonInput from "@/shared/component/input";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import Like from "@/assets/images/Like.svg";
-import comment from "@/assets/images/comment.svg";
 import Submit from "@/assets/images/Submit.svg";
 import GoBack from "@/assets/images/GoBack.svg";
+import commentIcon from "@/assets/images/comment.svg";
 import List from "@/assets/images/List.svg";
 import Icon from "@/shared/component/Icon";
+import { useState } from "react";
+import { createComment } from "@/api/comment";
+import { useParams } from "react-router-dom";
+import { useUserStore } from "@/stores/userStore";
 
 const Play = () => {
+  const [commentText, setCommentText] = useState("");
+  const userId = useUserStore((state) => state.user?.random_id);
+  const { p_id } = useParams<{ p_id: string }>();
+  const playlistId = Number(p_id);
+
+  const handleSubmit = async () => {
+    if (!commentText.trim()) return alert("댓글을 입력해주세요."); // 토스트 알림으로 수정
+
+    if (!userId || !playlistId) {
+      return alert("로그인 정보 또는 플레이리스트 정보가 없습니다.");
+    }
+
+    try {
+      await createComment({
+        playlist_id: playlistId,
+        random_id: userId,
+        comment: commentText,
+      });
+
+      setCommentText(""); // 입력 초기화
+      alert("댓글이 등록되었습니다."); // 또는 toast 메시지
+      // refetch()
+    } catch (error) {
+      console.error("댓글 등록 실패", error);
+      alert("댓글 등록 중 오류가 발생했습니다.");
+    }
+  };
   return (
     <>
       <Title showBackButton title="여기에 플레이리스트 제목" />
@@ -25,7 +56,7 @@ const Play = () => {
             <img src={Like} alt="좋아요" /> 50
           </span>
           <span className="comment">
-            <img src={comment} alt="댓글" /> 235
+            <img src={commentIcon} alt="댓글" /> 235
           </span>
         </IconGroup>
       </Meta>
@@ -35,8 +66,11 @@ const Play = () => {
           id="comment"
           placeholder="댓글을 입력해주세요."
           width="320px"
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
         />
-        <SubmitIcon src={Submit} alt="제출" />
+
+        <SubmitIcon src={Submit} alt="제출" onClick={handleSubmit} />
       </CommentWriteWrapper>
       <CommentListWrapper>
         <CommentIndividualWrapper>

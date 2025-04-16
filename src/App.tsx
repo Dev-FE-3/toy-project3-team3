@@ -62,7 +62,7 @@ const router = createBrowserRouter([
         element: <Modify />,
       },
       {
-        path: "/play",
+        path: "/play/:p_id",
         element: <Play />,
       },
       {
