@@ -278,12 +278,12 @@ const ThumbnailWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  object-fit: cover;
 `;
 
 const ThumbnailImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
   border-radius: 10px;
   position: absolute;
   top: 0;
