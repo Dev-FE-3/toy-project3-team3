@@ -11,6 +11,7 @@ export interface Like {
 //가져오기
 export async function getLike(): Promise<Like[]> {
   const response = await axiosInstance.get<Like[]>("/likes_table");
+  const response = await axiosInstance.get<Like[]>("/likes_table");
   return response.data;
 }
 
@@ -47,6 +48,7 @@ export async function updateLikeActive(l_id: number, is_active: boolean) {
 
 //현재로서 사용하지 않음
 export async function deleteLike(): Promise<Like[]> {
+  const response = await axiosInstance.delete<Like[]>("/likes_table");
   const response = await axiosInstance.delete<Like[]>("/likes_table");
   return response.data;
 }

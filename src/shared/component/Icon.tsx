@@ -1,11 +1,12 @@
 import { ReactSVG } from "react-svg";
 import styled from "@emotion/styled";
+import { useCallback } from "react";
 
 interface IconProps {
   src: string;
   alt?: string;
   size?: "small" | "large";
-  colorType?: "white" | "black"; // var(--background-color) | var(--text-secondary)
+  colorType?: "white" | "black";
   rotate?: number;
   onClick?: () => void;
 }
@@ -50,19 +51,32 @@ const Icon = ({
   colorType = "black",
   rotate = 0,
   onClick,
-}: IconProps) => (
-  <Wrapper size={size} rotate={rotate} colorType={colorType} onClick={onClick}>
-    <ReactSVG
-      src={src}
-      beforeInjection={(svg) => {
-        svg.setAttribute("role", "img");
-        svg.setAttribute("aria-label", alt);
-        svg.setAttribute("fill", "currentColor");
-        svg.removeAttribute("width");
-        svg.removeAttribute("height");
-      }}
-    />
-  </Wrapper>
-);
+}: IconProps) => {
+  const injectAttributes = useCallback(
+    (svg: SVGElement) => {
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", alt);
+      svg.setAttribute("fill", "currentColor");
+      svg.removeAttribute("width");
+      svg.removeAttribute("height");
+    },
+    [alt],
+  );
+
+  return (
+    <Wrapper
+      size={size}
+      rotate={rotate}
+      colorType={colorType}
+      onClick={onClick}
+    >
+      <ReactSVG
+        src={src}
+        beforeInjection={injectAttributes}
+        renumerateIRIElements={false} // optional: 얘도 무한 루프 방지용으로 good
+      />
+    </Wrapper>
+  );
+};
 
 export default Icon;
