@@ -6,7 +6,7 @@ const useOtherUser = (randomId: number) => {
   return useQuery<User | null>({
     queryKey: ["otherUser", randomId],
     queryFn: () => getUserByRandomId(randomId),
-    enabled: !!randomId, // undefined일 경우 실행 안 되게
+    enabled: !!randomId,
   });
 };
 
