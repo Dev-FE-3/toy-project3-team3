@@ -32,7 +32,6 @@ export const useLikeStatus = (userId?: number, playlistId?: number) => {
       if (!playlistId) return;
       const commentCount = await getCommentCountByPlaylist(playlistId);
       setCommentCount(commentCount);
-      console.log("commentCount::::::::  확인해볼게", commentCount);
     };
     fetchCommentCount();
   }, [playlistId]);

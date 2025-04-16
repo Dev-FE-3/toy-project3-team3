@@ -23,7 +23,6 @@ export async function getLikeStatus(
     `/likes_table?random_id=eq.${userId}&playlist_id=eq.${playlistId}`,
   );
 
-  console.log("좋아요 여부 확인:::", res.data);
   return res.data[0] ?? null;
 }
 
