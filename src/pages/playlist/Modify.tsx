@@ -11,6 +11,7 @@ import add from "@/assets/images/add.svg";
 import Modal from "@/shared/component/Modal";
 import Loading from "@/shared/component/Loading";
 import VideoItem from "./component/VideoItem";
+import { toast } from "react-toastify";
 import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
 import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
@@ -129,6 +130,7 @@ const Modify = () => {
     uploadVideoThumbnail,
     thumbnailPreview: thumbnailPreview ?? "",
     onSuccess: () => {
+      toast.success("업데이트 성공! 멋진 변화를 주셨네요 ✨");
       unlock();
       navigate("/storage");
     },

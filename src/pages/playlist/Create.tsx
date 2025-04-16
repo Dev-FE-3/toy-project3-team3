@@ -11,6 +11,7 @@ import add from "@/assets/images/add.svg";
 import Modal from "@/shared/component/Modal";
 import Loading from "@/shared/component/Loading";
 import VideoItem from "./component/VideoItem";
+import { toast } from "react-toastify";
 import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
 import { useUserStore } from "@/stores/userStore";
@@ -94,6 +95,7 @@ const Create = () => {
     uploadPlaylistThumbnail,
     uploadVideoThumbnail,
     onSuccess: () => {
+      toast.success("좋아요! 새로운 플레이리스트가 생성되었어요 🎶");
       unlock();
       navigate("/storage");
     },
