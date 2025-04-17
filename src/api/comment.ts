@@ -32,7 +32,6 @@ export const getCommentWithUserInfo = async (
     },
   );
 
-  console.log("댓글, 작성자 정보 확ㅇ;::::", response.data);
   return response.data;
 };
 

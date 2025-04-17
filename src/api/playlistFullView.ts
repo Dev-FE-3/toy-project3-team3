@@ -28,6 +28,5 @@ export const getSingleVideoFromPlaylist  = async (
     }
   );
 
-  console.log("🎥 단일 영상 조회 결과:", response.data);
   return response.data[0] ?? null;
 };

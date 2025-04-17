@@ -31,7 +31,7 @@ const Play = () => {
   const userId = useUserStore((state) => state.user?.random_id);
   const { p_id, video_id } = useParams<{ p_id: string; video_id: string }>();
   const playlistId = Number(p_id);
-  const videoId = video_id ?? ""; // ❗ undefined인 경우 빈 문자열로 대체
+  const videoId = video_id ?? "";
   const user = useUserStore((state) => state.user);
   const { isLiked, likeCount, commentCount } = usePlaylistMeta(playlistId);
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ const Play = () => {
       <Meta>
         <ProfileWrapper>
           <ProfileImage
-            src={user?.user_img || DefaultProfile}
+            src={videoData?.user_img || DefaultProfile}
             onError={(e) => (e.currentTarget.src = DefaultProfile)}
           />
           <ProfileName>{videoData?.nickname}</ProfileName>
