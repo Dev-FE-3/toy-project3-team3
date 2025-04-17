@@ -14,7 +14,7 @@ export interface CommentWithUserInfo {
   comment: string;
   created_at: number;
   random_id: number;
-  nickname: string;
+  user_nickname: string;
   user_img: string;
 }
 
@@ -31,7 +31,6 @@ export const getCommentWithUserInfo = async (
       },
     },
   );
-
   return response.data;
 };
 

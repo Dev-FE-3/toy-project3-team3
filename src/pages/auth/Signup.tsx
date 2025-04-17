@@ -183,7 +183,7 @@ const Form = styled.form`
 `;
 
 const Title = styled.h2`
-  font-size: 24px;
+  font-size: var(--font-size-subtitle);
   color: var(--text-primary);
   margin: 35px 0;
   align-self: center;

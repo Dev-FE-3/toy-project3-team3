@@ -37,8 +37,10 @@ const ItemWrapper = styled.div`
 `;
 
 const Thumbnail = styled.div`
-  width: 150px;
+  width: 160px;
   height: 90px;
+  //width: 128px;
+  //height: 72px;
   background-color: #d9d9d9;
   border-radius: 5px;
 
