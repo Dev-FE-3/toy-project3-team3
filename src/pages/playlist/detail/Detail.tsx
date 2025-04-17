@@ -113,9 +113,12 @@ const Detail = () => {
           </IconGroup>
         </Meta>
 
-        <VideoListWrapper onClick={() => navigate(`/play/${playlistId}`)}>
+        <VideoListWrapper>
           {playlistData.videos.map((item) => (
-            <VideoCardWrapper key={item.v_id}>
+            <VideoCardWrapper
+              key={item.v_id}
+              onClick={() => navigate(`/play/${playlistId}/${item.video_id}`)}
+            >
               <Thumbnail
                 src={item.thumbnail_url || backgroundImage}
                 alt="썸네일"
