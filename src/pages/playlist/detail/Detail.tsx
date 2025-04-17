@@ -77,11 +77,13 @@ const Detail = () => {
                 className={`likeSvg ${isLiked ? "active" : "inactive"}`}
               />
             </LikeIcon>
-            <Dropbox
-              variant="icon"
-              iconSize={24}
-              onChange={(action) => handleIconAction(action, playlistId)}
-            />
+            {userId === playlistData.random_id ? (
+              <Dropbox
+                variant="icon"
+                iconSize={24}
+                onChange={(action) => handleIconAction(action, playlistId)}
+              />
+            ) : null}
           </>
         }
       />

@@ -18,12 +18,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleVideoFromPlaylist } from "@/api/playlistFullView";
-import { usePlaylistMeta } from "@/shared/hooks/usePlaylistMeta";
 import { ReactSVG } from "react-svg";
 import {
   getPlaylistWithVideos,
   PlaylistWithVideos,
 } from "@/api/playlistWithvideos";
+import { useLikeStatus } from "../playlist/detail/hooks/useLikeStatus";
 
 const Play = () => {
   const queryClient = useQueryClient();
@@ -33,7 +33,13 @@ const Play = () => {
   const playlistId = Number(p_id);
   const videoId = video_id ?? "";
   const user = useUserStore((state) => state.user);
-  const { isLiked, likeCount, commentCount } = usePlaylistMeta(playlistId);
+  const {
+    isLiked,
+    isLoading: isLikeLoading,
+    likeCount,
+    commentCount,
+    handleLikeToggle,
+  } = useLikeStatus(userId, playlistId);
   const navigate = useNavigate();
 
   // ✅ 비디오 정보 가져오기
@@ -90,7 +96,7 @@ const Play = () => {
   const totalCount = videoList.length;
 
   // ✅ 조건 분기 처리
-  if (isPlaylistLoading) {
+  if (isPlaylistLoading || isLikeLoading) {
     return <p>플레이리스트 정보를 불러오는 중...</p>;
   }
 
@@ -124,7 +130,11 @@ const Play = () => {
           <ProfileName>{videoData?.nickname}</ProfileName>
         </ProfileWrapper>
         <IconGroup>
-          <span className="like">
+          <span
+            className="like"
+            onClick={handleLikeToggle}
+            style={{ cursor: "pointer" }}
+          >
             <ReactSVG
               src={Like}
               wrapper="span"
@@ -148,7 +158,6 @@ const Play = () => {
         />
         <SubmitIcon src={Submit} alt="제출" onClick={handleSubmit} />
       </CommentWriteWrapper>
-
       <ScrollableContent>
         <CommentListWrapper>
           {commentList.map((item) => {
@@ -156,15 +165,18 @@ const Play = () => {
               <CommentIndividualWrapper key={item.c_id}>
                 <ProfileImage src={item.user_img || DefaultProfile} />
                 <CommentIndividual>
-                  <CommentWriter>{item.nickname}</CommentWriter>
-                  <CommentContent>{item.comment}</CommentContent>
+                  <CommentWriter className="nickName">
+                    {item.user_nickname}
+                  </CommentWriter>
+                  <CommentContent className="comment">
+                    {item.comment}
+                  </CommentContent>
                 </CommentIndividual>
               </CommentIndividualWrapper>
             );
           })}
         </CommentListWrapper>
       </ScrollableContent>
-
       <PlayListInfoWrapper>
         <PlayListInfo>
           {videoData?.playlist_title} [{currentIndex + 1}/{totalCount}]
