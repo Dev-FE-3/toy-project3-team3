@@ -13,7 +13,7 @@ export interface CommentWithUserInfo {
   playlist_id: number;
   comment: string;
   created_at: number;
-  random_id: number;
+  user_random_id: number;
   user_nickname: string;
   user_img: string;
 }
@@ -81,8 +81,6 @@ export async function getCommentCountByPlaylist(
   return data.length;
 }
 
-
-
 // 현재로서 사용하지 않음
 export async function patchComment(): Promise<Comment[]> {
   const response = await axiosInstance.patch<Comment[]>("/comments_table");
@@ -94,4 +92,3 @@ export async function deleteComment(): Promise<Comment[]> {
   const response = await axiosInstance.delete<Comment[]>("/comments_table");
   return response.data;
 }
-
