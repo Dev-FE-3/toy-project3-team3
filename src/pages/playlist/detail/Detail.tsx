@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import Title from '@/shared/component/Title';
+import Title from "@/shared/component/Title";
 import Like from "@/assets/images/Like.svg";
 import Dropbox from "@/shared/component/Dropbox";
-import { useUserStore } from '@/stores/userStore';
+import { useUserStore } from "@/stores/userStore";
 import backgroundImage from "@/assets/images/backGround.png";
 import comment from "@/assets/images/comment.svg";
 import { useNavigate, useParams } from "react-router-dom";
@@ -64,31 +64,30 @@ const Detail = () => {
 
   return (
     <>
-      <div className="headerArea">
-        <Title
-          showBackButton
-          title={playlistData.playlist_title}
-          rightContent={
-            <>
-              <LikeIcon>
-                <ReactSVG
-                  src={Like}
-                  onClick={handleLikeToggle}
-                  wrapper="span"
-                  className={`likeSvg ${isLiked ? "active" : "inactive"}`}
-                />
-              </LikeIcon>
-              {userId === playlistData.random_id ? (
-                <Dropbox
-                  variant="icon"
-                  iconSize={24}
-                  onChange={(action) => handleIconAction(action, playlistId)}
-                />
-              ) : null}
-            </>
-          }
-        />
-      </div>
+      <Title
+        showBackButton
+        title={playlistData.playlist_title}
+        rightContent={
+          <>
+            <LikeIcon>
+              <ReactSVG
+                src={Like}
+                onClick={handleLikeToggle}
+                wrapper="span"
+                className={`likeSvg ${isLiked ? "active" : "inactive"}`}
+              />
+            </LikeIcon>
+            {userId === playlistData.random_id ? (
+              <Dropbox
+                variant="icon"
+                iconSize={24}
+                onChange={(action) => handleIconAction(action, playlistId)}
+              />
+            ) : null}
+          </>
+        }
+      />
+
       <DetailPage>
         <CoverImage
           src={playlistData.cover_img_path || backgroundImage}
@@ -213,7 +212,6 @@ const Meta = styled.div`
   font-size: var(--font-size-small);
   color: var(--text-secondary);
   padding-top: 20px;
-  padding-bottom: 10px;
 `;
 
 const IconGroup = styled.div`
@@ -254,21 +252,23 @@ const IconGroup = styled.div`
 `;
 
 const VideoListWrapper = styled.div`
-  border-top: 1px solid var(--text-secondary);
-  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
   display: flex;
-  cursor: pointer;
-  margin-bottom: 15px;
+  flex-direction: column;
   gap: 15px;
+  margin-top: 20px;
+  padding-bottom: 180px;
+  border-top: 1px solid var(--text-secondary);
 `;
 
 const VideoCardWrapper = styled.div`
- width: 520px;
- height: 90px;
+  width: 520px;
+  height: 90px;
   display: flex;
   gap: 15px;
   align-items: flex-start;
-  
+
   &:first-of-type {
     margin-top: 16px;
   }
@@ -286,6 +286,7 @@ const VideoInfo = styled.div`
   flex-direction: column;
   gap: 10px;
   flex: 1;
+  padding-right: 20px;
 `;
 
 const VideoTitle = styled.div`

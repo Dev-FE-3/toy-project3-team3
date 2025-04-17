@@ -186,7 +186,10 @@ const Storage = () => {
               const isLiked = likedIds.includes(item.p_id);
 
               return (
-                <VideoWrapper key={item.p_id}>
+                <VideoWrapper
+                  key={item.p_id}
+                  onClick={() => navigate(`/playlist/${item.p_id}`)}
+                >
                   <VideoArea src={item.cover_img_path || backgroundImage} />
                   <Meta>
                     <DetailArea>
@@ -289,7 +292,7 @@ const ProfileInfo = styled.div`
 `;
 
 const NickName = styled.span`
-  font-size: 24px;
+  font-size: var(--font-size-subtitle);
   font-weight: 700;
 `;
 
