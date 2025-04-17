@@ -1,15 +1,44 @@
 describe("사용자 인증 플로우", () => {
-  const email = `test${Date.now()}@naver.com`;
-  const password = "1234567!";
+  const randomId = Date.now();
+  const email = `test${randomId}@naver.com`;
+  const password = Cypress.env("TEST_USER_PASSWORD") || "1234567!";
 
-  // ✅ 로그인 세션 캐싱
-  const loginSession = () => {
-    cy.visit("/login");
-    cy.get("input#email").type(email);
-    cy.get("input#password").type(password);
-    cy.get("button").contains("로그인").click();
-    cy.url().should("eq", `${Cypress.config().baseUrl}/`);
-    cy.contains("반갑습니다").should("exist");
+  //  API로 직접 로그인하는 함수
+  const loginWithoutUI = () => {
+    return cy
+      .request({
+        method: "POST",
+        url: `${Cypress.env("SUPABASE_URL")}/auth/v1/token?grant_type=password`,
+        body: {
+          email,
+          password,
+        },
+        headers: {
+          apikey: Cypress.env("SUPABASE_ANON_KEY"),
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        // 응답에서 토큰 추출
+        const { access_token, refresh_token } = response.body;
+
+        // 토큰을 로컬 스토리지에 저장
+        cy.window().then((win) => {
+          const authData = {
+            access_token,
+            refresh_token,
+            expires_at: Math.floor(Date.now() / 1000) + 3600, // 임의로 1시간 후 만료
+            expires_in: 3600,
+            token_type: "bearer",
+            user: response.body.user,
+          };
+
+          win.localStorage.setItem(
+            Cypress.env("SUPABASE_AUTH_TOKEN_KEY"),
+            JSON.stringify(authData),
+          );
+        });
+      });
   };
 
   context("회원가입 페이지", () => {
@@ -108,12 +137,27 @@ describe("사용자 인증 플로우", () => {
 
   context("로그아웃 플로우", () => {
     beforeEach(() => {
-      // 세션 캐싱: 로그인 이후 세션 재사용
-      cy.session("logged-in", loginSession);
+      // API로 로그인 후 세션 캐싱
+      cy.session("logged-in", loginWithoutUI, {
+        validate() {
+          // 로컬 스토리지에 토큰이 있는지 확인하여 세션 유효성 검증
+          cy.window().then((win) => {
+            const authData = JSON.parse(
+              win.localStorage.getItem(
+                Cypress.env("SUPABASE_AUTH_TOKEN_KEY"),
+              ) || "null",
+            );
+            expect(authData).to.not.be.null;
+            expect(authData.access_token).to.exist;
+          });
+        },
+      });
+
+      // 로그인된 상태로 바로 홈페이지로 이동
+      cy.visit("/");
     });
 
     it("프로필 페이지에서 로그아웃하면 로그인 페이지로 이동해야 한다", () => {
-      cy.visit("/");
       cy.get("[data-testid='header']").should("exist");
       cy.get("img[alt='Profile Image']").click();
       cy.url().should("include", "/profile");
