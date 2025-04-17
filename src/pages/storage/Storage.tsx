@@ -289,7 +289,7 @@ const ProfileInfo = styled.div`
 `;
 
 const NickName = styled.span`
-  font-size: 24px;
+  font-size: var(--font-size-subtitle);
   font-weight: 700;
 `;
 

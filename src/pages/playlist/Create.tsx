@@ -260,7 +260,7 @@ const AddThumbnailButton = styled.button`
   position: absolute;
   z-index: 2;
   background-color: transparent;
-  font-size: 24px;
+  font-size: var(--font-size-subtitle);
   color: var(--text-primary);
   cursor: pointer;
   display: flex;

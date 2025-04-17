@@ -219,7 +219,6 @@ const VideoWrapper = styled.div`
 `;
 
 const VideoTitle = styled.div`
-  //font-size: var(--font-size-subtitle);
   font-size: var(--font-size-large);
   font-weight: 500;
   line-height: 1.2;
