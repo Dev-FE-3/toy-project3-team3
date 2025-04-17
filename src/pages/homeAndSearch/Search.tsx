@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Dropbox from "@/shared/component/Dropbox";
 import Title, { StyledTitle } from "@/shared/component/Title";
-import { useMemo, useState, useRef, useCallback } from "react";
+import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import { getPlaylistCardData, PlaylistCardData } from "@/api/playlistCardData";
 import styled from "@emotion/styled";
 import CommonInput from "@/shared/component/input";
@@ -10,6 +10,8 @@ import useLikedPlaylistIds from "@/pages/homeAndSearch/hooks/useLikedPlaylistIds
 import useDebounce from "@/shared/hooks/useDebounce";
 import Reset from "@/assets/images/reset.svg";
 import { useUserStore } from "@/stores/userStore";
+import { useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Search = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
@@ -18,6 +20,17 @@ const Search = () => {
 
   const currentUser = useUserStore((state) => state.user);
   const { data: likedIds = [] } = useLikedPlaylistIds(currentUser?.random_id);
+
+  const location = useLocation();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (currentUser?.random_id) {
+      queryClient.invalidateQueries({
+        queryKey: ["likedPlaylistIds", currentUser.random_id],
+      });
+    }
+  }, [location.pathname, currentUser?.random_id, queryClient]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
@@ -65,51 +78,75 @@ const Search = () => {
   );
 
   return (
-    <>
-      <Title
-        leftContent={
-          <>
-            <StyledTitle>탐색</StyledTitle>
-            <InputWrapper>
-              <CommonInput
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="키워드를 검색해주세요"
-                width="250px"
-              />
-              <ResetButton
-                src={Reset}
-                alt="검색 초기화"
-                visible={searchInput !== ""}
-                onClick={() => setSearchInput("")}
-              />
-            </InputWrapper>
-          </>
-        }
-        rightContent={
-          <Dropbox variant="text" value={sortOrder} onChange={setSortOrder} />
-        }
-      />
+    <SearchPage>
+      <TitleWrapper>
+        <Title
+          leftContent={
+            <>
+              <StyledTitle>탐색</StyledTitle>
+              <InputWrapper>
+                <CommonInput
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder="키워드를 검색해주세요"
+                  width="250px"
+                />
+                <ResetButton
+                  src={Reset}
+                  alt="검색 초기화"
+                  visible={searchInput !== ""}
+                  onClick={() => setSearchInput("")}
+                />
+              </InputWrapper>
+            </>
+          }
+          rightContent={
+            <Dropbox variant="text" value={sortOrder} onChange={setSortOrder} />
+          }
+        />
+      </TitleWrapper>
 
-      <SearchPage>
-        <Container>
-          <ScrollableList>
-            {playlistCard.map((item, index) => {
-              const isLast = index === playlistCard.length - 1;
-              return (
-                <div ref={isLast ? lastItemRef : null} key={item.p_id}>
-                  <PlaylistCard {...item} />
-                </div>
-              );
-            })}
-          </ScrollableList>
-        </Container>
-      </SearchPage>
-    </>
+      <ScrollableArea>
+        <ScrollableList>
+          {playlistCard.map((item, index) => {
+            const isLast = index === playlistCard.length - 1;
+            return (
+              <div ref={isLast ? lastItemRef : null} key={item.p_id}>
+                <PlaylistCard {...item} />
+              </div>
+            );
+          })}
+        </ScrollableList>
+      </ScrollableArea>
+    </SearchPage>
   );
 };
 
 export default Search;
+
+const SearchPage = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+`;
+
+const TitleWrapper = styled.div`
+  flex-shrink: 0;
+`;
+
+const ScrollableArea = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 40px;
+`;
+
+const ScrollableList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 70px; // Nav 가림 방지용
+`;
 
 const InputWrapper = styled.div`
   position: relative;
@@ -125,27 +162,4 @@ const ResetButton = styled.img<{ visible: boolean }>`
   transform: translateY(-50%);
   cursor: pointer;
   visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-`;
-
-const SearchPage = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 20px 40px;
-  align-items: flex-start;
-  overflow-y: auto;
-`;
-
-const Container = styled.div`
-  //height: 300px;
-  //height: (100%-600px);
-  //height: calc(100vh-500px);
-  //height: 850px;
-  height: 700px;
-`;
-
-const ScrollableList = styled.div`
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
 `;
