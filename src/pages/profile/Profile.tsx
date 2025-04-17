@@ -103,7 +103,7 @@ const Profile = () => {
   if (!user) return toast.error("유저 정보가 존재하지 않습니다.");
 
   return (
-    <>
+    <ProfilePage>
       {isEditing ? (
         <Title
           title="프로필"
@@ -231,15 +231,26 @@ const Profile = () => {
         leftButtonText="계속하기"
         rightButtonText="네"
       />
-    </>
+    </ProfilePage>
   );
 };
 
 export default Profile;
 
+const ProfilePage = styled.div`
+  flex: 1;
+  height: 100%;
+  overflow-y: auto; // 🔥 이걸 추가!
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 100px; // Nav 가림 방지용
+`;
+
 const ProfileHeader = styled.div`
   width: 100%;
-  height: 150px;
+  //height: 150px;
+  height: 220px;
   background-color: var(--profile-background);
   position: relative;
 `;
@@ -269,19 +280,22 @@ const ProfileImage = styled.img`
 
 const ProfileDataWrapper = styled.div`
   width: 500px;
-  height: 350px;
+  //height: 350px;
+  height: 400px;
   border-radius: 18px;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 110px auto 0;
+  //margin: 110px auto 0;
+  margin: 125px auto 0;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 15px;
+  //margin-top: 15px;
+  margin-top: 30px;
 `;
 
 const FormWrapper = styled.div`

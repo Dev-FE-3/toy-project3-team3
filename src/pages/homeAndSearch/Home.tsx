@@ -1,19 +1,32 @@
 import styled from "@emotion/styled";
 import Title, { StyledTitle } from "@/shared/component/Title";
 import Dropbox from "@/shared/component/Dropbox";
-import { useMemo, useState, useRef, useCallback } from "react";
+import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 
 import useHomeFeedPlaylists from "./hooks/useHomeFeedPlaylists";
 import PlaylistCard from "@/pages/homeAndSearch/component/PlaylistCard";
 import useLikedPlaylistIds from "@/pages/homeAndSearch/hooks/useLikedPlaylistIds";
 import Loading from "@/shared/component/Loading";
 import { useUserStore } from "@/stores/userStore";
+import { useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Home = () => {
   const [sortOrder, setSortOrder] = useState("최신순");
 
   const randomId = useUserStore((state) => state.user?.random_id);
   const { data: likedIds = [] } = useLikedPlaylistIds(randomId);
+
+  const location = useLocation(); // 👈 경로 감지를 위한 훅
+  const queryClient = useQueryClient(); // 👈 React Query 클라이언트
+
+  useEffect(() => {
+    if (randomId) {
+      queryClient.invalidateQueries({
+        queryKey: ["likedPlaylistIds", randomId],
+      });
+    }
+  }, [location.pathname, randomId, queryClient]);
 
   const {
     playlists,
@@ -60,14 +73,17 @@ const Home = () => {
   );
 
   return (
-    <>
-      <Title
-        leftContent={<StyledTitle>홈</StyledTitle>}
-        rightContent={
-          <Dropbox variant="text" value={sortOrder} onChange={setSortOrder} />
-        }
-      />
-      <HomePage>
+    <HomePage>
+      <TitleWrapper>
+        <Title
+          leftContent={<StyledTitle>홈</StyledTitle>}
+          rightContent={
+            <Dropbox variant="text" value={sortOrder} onChange={setSortOrder} />
+          }
+        />
+      </TitleWrapper>
+
+      <ScrollableArea>
         <Container isEmpty={sortedPlaylistCards.length === 0}>
           {isLoading ? (
             <Loading />
@@ -82,18 +98,15 @@ const Home = () => {
                 const isLast = index === sortedPlaylistCards.length - 1;
                 return (
                   <div ref={isLast ? lastItemRef : null} key={item.p_id}>
-                    <PlaylistCard
-                      {...item}
-                      onLikeClick={() => console.log(item.p_id)}
-                    />
+                    <PlaylistCard {...item} />
                   </div>
                 );
               })}
             </ScrollableList>
           )}
         </Container>
-      </HomePage>
-    </>
+      </ScrollableArea>
+    </HomePage>
   );
 };
 
@@ -102,35 +115,38 @@ export default Home;
 const HomePage = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 20px 40px;
-  align-items: flex-start;
+  flex: 1;
+  height: 100%;
+`;
+
+const TitleWrapper = styled.div`
+  flex-shrink: 0;
+`;
+
+const ScrollableArea = styled.div`
+  flex: 1;
   overflow-y: auto;
-  height: 700px;
+  padding: 20px 40px;
 `;
 
 const Container = styled.div<{ isEmpty?: boolean }>`
-  height: 700px;
   width: 100%;
   display: ${({ isEmpty }) => (isEmpty ? "flex" : "block")};
-  justify-content: center;
-  align-items: center;
+  justify-content: ${({ isEmpty }) => (isEmpty ? "center" : "initial")};
+  align-items: ${({ isEmpty }) => (isEmpty ? "center" : "initial")};
+  flex: 1;
 `;
 
 const ScrollableList = styled.div`
-  overflow-y: auto;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  padding-bottom: 80px;
 `;
 
 const EmptyMessage = styled.div`
-  width: 100%;
-  height: 500px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
   font-size: var(--font-size-subtitle);
   color: var(--text-secondary);
-  margin: 0 auto;
   line-height: normal;
 `;

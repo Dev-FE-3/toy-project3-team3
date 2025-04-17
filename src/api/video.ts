@@ -12,8 +12,10 @@ export interface Video {
 }
 
 //가져오기
-export async function getVideo(): Promise<Video[]> {
-  const response = await axiosInstance.get<Video[]>("/video_table");
+export async function getVideo(p_id: number): Promise<Video[]> {
+  const response = await axiosInstance.get<Video[]>(
+    `/video_table?playlist_id=eq.${p_id}`,
+  );
   return response.data;
 }
 

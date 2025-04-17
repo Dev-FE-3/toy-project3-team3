@@ -12,8 +12,9 @@ import Storage from "@/pages/storage/Storage";
 import NavigateToMyStorage from "@/pages/storage/hooks/NavigateToMyStorage";
 import FollowInfo from "@/pages/followInfo/FollowInfo";
 import Play from "@/pages/play/Play";
-import Search from "./pages/homeAndSearch/Search";
-import Modify from "./pages/playlist/Modify";
+import Search from "@/pages/homeAndSearch/Search";
+import Modify from "@/pages/playlist/Modify";
+import Detail from "@/pages/playlist/detail/Detail";
 
 const router = createBrowserRouter([
   {
@@ -61,13 +62,13 @@ const router = createBrowserRouter([
         element: <Modify />,
       },
       {
-        path: "/play",
+        path: "/play/:p_id/:video_id",
         element: <Play />,
       },
-      // { 디테일 페이지 만들면 연결시킴
-      //   path: "playlist/:p_id",
-      //   element: <Detail />,
-      // },
+      {
+        path: "playlist/:p_id",
+        element: <Detail />,
+      },
     ],
   },
   { path: "/login", element: <Login /> },

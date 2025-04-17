@@ -36,6 +36,7 @@ export async function updateUser(
   return response.data;
 }
 
+
 // 현재로서 사용하지 않음
 export async function deleteAllUser(): Promise<User[]> {
   const response = await axiosInstance.delete<User[]>("/user_table");

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { ReactSVG } from "react-svg";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import likeIcon from "@/assets/images/Like.svg";
 import commentIcon from "@/assets/images/comment.svg";
@@ -17,10 +17,11 @@ interface Props {
   like_count: number;
   comment_count: number;
   is_active: boolean;
-  onLikeClick: () => void;
+  random_id: number;
 }
 
 const PlaylistCard = ({
+  p_id,
   cover_img_path,
   playlist_title,
   video_count,
@@ -29,26 +30,26 @@ const PlaylistCard = ({
   like_count,
   comment_count,
   is_active,
-  onLikeClick,
+  random_id,
 }: Props) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const handleGoToDetail = () => {
-  //   navigate(`/playlist/${p_id}`);
-  // };
+  const handleGoToStorage = () => {
+    navigate(`/storage/${random_id}`);
+  };
 
   return (
     <CardWrapper>
-      {/* <Thumbnail onClick={handleGoToDetail}> */}
-      <Thumbnail>
+      <Thumbnail onClick={() => navigate(`/playlist/${p_id}`)}>
         <ThumbnailImg src={cover_img_path || backgroundImage} />
       </Thumbnail>
 
       <Description>
         <TitleAndCreatorWrapper>
-          {/* <PlayListTitle onClick={handleGoToDetail}> */}
-          <PlayListTitle>{playlist_title}</PlayListTitle>
-          <CreatorInfo>
+          <PlayListTitle onClick={() => navigate(`/playlist/${p_id}`)}>
+            {playlist_title}
+          </PlayListTitle>
+          <CreatorInfo onClick={handleGoToStorage}>
             <div className="profileImg">
               <img
                 src={user_img || defaultProfile}
@@ -68,7 +69,6 @@ const PlaylistCard = ({
                 src={likeIcon}
                 wrapper="span"
                 className={`likeSvg ${is_active ? "active" : "inactive"}`}
-                onClick={onLikeClick}
               />
               {like_count}
             </span>
