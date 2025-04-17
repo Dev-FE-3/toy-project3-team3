@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <HeaderWrapper data-testid="header">
       <Link to="/" onClick={(e) => isLocked && e.preventDefault()}>
-        <Logo src={IdolLink} alt="IdolLink Logo" />
+        <Logo src={IdolLink} alt="IdolLink Logo" data-testid="header-logo" />
       </Link>
       {isProfilePage ? (
         <LogoutButton
@@ -45,7 +45,11 @@ const Header = () => {
         </LogoutButton>
       ) : (
         <Link to="/profile" onClick={(e) => isLocked && e.preventDefault()}>
-          <Profile src={profileImage || DefaultProfile} alt="Profile Image" />
+          <Profile
+            src={profileImage || DefaultProfile}
+            alt="Profile Image"
+            data-testid="header-profileLogo"
+          />
         </Link>
       )}
     </HeaderWrapper>

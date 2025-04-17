@@ -12,7 +12,7 @@ interface VideoItemProps {
 
 const VideoItem = ({ title, source, thumbnail, onDelete }: VideoItemProps) => {
   return (
-    <ItemWrapper>
+    <ItemWrapper data-testid="videoItem">
       <Thumbnail>
         {thumbnail && <img src={thumbnail} alt="영상 썸네일" />}
       </Thumbnail>
@@ -20,7 +20,7 @@ const VideoItem = ({ title, source, thumbnail, onDelete }: VideoItemProps) => {
         <VideoTitle>{title}</VideoTitle>
         <VideoSource>{source}</VideoSource>
       </TextBox>
-      <DeleteButton onClick={onDelete}>
+      <DeleteButton onClick={onDelete} data-testid="deleteButton">
         <ReactSVG src={cancel} />
       </DeleteButton>
     </ItemWrapper>
