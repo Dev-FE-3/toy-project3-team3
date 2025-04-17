@@ -41,6 +41,17 @@ const Signup = () => {
 
     //에러가 발생하거나 유저 정보가 없으면 종료
     if (error || !signupData.user) {
+      // 이미 가입된 이메일에 대한 에러만 사용자에게 노출
+      if (error?.message === "User already registered") {
+        toast.error(
+          <>
+            이미 존재하는 이메일입니다.
+            <br />
+            로그인 페이지를 이용해주세요.
+          </>,
+        );
+      }
+
       console.error("회원가입 실패: ", error?.message);
       return;
     }
