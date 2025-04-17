@@ -300,6 +300,7 @@ const AddThumbnailButton = styled.button`
   justify-content: center;
   align-items: center;
 `;
+
 const TitleInputWrapper = styled.div`
   width: 520px;
   display: flex;
@@ -313,7 +314,7 @@ const VideoInputWrapper = styled.div`
   justify-content: center;
   align-items: flex-end;
   gap: 20px;
-  margin: 25px 0;
+  margin: 15px 0;
 `;
 
 const AddButton = styled.button`

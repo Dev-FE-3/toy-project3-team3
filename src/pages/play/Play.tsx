@@ -95,8 +95,12 @@ const Play = () => {
   }
 
   return (
-    <>
-      <Title showBackButton title={videoData?.playlist_title} />
+    <Wrapper>
+      <Title
+        showBackButton
+        title={videoData?.playlist_title}
+        onBackClick={() => navigate(`/playlist/${playlistId}`)} // 🔥 맞춤 이동
+      />
       <VideoWrapper className="playContainer">
         {videoData?.video_id && (
           <iframe
@@ -138,26 +142,28 @@ const Play = () => {
         <CommonInput
           id="comment"
           placeholder="댓글을 입력해주세요."
-          width="320px"
+          width="400px"
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
         />
-
         <SubmitIcon src={Submit} alt="제출" onClick={handleSubmit} />
       </CommentWriteWrapper>
-      <CommentListWrapper>
-        {commentList.map((item) => {
-          return (
-            <CommentIndividualWrapper key={item.c_id}>
-              <ProfileImage src={item.user_img || DefaultProfile} />
-              <CommentIndividual>
-                <CommentWriter>{item.nickname}</CommentWriter>
-                <CommentContent>{item.comment}</CommentContent>
-              </CommentIndividual>
-            </CommentIndividualWrapper>
-          );
-        })}
-      </CommentListWrapper>
+
+      <ScrollableContent>
+        <CommentListWrapper>
+          {commentList.map((item) => {
+            return (
+              <CommentIndividualWrapper key={item.c_id}>
+                <ProfileImage src={item.user_img || DefaultProfile} />
+                <CommentIndividual>
+                  <CommentWriter>{item.nickname}</CommentWriter>
+                  <CommentContent>{item.comment}</CommentContent>
+                </CommentIndividual>
+              </CommentIndividualWrapper>
+            );
+          })}
+        </CommentListWrapper>
+      </ScrollableContent>
 
       <PlayListInfoWrapper>
         <PlayListInfo>
@@ -196,13 +202,12 @@ const Play = () => {
           />
         </PlayListIconGroup>
       </PlayListInfoWrapper>
-    </>
+    </Wrapper>
   );
 };
 
 export default Play;
 
-// 비디오 담는 박스
 const VideoWrapper = styled.div`
   width: 480px;
   height: 270px;
@@ -210,14 +215,16 @@ const VideoWrapper = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 18px;
-  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2); // 디자인 상 들어가긴 했는데, 이미지 넣어보시고 없는게 낫다면 빼도 괜찮을 듯!
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
 `;
 
-// 비디오 제목
-const VideoTitle = styled.span`
-  font-size: var(--font-size-subtitle);
+const VideoTitle = styled.div`
+  //font-size: var(--font-size-subtitle);
+  font-size: var(--font-size-large);
   font-weight: 500;
+  line-height: 1.2;
   margin: 0 50px;
+  height: 45px;
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -229,7 +236,6 @@ const VideoTitle = styled.span`
   white-space: normal;
 `;
 
-// 하단 프로필, 좋아요, 댓글 수 담는 박스 - 내용은 space between!
 const Meta = styled.div`
   margin: 0 50px;
   padding: 15px 0;
@@ -238,49 +244,47 @@ const Meta = styled.div`
   justify-content: space-between;
 `;
 
-// 이 wrapper는 프로필 이미지 + 제작자 띄우는 상단에만 쓰임 (좌 우 space between 위해 만듦)
 const ProfileWrapper = styled.div`
   display: flex;
   gap: 15px;
   align-items: center;
 `;
 
-// 이 부분은 내 프로필과 댓글 프로필 사이즈가 동일해서 같이 사용하기
 const ProfileImage = styled.img`
   width: 50px;
   height: 50px;
   border-radius: 50px;
-`; // 원래 70px였는데, 너무 커서 50px로 줄였어요
+`;
 
-// 플리 제작자 이름
 const ProfileName = styled.span`
   font-size: var(--font-size-large);
   font-weight: 400;
 `;
 
-// 우측 정렬할 아이콘 그룹
 const IconGroup = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 15px; // 아이콘 그룹 간 여백
   align-items: center;
 
   .like,
   .comment {
     width: 28px;
     height: 28px;
-    display: flex;
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: inline-flex;
     align-items: center;
     gap: 4px;
+    min-width: 40px;
+    white-space: nowrap;
   }
 
-  /* 활성화된 좋아요 스타일 */
   .likeSvg.active svg {
-    color: var(--primary); /* 활성화 시 컬러 */
+    color: var(--primary);
     stroke: none;
-    fill: var(--primary); /* 내부도 채우기 */
+    fill: var(--primary);
   }
 
-  /* 비활성화된 좋아요 스타일 (명시적 처리) */
   .likeSvg.inactive svg {
     color: var(--text-secondary);
     stroke: var(--text-secondary);
@@ -294,34 +298,13 @@ const IconGroup = styled.div`
   }
 `;
 
-// const IconGroup = styled.div`
-//   display: flex;
-//   gap: 10px;
-//   color: var(--text-secondary);
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+`;
 
-//   span {
-//     display: flex;
-//     align-items: center;
-//     gap: 4px;
-
-//     img {
-//       width: 28px;
-//       height: 28px;
-//       filter: grayscale(100%); // 기본 상태: 흐리게
-//       transition:
-//         filter 0.2s ease,
-//         transform 0.2s ease;
-//     }
-
-//     img.liked {
-//       filter: none; // 좋아요 눌렀을 때는 원래 색상
-//       transform: scale(1.1); // 약간 커지게 (선택)
-//     }
-//   }
-// `;
-
-
-// 내가 쓸 댓글 부분 wrapper
 const CommentWriteWrapper = styled.div`
   display: flex;
   gap: 16px;
@@ -338,14 +321,11 @@ const SubmitIcon = styled.img`
   margin-left: auto;
 `;
 
-// 작성한 댓글을 보여줄 부분 담는 wrapper. 스크롤 설정 해놨지만 높이 사이즈는.. 조절해야 할 지도
 const CommentListWrapper = styled.div`
   height: 300px;
   overflow-y: auto;
 `;
 
-// 댓글 하나 하나 담는 wrapper
-// 여기에서 크게 좌(프로필 이미지) 우(작성자&내용)은 좌 우 flex지만 (하단 이어서)
 const CommentIndividualWrapper = styled.div`
   display: flex;
   gap: 16px;
@@ -353,7 +333,6 @@ const CommentIndividualWrapper = styled.div`
   padding: 10px 0;
 `;
 
-// 우(작성자&내용)은 column flex 적용해야 해서 한 번 더 감쌌어요
 const CommentIndividual = styled.div`
   display: flex;
   flex-direction: column;
@@ -363,23 +342,26 @@ const CommentIndividual = styled.div`
   color: var(--text-primary);
 `;
 
-// 작성자 닉네임
 const CommentWriter = styled.span`
   font-size: var(--font-size-large);
   font-weight: 500;
 `;
 
-// 작성 내용
 const CommentContent = styled.div`
   font-size: var(--font-size-primary);
   font-weight: 400;
   line-height: normal;
 `;
 
-// 플레이리스트 정보 담는 분홍 박스
+const ScrollableContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 200px;
+`;
+
 const PlayListInfoWrapper = styled.div`
-  // position sticky를 할지 아예 fixed할지 고민하다 우선은 fixed로...
-  // 이 부분은 지원님이 고민하셨던 부분이랑 동일한 느낌입니다
   position: fixed;
   bottom: 70px;
   left: 50%;
@@ -399,12 +381,10 @@ const PlayListInfoWrapper = styled.div`
   align-items: center;
 `;
 
-// 플레이리스트 정보 텍스트
 const PlayListInfo = styled.div`
   margin-left: 20px;
 `;
 
-// 아이콘 그룹 배치
 const PlayListIconGroup = styled.div`
   margin-right: 20px;
   display: flex;

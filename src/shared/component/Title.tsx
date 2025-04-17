@@ -8,6 +8,7 @@ type TitleProps = {
   showBackButton?: boolean;
   leftContent?: React.ReactNode;
   rightContent?: React.ReactNode;
+  onBackClick?: () => void;
 };
 
 const Title = ({
@@ -15,13 +16,18 @@ const Title = ({
   showBackButton,
   leftContent,
   rightContent,
+  onBackClick,
 }: TitleProps) => {
   const navigate = useNavigate();
 
   const defaultLeft = (
     <>
       {showBackButton && (
-        <Icon src={GoBack} alt="뒤로가기" onClick={() => navigate(-1)} />
+        <Icon
+          src={GoBack}
+          alt="뒤로가기"
+          onClick={onBackClick ?? (() => navigate(-1))}
+        />
       )}
       {title && <StyledTitle>{title}</StyledTitle>}
     </>

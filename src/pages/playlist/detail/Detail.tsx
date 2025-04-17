@@ -210,7 +210,6 @@ const Meta = styled.div`
   font-size: var(--font-size-small);
   color: var(--text-secondary);
   padding-top: 20px;
-  padding-bottom: 10px;
 `;
 
 const IconGroup = styled.div`
@@ -251,12 +250,14 @@ const IconGroup = styled.div`
 `;
 
 const VideoListWrapper = styled.div`
-  border-top: 1px solid var(--text-secondary);
-  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
   display: flex;
-  cursor: pointer;
-  margin-bottom: 15px;
+  flex-direction: column;
   gap: 15px;
+  margin-top: 20px;
+  padding-bottom: 180px;
+  border-top: 1px solid var(--text-secondary);
 `;
 
 const VideoCardWrapper = styled.div`
@@ -283,6 +284,7 @@ const VideoInfo = styled.div`
   flex-direction: column;
   gap: 10px;
   flex: 1;
+  padding-right: 20px;
 `;
 
 const VideoTitle = styled.div`
