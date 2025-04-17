@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import Title from '@/shared/component/Title';
+import Title from "@/shared/component/Title";
 import Like from "@/assets/images/Like.svg";
 import Dropbox from "@/shared/component/Dropbox";
-import { useUserStore } from '@/stores/userStore';
+import { useUserStore } from "@/stores/userStore";
 import backgroundImage from "@/assets/images/backGround.png";
 import comment from "@/assets/images/comment.svg";
 import { useNavigate, useParams } from "react-router-dom";
@@ -64,29 +64,28 @@ const Detail = () => {
 
   return (
     <>
-      <div className="headerArea">
-        <Title
-          showBackButton
-          title={playlistData.playlist_title}
-          rightContent={
-            <>
-              <LikeIcon>
-                <ReactSVG
-                  src={Like}
-                  onClick={handleLikeToggle}
-                  wrapper="span"
-                  className={`likeSvg ${isLiked ? "active" : "inactive"}`}
-                />
-              </LikeIcon>
-              <Dropbox
-                variant="icon"
-                iconSize={24}
-                onChange={(action) => handleIconAction(action, playlistId)}
+      <Title
+        showBackButton
+        title={playlistData.playlist_title}
+        rightContent={
+          <>
+            <LikeIcon>
+              <ReactSVG
+                src={Like}
+                onClick={handleLikeToggle}
+                wrapper="span"
+                className={`likeSvg ${isLiked ? "active" : "inactive"}`}
               />
-            </>
-          }
-        />
-      </div>
+            </LikeIcon>
+            <Dropbox
+              variant="icon"
+              iconSize={24}
+              onChange={(action) => handleIconAction(action, playlistId)}
+            />
+          </>
+        }
+      />
+
       <DetailPage>
         <CoverImage
           src={playlistData.cover_img_path || backgroundImage}
@@ -113,9 +112,12 @@ const Detail = () => {
           </IconGroup>
         </Meta>
 
-        <VideoListWrapper onClick={() => navigate(`/play/${playlistId}`)}>
+        <VideoListWrapper>
           {playlistData.videos.map((item) => (
-            <VideoCardWrapper key={item.v_id}>
+            <VideoCardWrapper
+              key={item.v_id}
+              onClick={() => navigate(`/play/${playlistId}/${item.video_id}`)}
+            >
               <Thumbnail
                 src={item.thumbnail_url || backgroundImage}
                 alt="썸네일"
@@ -258,12 +260,12 @@ const VideoListWrapper = styled.div`
 `;
 
 const VideoCardWrapper = styled.div`
- width: 520px;
- height: 90px;
+  width: 520px;
+  height: 90px;
   display: flex;
   gap: 15px;
   align-items: flex-start;
-  
+
   &:first-of-type {
     margin-top: 16px;
   }

@@ -50,21 +50,22 @@ const Left = styled.div`
   display: flex;
   align-items: center;
   gap: 24px;
+  max-width: 90%; // 💡 여기가 핵심
+  overflow: hidden;
 `;
-
-// const BackIcon = styled.img`
-//   width: 24px;
-//   height: 24px;
-//   cursor: pointer;
-// `;
 
 export const StyledTitle = styled.h1`
   font-size: var(--font-size-title);
   font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
 `;
 
 const Right = styled.div`
   display: flex;
   align-items: center;
   gap: 24px;
+  flex-shrink: 0;
 `;
