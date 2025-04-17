@@ -14,7 +14,7 @@ export interface CommentWithUserInfo {
   comment: string;
   created_at: number;
   random_id: number;
-  nickname: string;
+  user_nickname: string;
   user_img: string;
 }
 
@@ -31,7 +31,7 @@ export const getCommentWithUserInfo = async (
       },
     },
   );
-
+  console.log("가져오고 있는 데이터 확잌 ::::::", response.data);
   return response.data;
 };
 

@@ -78,7 +78,7 @@ const Detail = () => {
                   className={`likeSvg ${isLiked ? "active" : "inactive"}`}
                 />
               </LikeIcon>
-              {userId === playlistData.random_id ? ( // 작성자 본인일 때만 드롭박스 표시
+              {userId === playlistData.random_id ? (
                 <Dropbox
                   variant="icon"
                   iconSize={24}

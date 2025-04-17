@@ -151,8 +151,12 @@ const Play = () => {
             <CommentIndividualWrapper key={item.c_id}>
               <ProfileImage src={item.user_img || DefaultProfile} />
               <CommentIndividual>
-                <CommentWriter>{item.nickname}</CommentWriter>
-                <CommentContent>{item.comment}</CommentContent>
+                <CommentWriter className="nickName">
+                  {item.user_nickname}
+                </CommentWriter>
+                <CommentContent className="comment">
+                  {item.comment}
+                </CommentContent>
               </CommentIndividual>
             </CommentIndividualWrapper>
           );
