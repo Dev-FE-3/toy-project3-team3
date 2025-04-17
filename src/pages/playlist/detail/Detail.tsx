@@ -78,11 +78,13 @@ const Detail = () => {
                   className={`likeSvg ${isLiked ? "active" : "inactive"}`}
                 />
               </LikeIcon>
-              <Dropbox
-                variant="icon"
-                iconSize={24}
-                onChange={(action) => handleIconAction(action, playlistId)}
-              />
+              {userId === playlistData.random_id ? ( // 작성자 본인일 때만 드롭박스 표시
+                <Dropbox
+                  variant="icon"
+                  iconSize={24}
+                  onChange={(action) => handleIconAction(action, playlistId)}
+                />
+              ) : null}
             </>
           }
         />
