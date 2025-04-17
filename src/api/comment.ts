@@ -31,7 +31,6 @@ export const getCommentWithUserInfo = async (
       },
     },
   );
-  console.log("가져오고 있는 데이터 확잌 ::::::", response.data);
   return response.data;
 };
 
