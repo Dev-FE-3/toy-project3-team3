@@ -11,41 +11,60 @@
 
 ## 🚀 프로젝트 소개</span>
 
+### 회원가입 & 로그인 페이지
+- 중복된 아이디를 입력하면 경고 토스트알람이 표시됩니다.
+- 모든 입력 항목이 유효하고 중복 검사가 통과되면 회원가입 버튼이 활성화됩니다.
+- 회원가입이 완료되면 토스트알람이 표시되고 자동으로 로그인 페이지로 이동됩니다.
+- 아이디 또는 비밀번호가 잘못되었을 경우 경고 메시지가 입력창 밑에 표시됩니다.
+- 로그인 후 홈페이지로 리다이렉션됩니다.
 
-#### 미리보기
+| <img src="https://github.com/user-attachments/assets/838aef74-6f6b-4a47-aace-f136e85761d8"></img> |
 
-| **1. 회원가입 및 소셜 로그인**                                     | **2. 메인 홈 - 모든 플레이리스트 조회, 검색**                | **3. 구독 탭 - 구독한 플레이리스트 필터**                     |
-| ------------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------- |
-| <img src="./gif/플로리-가입로그인.gif" alt="회원가입 및 로그인" /> | <img src="./gif/플로리-메인탭.gif" alt="메인 홈" />          | <img src="./gif/플로리-구독탭.gif" alt="구독 탭" />           |
-| **4. 영상 링크로 플레이리스트 생성**                               | **5. 내 플레이리스트 관리 - 삭제, 공개여부 설정**            | **6. 상세 페이지 - 플레이리스트 세부 정보 확인 및 영상 재생** |
-| <img src="./gif/플로리-생성.gif" alt="플리 생성" />                | <img src="./gif/플로리-내플리탭.gif" alt="내 플리 탭" />     | <img src="./gif/플로리-상세탭.gif" alt="상세 페이지" />       |
-| **7. 마이페이지 - 프로필 수정**                                    | **8. 마이페이지 - 좋아요 및 저장한 플레이리스트 조회**       |                                                               |
-| <img src="./gif/플로리-프로필수정.gif" alt="상세 페이지" />        | <img src="./gif/플로리-마이페이지탭.gif" alt="마이페이지" /> |                                                               |
+### 홈 & 탐색
 
-<!--
-회원가입 및 소셜 로그인
-사용자는 이메일 및 소셜 계정을 통해 간편하게 회원가입 및 로그인할 수 있습니다.
+- 홈 화면에서는 내가 작성한 플레이리스트와 내가 팔로우한 유저가 작성한 플레이리스트만 표시됩니다.
+- 작성된 플레이리스트가 없거나, 팔로우한 유저가 없는 경우에는
+➔ "관심 있는 이용자를 팔로우하여 나만의 타임라인을 구성하세요 😄" 라는 안내 문구가 출력됩니다.
+- 탐색 화면에서는 모든 사용자가 작성한 플레이리스트 전체가 표시됩니다.
+- 플레이리스트 제목으로 검색하여 원하는 플레이리스트를 찾을 수 있습니다.
+- 화면 우측 상단에 위치한 '최신순' 드롭다운 버튼을 클릭하여, 원하는 정렬 기준(최신순, 인기순 등)으로 목록을 정렬할 수 있습니다.
+- 무한 스크롤을 지원하여, 스크롤을 내리면 추가 플레이리스트를 계속 불러올 수 있습니다.
+- 플레이리스트 커버 이미지나 제목을 클릭하면 해당 상세 플레이리스트 페이지로 이동할 수 있습니다.
+- 작성자 이름을 클릭하면 해당 작성자의 보관함 페이지로 이동할 수 있습니다.
+- 화면 우측 최상단에 위치한 프로필 이이미지로 프로필 수정할 수 있는 페이지로 이동할 수 있습니다.
 
-메인 홈 - 모든 플레이리스트 조회, 검색
-모든 사용자가 업로드한 공개 플레이리스트를 확인할 수 있고 검색할 수 있습니다.
+| <img src="https://github.com/user-attachments/assets/2e0da9cd-9c9d-47e0-8cf4-4489894520cb"></img> |
 
-구독 탭 - 구독한 사람의 플레이리스트 필터
-내가 구독한 사용자들의 플레이리스트만 필터링하여 볼 수 있습니다.
+### 프로필 페이지
+- 프로필 이미지를 수정/삭제할 수 있습니다.
+- 닉네임, 한 줄 소개, 관심 아티스트를 수정할 수 있습니다. 
+- 관심 아티스트 창에 해시태그로 입력한 내용은 형태의 뱃지로 시각화됩니다.
 
-생성 탭 - 영상 링크로 플레이리스트 생성
-유튜브 등 영상 링크를 기반으로 새로운 플레이리스트를 쉽게 생성할 수 있습니다.
+| <img src="https://github.com/user-attachments/assets/3eff112e-8a46-445a-b659-8fe094366cf6"></img> |
 
-사용자 프로필 조회
-다른 사용자의 프로필과 그들의 공개 플레이리스트를 확인할 수 있습니다.
+### 보관함 페이지
+- 나의 보관함 페이지에서 프로필 수정 페이지로 이동 할 수 있습니다.
+- 탭을 이용해 유저가 만든 플레이리스트들과 관심 표시한 플레이리스트들을 보여줄 수 있습니다.
+- 팔로워 / 팔로잉 유저를 확인하고 특정 유저를 검색할 수 있습니다.
+- 남의 보관함 페이지에서 해당 유저를 팔로우 / 팔로잉 할 수 있습니다.
+- 플레이리스트 상세페이지로 이동할 수 있습니다.
 
-내 플리 탭 - 내 플레이리스트 관리
-내가 만든 플레이리스트 목록을 조회, 삭제하거나 공개 여부를 설정할 수 있습니다.
+| <img src="https://github.com/user-attachments/assets/98a29aac-0d71-49a9-915a-52914eba7115"></img> |  
 
-마이페이지 - 프로필 정보 수정
-프로필 사진, 닉네임 등 사용자 정보를 수정할 수 있습니다.
+### 플레이리스트 상세페이지 & 재생
+- 화면 우측 상단에 위치한 하트 아이콘으로 관심 있는 플레이리스트로 설정할 수 있습니다.
+- 메뉴 아이콘으로 해당 플레이리스트를 삭제/ 수정 페이지로 이동할 수 있습니다. 
+- 영상을 재생 페이지에서 댓글을 작성할 수 있습니다.
+- 화면 하단의 네비바를 이용하여 플레이리스트의 영상을 다음, 이전으로 넘어갈 수 있습니다.
 
-마이페이지 - 좋아요 및 저장한 플레이리스트 조회
-좋아요를 누르거나 저장한 플레이리스트를 조회,삭제 할 수 있습니다. -->
+| <img src="https://github.com/user-attachments/assets/20e3e77f-7c00-4c17-a07b-82f85260e584"></img> |  
+
+
+### 제작&수정 페이지
+- 플레이리스트에 넣고 싶은 유튜브영상 주소를 입력하여 추가할 수 있습니다.
+- 제작/수정이 완료되면 이전 페이지로 이동됩니다.
+
+| <img src="https://github.com/user-attachments/assets/a66566fa-7027-4fde-a878-5b0b26c8396c"></img> |
 
 
 ## 📅 프로젝트 진행 과정
@@ -110,18 +129,6 @@
 
 ## 🏗️설계
 ![Image](https://github.com/user-attachments/assets/b822a076-b26b-4186-a16b-9d1e48f02872)
-
-## 🛠️ 기술 스택 및 개발환경
-
-| **분류** | **내용** |
-| :--- | :--- |
-| **Frontend** | <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> |
-| **State Management** | <img src="https://img.shields.io/badge/Zustand-FF5C00?style=for-the-badge&logo=Zustand&logoColor=white"> |
-| **Server State Management** | <img src="https://img.shields.io/badge/TanStack%20Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white"> |
-| **Styling** | <img src="https://img.shields.io/badge/Emotion-DB7093?style=for-the-badge&logo=emotion&logoColor=white"> |
-| **Backend / Database** | <img src="https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white"> |
-| **Code Quality** | <img src="https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white"> <img src="https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black"> |
-| **Collaboration Tools** | <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white"> <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"> |
 
 
 ## 🛠️ 기술 스택 및 개발환경
