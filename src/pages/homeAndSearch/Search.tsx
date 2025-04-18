@@ -34,22 +34,35 @@ const Search = () => {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
-      queryKey: ["playlistCardData", sortOrder, debouncedSearch],
+      queryKey: [
+        "playlistCardData",
+        { sortOrder, searchKeyword: debouncedSearch },
+      ],
       queryFn: ({ pageParam = 1 }) =>
         getPlaylistCardData(pageParam, sortOrder, debouncedSearch),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => lastPage.nextPage,
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
     });
 
   const playlistCard: (PlaylistCardData & { is_active: boolean })[] =
     useMemo(() => {
       if (!data) return [];
-      return data.pages.flatMap((page) =>
+
+      const flatData = data.pages.flatMap((page) =>
         page.data.map((item) => ({
           ...item,
           is_active: likedIds.includes(item.p_id),
         })),
       );
+
+      // ✨ p_id 기준으로 중복 제거
+      const uniqueData = Array.from(
+        new Map(flatData.map((item) => [item.p_id, item])).values(),
+      );
+
+      return uniqueData;
     }, [data, likedIds]);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
