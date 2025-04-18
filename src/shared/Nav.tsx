@@ -29,6 +29,7 @@ const Nav = () => {
         <StyledNavLink
           key={to}
           to={to}
+          data-testid={`nav-${label}`}
           onClick={(e) => isLocked && e.preventDefault()}
         >
           <ButtonIcon src={icon} alt={label} />
