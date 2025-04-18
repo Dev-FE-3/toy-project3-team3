@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "@/shared/Layout.tsx";
 import GlobalStyle from "@/shared/styles/GlobalStyle.tsx";
 import Home from "@/pages/homeAndSearch/Home";
-import Guide from "@/pages/guide/Guide.tsx";
 import Profile from "@/pages/profile/Profile.tsx";
 import ProtectedRoute from "@/shared/component/ProtectedRoute.tsx";
 import Login from "@/pages/auth/Login.tsx";
@@ -32,10 +31,6 @@ const router = createBrowserRouter([
       {
         path: "search",
         element: <Search />,
-      },
-      {
-        path: "guide",
-        element: <Guide />,
       },
       {
         path: "/profile",

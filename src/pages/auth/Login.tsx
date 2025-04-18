@@ -37,57 +37,69 @@ const Login = () => {
   };
 
   return (
-    <Wrapper>
-      <Logo src={IdolLinkLogo} alt="로고" />
+    <Background>
+      <Wrapper>
+        <Logo src={IdolLinkLogo} alt="로고" />
 
-      <Form onSubmit={handleSubmit(handleLogin)}>
-        <Title>로그인</Title>
+        <Form onSubmit={handleSubmit(handleLogin)}>
+          <Title>로그인</Title>
 
-        <FormInput
-          id="email"
-          label="이메일"
-          type="email"
-          placeholder="이메일을 입력해주세요"
-          error={errors.email?.message}
-          {...register("email", {
-            required: "이메일을 입력해주세요.",
-          })}
-        />
+          <FormInput
+            id="email"
+            label="이메일"
+            type="email"
+            placeholder="이메일을 입력해주세요"
+            error={errors.email?.message}
+            {...register("email", {
+              required: "이메일을 입력해주세요.",
+            })}
+          />
 
-        <FormInput
-          id="password"
-          label="비밀번호"
-          type="password"
-          autoComplete="off"
-          placeholder="비밀번호를 입력해주세요"
-          error={errors.password?.message}
-          {...register("password", {
-            required: "비밀번호를 입력해주세요.",
-          })}
-        />
+          <FormInput
+            id="password"
+            label="비밀번호"
+            type="password"
+            autoComplete="off"
+            placeholder="비밀번호를 입력해주세요"
+            error={errors.password?.message}
+            {...register("password", {
+              required: "비밀번호를 입력해주세요.",
+            })}
+          />
 
-        <LoginButton
-          size="big"
-          btnColor="pink"
-          onClick={handleSubmit(handleLogin)}
-          disabled={!isValid}
-        >
-          로그인
-        </LoginButton>
-        <SignupGuide>
-          계정이 아직 없으신가요?
-          <span onClick={() => navigate("/signup")}> 회원가입</span>
-        </SignupGuide>
-      </Form>
-    </Wrapper>
+          <LoginButton
+            size="big"
+            btnColor="pink"
+            onClick={handleSubmit(handleLogin)}
+            disabled={!isValid}
+          >
+            로그인
+          </LoginButton>
+          <SignupGuide>
+            계정이 아직 없으신가요?
+            <span onClick={() => navigate("/signup")}> 회원가입</span>
+          </SignupGuide>
+        </Form>
+      </Wrapper>
+    </Background>
   );
 };
 
 export default Login;
 
+const Background = styled.div`
+  width: 100%;
+  height: 100vh;
+  background-color: var(--button-gray);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Wrapper = styled.div`
   width: 600px;
   height: 100vh;
+  background-color: var(--background-color);
   margin: 0 auto;
   display: flex;
   flex-direction: column;

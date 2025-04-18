@@ -268,6 +268,7 @@ const VideoCardWrapper = styled.div`
   display: flex;
   gap: 15px;
   align-items: flex-start;
+  cursor: pointer;
 
   &:first-of-type {
     margin-top: 16px;
