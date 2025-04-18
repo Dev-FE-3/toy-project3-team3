@@ -18,7 +18,7 @@
 - 아이디 또는 비밀번호가 잘못되었을 경우 경고 메시지가 입력창 밑에 표시됩니다.
 - 로그인 후 홈페이지로 리다이렉션됩니다.
 
-| <img src="https://github.com/user-attachments/assets/838aef74-6f6b-4a47-aace-f136e85761d8"></img> |
+<img src="https://github.com/user-attachments/assets/838aef74-6f6b-4a47-aace-f136e85761d8"></img>
 
 ### 홈 & 탐색
 
@@ -33,14 +33,14 @@
 - 작성자 이름을 클릭하면 해당 작성자의 보관함 페이지로 이동할 수 있습니다.
 - 화면 우측 최상단에 위치한 프로필 이이미지로 프로필 수정할 수 있는 페이지로 이동할 수 있습니다.
 
-| <img src="https://github.com/user-attachments/assets/2e0da9cd-9c9d-47e0-8cf4-4489894520cb"></img> |
+<img src="https://github.com/user-attachments/assets/2e0da9cd-9c9d-47e0-8cf4-4489894520cb"></img>
 
 ### 프로필 페이지
 - 프로필 이미지를 수정/삭제할 수 있습니다.
 - 닉네임, 한 줄 소개, 관심 아티스트를 수정할 수 있습니다. 
 - 관심 아티스트 창에 해시태그로 입력한 내용은 형태의 뱃지로 시각화됩니다.
 
-| <img src="https://github.com/user-attachments/assets/3eff112e-8a46-445a-b659-8fe094366cf6"></img> |
+<img src="https://github.com/user-attachments/assets/3eff112e-8a46-445a-b659-8fe094366cf6"></img>
 
 ### 보관함 페이지
 - 나의 보관함 페이지에서 프로필 수정 페이지로 이동 할 수 있습니다.
@@ -49,7 +49,7 @@
 - 남의 보관함 페이지에서 해당 유저를 팔로우 / 팔로잉 할 수 있습니다.
 - 플레이리스트 상세페이지로 이동할 수 있습니다.
 
-| <img src="https://github.com/user-attachments/assets/98a29aac-0d71-49a9-915a-52914eba7115"></img> |  
+<img src="https://github.com/user-attachments/assets/98a29aac-0d71-49a9-915a-52914eba7115"></img>
 
 ### 플레이리스트 상세페이지 & 재생
 - 화면 우측 상단에 위치한 하트 아이콘으로 관심 있는 플레이리스트로 설정할 수 있습니다.
@@ -57,14 +57,14 @@
 - 영상을 재생 페이지에서 댓글을 작성할 수 있습니다.
 - 화면 하단의 네비바를 이용하여 플레이리스트의 영상을 다음, 이전으로 넘어갈 수 있습니다.
 
-| <img src="https://github.com/user-attachments/assets/20e3e77f-7c00-4c17-a07b-82f85260e584"></img> |  
+<img src="https://github.com/user-attachments/assets/20e3e77f-7c00-4c17-a07b-82f85260e584"></img>
 
 
 ### 제작&수정 페이지
 - 플레이리스트에 넣고 싶은 유튜브영상 주소를 입력하여 추가할 수 있습니다.
 - 제작/수정이 완료되면 이전 페이지로 이동됩니다.
 
-| <img src="https://github.com/user-attachments/assets/a66566fa-7027-4fde-a878-5b0b26c8396c"></img> |
+<img src="https://github.com/user-attachments/assets/a66566fa-7027-4fde-a878-5b0b26c8396c"></img>
 
 
 ## 📅 프로젝트 진행 과정
