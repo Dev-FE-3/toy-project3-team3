@@ -105,7 +105,7 @@ const Play = () => {
       <Title
         showBackButton
         title={videoData?.playlist_title}
-        onBackClick={() => navigate(`/playlist/${playlistId}`)} // 🔥 맞춤 이동
+        // onBackClick={() => navigate(`/playlist/${playlistId}`)} //
       />
       <VideoWrapper className="playContainer">
         {videoData?.video_id && (
