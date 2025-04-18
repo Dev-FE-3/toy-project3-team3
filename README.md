@@ -1,42 +1,79 @@
 <p align="center" style="display: flex; align-items: center;">
-  <h1 align="center">🎵 IdolLing </h1>
+  <h1 align="center"><img width="200px" src="https://github.com/user-attachments/assets/a1fe1cbc-7b97-433e-af1f-61c557adc036" style="max-width: 100%;"></h1>
 </p>
 <p align="center " style="font-size: 16px; line-height: 1.6;">
-좋아하는 아이돌 콘텐츠를 한곳에,
-<br>팬들을 위한 <strong>아이돌 영상 플렛폼</strong>
+내가 좋아하는 아이돌 영상만 골라 <strong>나만의 플레이 리스트 제작</strong><br/>
+다른 사람의 플레이리스트를 <strong>감상</strong>하고 <strong>댓글로 소통해요</strong><br/>
+공감가는 플레이리스트는 <strong>좋아요를 눌러서 응원</strong>하기<br/>
+마음에 드는 팬을 <strong>팔로우해서 새로운 플레이리스트를</strong> 놓치지 마세요
 </p>
 <br>
 
 ## 🚀 프로젝트 소개</span>
-여기에 영상이 들어갈 예정
+
+
+#### 미리보기
+
+| **1. 회원가입 및 소셜 로그인**                                     | **2. 메인 홈 - 모든 플레이리스트 조회, 검색**                | **3. 구독 탭 - 구독한 플레이리스트 필터**                     |
+| ------------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------- |
+| <img src="./gif/플로리-가입로그인.gif" alt="회원가입 및 로그인" /> | <img src="./gif/플로리-메인탭.gif" alt="메인 홈" />          | <img src="./gif/플로리-구독탭.gif" alt="구독 탭" />           |
+| **4. 영상 링크로 플레이리스트 생성**                               | **5. 내 플레이리스트 관리 - 삭제, 공개여부 설정**            | **6. 상세 페이지 - 플레이리스트 세부 정보 확인 및 영상 재생** |
+| <img src="./gif/플로리-생성.gif" alt="플리 생성" />                | <img src="./gif/플로리-내플리탭.gif" alt="내 플리 탭" />     | <img src="./gif/플로리-상세탭.gif" alt="상세 페이지" />       |
+| **7. 마이페이지 - 프로필 수정**                                    | **8. 마이페이지 - 좋아요 및 저장한 플레이리스트 조회**       |                                                               |
+| <img src="./gif/플로리-프로필수정.gif" alt="상세 페이지" />        | <img src="./gif/플로리-마이페이지탭.gif" alt="마이페이지" /> |                                                               |
+
+<!--
+회원가입 및 소셜 로그인
+사용자는 이메일 및 소셜 계정을 통해 간편하게 회원가입 및 로그인할 수 있습니다.
+
+메인 홈 - 모든 플레이리스트 조회, 검색
+모든 사용자가 업로드한 공개 플레이리스트를 확인할 수 있고 검색할 수 있습니다.
+
+구독 탭 - 구독한 사람의 플레이리스트 필터
+내가 구독한 사용자들의 플레이리스트만 필터링하여 볼 수 있습니다.
+
+생성 탭 - 영상 링크로 플레이리스트 생성
+유튜브 등 영상 링크를 기반으로 새로운 플레이리스트를 쉽게 생성할 수 있습니다.
+
+사용자 프로필 조회
+다른 사용자의 프로필과 그들의 공개 플레이리스트를 확인할 수 있습니다.
+
+내 플리 탭 - 내 플레이리스트 관리
+내가 만든 플레이리스트 목록을 조회, 삭제하거나 공개 여부를 설정할 수 있습니다.
+
+마이페이지 - 프로필 정보 수정
+프로필 사진, 닉네임 등 사용자 정보를 수정할 수 있습니다.
+
+마이페이지 - 좋아요 및 저장한 플레이리스트 조회
+좋아요를 누르거나 저장한 플레이리스트를 조회,삭제 할 수 있습니다. -->
+
 
 ## 📅 프로젝트 진행 과정
 
 #### 1️⃣기획 (2025.03.26 ~ 2025.04.01)
-프로젝트의 방향성을 설정하고 핵심 기능을 정의하는 시간을 가졌습니다. 팀원들과 함께 기능 정의서, 컨벤션을 정의하고 디자인을 구성하는 시간을 가졌습니다.
+- 프로젝트의 방향성을 설정하고 핵심 기능을 정의하는 시간을 가졌습니다. 
+- 팀원들과 함께 기능 정의서, 컨벤션을 정의하고 디자인을 구성하는 시간을 가졌습니다.
+- [와이어프레임](https://www.figma.com/design/RKmgqRJ9p9viF68tUqUF9m/%ED%86%A0%EC%9D%B43_%ED%83%80%EC%9E%85-%EB%84%A5%EC%8A%A4%ED%8A%B8-%EB%8F%84%EC%96%B4?node-id=0-1&t=wYzGJ7TslEp1ChqA-0) 
 
-#### [와이어프레임](https://www.figma.com/design/RKmgqRJ9p9viF68tUqUF9m/%ED%86%A0%EC%9D%B43_%ED%83%80%EC%9E%85-%EB%84%A5%EC%8A%A4%ED%8A%B8-%EB%8F%84%EC%96%B4?node-id=0-1&t=wYzGJ7TslEp1ChqA-0) 
-
-정의된 기능 정의서를 바탕으로 Figma를 활용하여 와이어프레임을 제작했습니다. 프로젝트의 일관성을 위해 디자인 시스템을 구축하고 공통 컴포넌트를 정의했습니다.
+   정의된 기능 정의서를 바탕으로 Figma를 활용하여 와이어프레임을 제작했습니다. (디자인 시스템을 구축하고 공통 컴포넌트를 정의)
 
 #### 2️⃣백엔드 및 컴포넌트 제작 (2025.04.02 ~ 2025.04.06)
 
-설계된 와이어프레임을 기반으로 공통 컴포넌트를 설계하고 개발한 후, 세부 기능을 단계적으로 구현했습니다. 
-<br/>
-Supabase를 BaaS(Backend as a Service)로 도입하여 내장 메서드를 활용한 API를 설계했습니다.<br/>
-매일 아침 데일리 스크럼을 통해 진행 상황을 공유하고, 팀원 간 적극적인 코드 리뷰를 진행했습니다.
+- 설계된 와이어프레임을 기반으로 공통 컴포넌트를 설계하고 개발한 후, 세부 기능을 단계적으로 구현했습니다. 
+- Supabase를 BaaS(Backend as a Service)로 도입하여 내장 메서드를 활용한 API를 설계했습니다.
+- 매일 아침 데일리 스크럼을 통해 진행 상황을 공유하고, 팀원 간 적극적인 코드 리뷰를 진행했습니다.
 
 #### 3️⃣페이지 개발 (2025.04.07 ~ 2025.04.16)
 
-API를 통해 가져온 데이터를 TanStack Query와 연동해 효율적인 데이터 페칭과 상태 관리를 구현했습니다.<br/> 
-페이지 전역 상태 관리를 위해 Zustand를 활용했습니다.
+- API를 통해 가져온 데이터를 TanStack Query와 연동해 효율적인 데이터 페칭과 상태 관리를 구현했습니다.
+- 페이지 전역 상태 관리를 위해 Zustand를 활용했습니다.
 
 #### 4️⃣최종 merge, 테스트 (2025.04.16 ~ 2025.04.18)
 
-최종 merge를 진행하고, Cypress를 활용해 주요 기능에 대한 E2E 테스트를 수행하여 발생할 수 있는 오류를 사전에 점검 및 수정했습니다.
+- 최종 merge를 진행하고, Cypress를 활용해 주요 기능에 대한 E2E 테스트를 수행하여 발생할 수 있는 오류를 사전에 점검 및 수정했습니다.
 
 #### 5️⃣리펙토링 (2025.04.21 ~ 2025.04.23)
-코드 품질 향상을 위한 리팩토링을 진행했고, 컴포넌트 분리 및 발견된 버그를 수정했습니다.
+- 코드 품질 향상을 위한 리팩토링을 진행했고, 컴포넌트 분리 및 발견된 버그를 수정했습니다.
 
 ## 🗂️ 브랜치 및 디렉토리 구조</span>
 ```
@@ -50,7 +87,6 @@ API를 통해 가져온 데이터를 TanStack Query와 연동해 효율적인 �
 ├── 📂 pages
 │   ├── 📂 auth
 │   ├── 📂 followInfo
-│   ├── 📂 guide
 │   ├── 📂 homeAndSearch
 │   ├── 📂 play
 │   ├── 📂 playlist
@@ -68,12 +104,25 @@ API를 통해 가져온 데이터를 TanStack Query와 연동해 효율적인 �
 │   ├── 🧩 lockStore.ts
 │   └── 🧩 userStore.ts
 ├── 🧩 App.tsx
-├── 🧩 main.tsx
-└── 🧩 vite-env.d.ts
+└── 🧩 main.tsx
+
 ```
 
 ## 🏗️설계
 ![Image](https://github.com/user-attachments/assets/b822a076-b26b-4186-a16b-9d1e48f02872)
+
+## 🛠️ 기술 스택 및 개발환경
+
+| **분류** | **내용** |
+| :--- | :--- |
+| **Frontend** | <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> |
+| **State Management** | <img src="https://img.shields.io/badge/Zustand-FF5C00?style=for-the-badge&logo=Zustand&logoColor=white"> |
+| **Server State Management** | <img src="https://img.shields.io/badge/TanStack%20Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white"> |
+| **Styling** | <img src="https://img.shields.io/badge/Emotion-DB7093?style=for-the-badge&logo=emotion&logoColor=white"> |
+| **Backend / Database** | <img src="https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white"> |
+| **Code Quality** | <img src="https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white"> <img src="https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black"> |
+| **Collaboration Tools** | <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white"> <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"> |
+
 
 ## 🛠️ 기술 스택 및 개발환경
 | **기술 스택** | **도입 이유** |
