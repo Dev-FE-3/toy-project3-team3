@@ -73,7 +73,7 @@ export const getFilteredPlaylistCardData = async ({
   pageParam?: number;
   randomIds: number[];
 }): Promise<PlaylistPageResponse> => {
-  const limit = 6;
+  const limit = 3;
   const offset = (pageParam - 1) * limit;
 
   if (!randomIds.length) {

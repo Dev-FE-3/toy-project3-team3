@@ -105,7 +105,7 @@ const Play = () => {
       <Title
         showBackButton
         title={videoData?.playlist_title}
-        onBackClick={() => navigate(`/playlist/${playlistId}`)} // 🔥 맞춤 이동
+        // onBackClick={() => navigate(`/playlist/${playlistId}`)} //
       />
       <VideoWrapper className="playContainer">
         {videoData?.video_id && (
@@ -122,7 +122,13 @@ const Play = () => {
       </VideoWrapper>
       <VideoTitle>{videoData?.title}</VideoTitle>
       <Meta>
-        <ProfileWrapper>
+        <ProfileWrapper
+          onClick={() => {
+            if (videoData?.user_random_id) {
+              navigate(`/storage/${videoData.user_random_id}`);
+            }
+          }}
+        >
           <ProfileImage
             src={videoData?.user_img || DefaultProfile}
             onError={(e) => (e.currentTarget.src = DefaultProfile)}
@@ -163,7 +169,10 @@ const Play = () => {
           {commentList.map((item) => {
             return (
               <CommentIndividualWrapper key={item.c_id}>
-                <ProfileImage src={item.user_img || DefaultProfile} />
+                <ProfileImage
+                  src={item.user_img || DefaultProfile}
+                  onClick={() => navigate(`/storage/${item.user_random_id}`)}
+                />
                 <CommentIndividual>
                   <CommentWriter className="nickName">
                     {item.user_nickname}
@@ -259,12 +268,14 @@ const ProfileWrapper = styled.div`
   display: flex;
   gap: 15px;
   align-items: center;
+  cursor: pointer;
 `;
 
 const ProfileImage = styled.img`
   width: 50px;
   height: 50px;
   border-radius: 50px;
+  cursor: pointer;
 `;
 
 const ProfileName = styled.span`
