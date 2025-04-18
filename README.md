@@ -18,7 +18,7 @@
 - 아이디 또는 비밀번호가 잘못되었을 경우 경고 메시지가 입력창 밑에 표시됩니다.
 - 로그인 후 홈페이지로 리다이렉션됩니다.
 
-<img src="https://github.com/user-attachments/assets/838aef74-6f6b-4a47-aace-f136e85761d8"></img>
+<img src="https://github.com/user-attachments/assets/63e71c42-9c2e-4ae8-9a9f-9cfe6259e144"></img>
 
 ### 홈 & 탐색
 
