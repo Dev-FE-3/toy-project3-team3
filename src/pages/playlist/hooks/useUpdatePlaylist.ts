@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { patchPlaylist } from "@/api/playlist";
-import { createVideo, deleteVideosByIds, Video } from "@/api/video";
+import { patchPlaylist } from "@/db/playlist";
+import { createVideo, deleteVideosByIds, Video } from "@/db/video";
 import { diffVideoList } from "@/pages/playlist/utils/diffVideoList";
 import { toast } from "react-toastify";
 

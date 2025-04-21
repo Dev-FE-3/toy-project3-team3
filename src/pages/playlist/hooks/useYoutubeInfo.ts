@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { extractVideoId } from "@/shared/ExtractVideoId";
-import { fetchYoutubeVideoData } from "@/api/youtube";
+import { fetchYoutubeVideoData } from "@/db/youtube";
 import { toast } from "react-toastify";
 
 export type YoutubeVideo = {

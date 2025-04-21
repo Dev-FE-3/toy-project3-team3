@@ -7,12 +7,12 @@ import backgroundImage from "@/assets/images/backGround.png";
 import comment from "@/assets/images/comment.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getPlaylistWithVideos } from "@/api/playlistWithvideos";
+import { getPlaylistWithVideos } from "@/db/playlistWithvideos";
 import { useLikeStatus } from "./hooks/useLikeStatus";
 import { ReactSVG } from "react-svg";
 import { useState } from "react";
 import Modal from "@/shared/component/Modal";
-import { softDeletePlaylist } from "@/api/playlist";
+import { softDeletePlaylist } from "@/db/playlist";
 
 const Detail = () => {
   // 로그인된 유저의 random_id를 userId로 사용 (DB 컬럼명은 random_id)

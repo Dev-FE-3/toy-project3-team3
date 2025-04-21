@@ -91,7 +91,7 @@
 // src/pages/profile/hooks/useUploadDeleteProfileImage.ts
 import { supabase } from "@/lib/supabase";
 import { useMutation } from "@tanstack/react-query";
-import { updateUser } from "@/api/users";
+import { updateUser } from "@/db/users";
 import useUser from "@/shared/hooks/useUser";
 
 interface UploadDeleteArgs {

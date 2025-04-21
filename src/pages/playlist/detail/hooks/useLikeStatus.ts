@@ -1,7 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getLikeStatus, addLike, updateLikeActive, getLikeCountByPlaylist } from "@/api/like";
+import {
+  getLikeStatus,
+  addLike,
+  updateLikeActive,
+  getLikeCountByPlaylist,
+} from "@/db/like";
 import { useEffect, useState } from "react";
-import { getCommentCountByPlaylist } from "@/api/comment";
+import { getCommentCountByPlaylist } from "@/db/comment";
 
 export const useLikeStatus = (userId?: number, playlistId?: number) => {
   const [likeCount, setLikeCount] = useState<number>(0);

@@ -1,5 +1,5 @@
-import { getUser } from "@/api/users";
-import { User } from "@/api/users";
+import { getUser } from "@/db/users";
+import { User } from "@/db/users";
 import { supabase } from "@/lib/supabase";
 
 /**
