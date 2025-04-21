@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import { useYoutubeInfo } from "@/pages/playlist/hooks/useYoutubeInfo";
 import { useThumbnail } from "@/pages/playlist/hooks/useThumbnailUpload";
 import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
-import { getPlaylistDetail } from "@/db/getPlaylistDetail";
+import { getPlaylistWithVideos } from "@/db/playlistWithvideos";
 import { Video } from "@/types/video";
 import { useUpdatePlaylist } from "@/pages/playlist/hooks/useUpdatePlaylist";
 
@@ -53,7 +53,12 @@ const Modify = () => {
     isError,
   } = useQuery({
     queryKey: ["playlistDetail", playlistId] as const,
-    queryFn: () => getPlaylistDetail(Number(playlistId)),
+    queryFn: async () => {
+      const data = await getPlaylistWithVideos(Number(playlistId));
+      if (!data)
+        throw new Error("플레이리스트가 존재하지 않거나 삭제되었습니다.");
+      return data;
+    },
     enabled: !!playlistId,
   });
 
