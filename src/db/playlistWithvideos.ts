@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import { Video } from "./video";
+import { Video } from "@/types/video";
 
 export interface PlaylistWithVideos {
   p_id: number;
@@ -9,13 +9,15 @@ export interface PlaylistWithVideos {
   video_count: number;
   is_delete: boolean;
   created_at: string;
-  videos: Video[]; 
+  videos: Video[];
 }
 
-export async function getPlaylistWithVideos(p_id: number): Promise<PlaylistWithVideos | null> {
+export async function getPlaylistWithVideos(
+  p_id: number,
+): Promise<PlaylistWithVideos | null> {
   const response = await axiosInstance.get<PlaylistWithVideos[]>(
     `/playlist_with_videos?p_id=eq.${p_id}&is_delete=eq.false`,
   );
 
-  return response.data[0] ?? null; 
+  return response.data[0] ?? null;
 }

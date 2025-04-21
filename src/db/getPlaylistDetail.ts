@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+import axiosInstance from "@/db/axiosInstance";
 
 interface Video {
   v_id: number;

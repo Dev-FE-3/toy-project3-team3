@@ -17,7 +17,7 @@ import { useYoutubeInfo } from "@/pages/playlist/hooks/useYoutubeInfo";
 import { useThumbnail } from "@/pages/playlist/hooks/useThumbnailUpload";
 import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
 import { getPlaylistDetail } from "@/db/getPlaylistDetail";
-import { Video } from "@/db/video";
+import { Video } from "@/types/video";
 import { useUpdatePlaylist } from "@/pages/playlist/hooks/useUpdatePlaylist";
 
 const Modify = () => {
