@@ -14,7 +14,7 @@ import useLockStore from "@/stores/lockStore";
 import useUploadDeleteProfileImage from "./hooks/useUploadDeleteProfileImage";
 import { toast } from "react-toastify";
 import { useUserStore } from "@/stores/userStore";
-import { isNicknameDuplicated } from "@/api/users";
+import { isNicknameDuplicated } from "@/db/users";
 
 const Profile = () => {
   const navigate = useNavigate();

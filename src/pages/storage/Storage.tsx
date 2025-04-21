@@ -6,19 +6,19 @@ import { useState } from "react";
 import Like from "@/assets/images/like.svg";
 import Comment from "@/assets/images/comment.svg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import useOtherUser from "@/api/services/useOtherUser";
-import useFollowCount from "@/api/services/useFollowCount";
+import useOtherUser from "@/api/useOtherUser";
+import useFollowCount from "@/api/useFollowCount";
 import Loading from "@/shared/component/Loading";
 import { useUserStore } from "@/stores/userStore";
 import useFollowStatus from "@/pages/followInfo/hooks/useFollowStatus";
-import useLikedPlaylists from "@/api/services/useLikedPlaylists";
-import useMyPlaylists from "@/api/services/useMyPlaylists";
+import useLikedPlaylists from "@/api/useLikedPlaylists";
+import useMyPlaylists from "@/api/useMyPlaylists";
 import backgroundImage from "@/assets/images/backGround.png";
 import Dropbox from "@/shared/component/Dropbox";
 import Modal from "@/shared/component/Modal";
-import { softDeletePlaylist } from "@/api/playlist";
+import { softDeletePlaylist } from "@/db/playlist";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { getMyLikedPlaylistIds } from "@/api/like";
+import { getMyLikedPlaylistIds } from "@/db/like";
 import { ReactSVG } from "react-svg";
 
 const Storage = () => {

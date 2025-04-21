@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useUserStore } from "@/stores/userStore";
 import { supabase } from "@/lib/supabase";
-import { getUser } from "@/api/users";
+import { getUser } from "@/db/users";
 
 const useUser = () => {
   const setUser = useUserStore((state) => state.setUser);

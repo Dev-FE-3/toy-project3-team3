@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { uploadPlaylist } from "@/api/services/uploadPlaylist";
+import { uploadPlaylist } from "@/api/uploadPlaylist";
 import { toast } from "react-toastify";
 
 type UploadVideo = {

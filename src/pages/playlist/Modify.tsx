@@ -15,8 +15,8 @@ import { toast } from "react-toastify";
 import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
 import { useThumbnail } from "./hooks/useThumbnailUpload";
 import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
-import { getPlaylistDetail } from "@/api/getPlaylistDetail";
-import { Video } from "@/api/video";
+import { getPlaylistDetail } from "@/db/getPlaylistDetail";
+import { Video } from "@/db/video";
 import { useUpdatePlaylist } from "./hooks/useUpdatePlaylist";
 
 const Modify = () => {

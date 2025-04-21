@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyPlaylists } from "@/api/services/getMyPlaylists";
+import { getMyPlaylists } from "@/api/getMyPlaylists";
 
 const useMyPlaylists = (randomId?: number) => {
   return useQuery({

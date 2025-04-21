@@ -2,7 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import Dropbox from "@/shared/component/Dropbox";
 import Title, { StyledTitle } from "@/shared/component/Title";
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
-import { getPlaylistCardData, PlaylistCardData } from "@/api/playlistCardData";
+import { getPlaylistCardData, PlaylistCardData } from "@/db/playlistCardData";
 import styled from "@emotion/styled";
 import CommonInput from "@/shared/component/input";
 import PlaylistCard from "@/pages/homeAndSearch/component/PlaylistCard";

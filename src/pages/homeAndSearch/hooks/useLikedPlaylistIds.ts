@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLikedPlaylistIds } from "@/api/services/likeActive";
+import { getLikedPlaylistIds } from "@/api/likeActive";
 
 const useLikedPlaylistIds = (randomId?: number) => {
   return useQuery({

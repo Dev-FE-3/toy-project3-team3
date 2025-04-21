@@ -13,16 +13,16 @@ import {
   CommentWithUserInfo,
   createComment,
   getCommentWithUserInfo,
-} from "@/api/comment";
+} from "@/db/comment";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getSingleVideoFromPlaylist } from "@/api/playlistFullView";
+import { getSingleVideoFromPlaylist } from "@/db/playlistFullView";
 import { ReactSVG } from "react-svg";
 import {
   getPlaylistWithVideos,
   PlaylistWithVideos,
-} from "@/api/playlistWithvideos";
+} from "@/db/playlistWithvideos";
 import { useLikeStatus } from "../playlist/detail/hooks/useLikeStatus";
 
 const Play = () => {
