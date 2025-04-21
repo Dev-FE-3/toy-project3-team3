@@ -174,7 +174,7 @@ const Create = () => {
             {isFetching && <Loading />}
             {videos.map((video, index) => (
               <VideoItem
-                key={index}
+                key={video.videoId}
                 thumbnail={video.thumbnail}
                 title={video.title}
                 source={video.source}
