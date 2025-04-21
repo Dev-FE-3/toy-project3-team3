@@ -10,7 +10,7 @@ interface Video {
   created_at: string;
 }
 
-interface PlaylistWithVideos {
+export interface PlaylistWithVideos {
   p_id: number;
   random_id: number;
   playlist_title: string;
