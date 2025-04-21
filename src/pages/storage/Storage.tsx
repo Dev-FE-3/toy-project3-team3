@@ -211,12 +211,18 @@ const Storage = () => {
                         {isMyPage &&
                           activeTab === "left" &&
                           item.random_id === currentUser?.random_id && (
-                            <Dropbox
-                              variant="icon"
-                              onChange={(action) =>
-                                handleIconAction(action, item.p_id)
-                              }
-                            />
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <Dropbox
+                                variant="icon"
+                                onChange={(action) =>
+                                  handleIconAction(action, item.p_id)
+                                }
+                              />
+                            </div>
                           )}
                       </IconGroup>
                     </DetailArea>

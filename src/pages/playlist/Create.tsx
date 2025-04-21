@@ -163,7 +163,7 @@ const Create = () => {
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
           />
-          <AddButton onClick={handleAddVideo}>
+          <AddButton id="addVideoButton" onClick={handleAddVideo}>
             <ReactSVG src={add} wrapper="span" />
           </AddButton>
         </VideoInputWrapper>
@@ -184,7 +184,12 @@ const Create = () => {
           </ScrollableList>
         </VideoListWrapper>
         <ButtonWrapper>
-          <Button size="big" color="pink" onClick={handleUpload}>
+          <Button
+            id="uploadButton"
+            size="big"
+            color="pink"
+            onClick={handleUpload}
+          >
             업로드 하기
           </Button>
         </ButtonWrapper>

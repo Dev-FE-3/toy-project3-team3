@@ -47,6 +47,7 @@ const Modal = ({
             size="small"
             btnColor="pink"
             onClick={handleConfirm}
+            data-testid="modal-confirm-button"
           >
             {rightButtonText}
           </Button>
