@@ -31,9 +31,9 @@ describe("사용자 인증 플로우", () => {
       cy.get("input#email").should("exist");
       cy.get("input#password").should("exist");
       cy.get("input#confirmPassword").should("exist");
-      cy.contains("회원가입").should("exist");
-      cy.contains("계정이 이미 있으신가요?").should("exist");
-      cy.contains("로그인").should("exist");
+      cy.contains('[data-testid="signup-title"]').should("exist");
+      cy.contains('[data-testid="login-guide"]').should("exist");
+      cy.contains('[data-testid="login-link"]').should("exist");
     });
 
     it("입력값이 유효하지 않으면 회원가입 버튼은 비활성화 상태여야 한다", () => {
@@ -79,9 +79,9 @@ describe("사용자 인증 플로우", () => {
     it("로그인 폼 요소들이 보여야 한다", () => {
       cy.get("input#email").should("exist");
       cy.get("input#password").should("exist");
-      cy.contains("로그인").should("exist");
-      cy.contains("계정이 아직 없으신가요?").should("exist");
-      cy.contains("회원가입").should("exist");
+      cy.contains('[data-testid="login-title"]').should("exist");
+      cy.contains('[data-testid="login-guide"]').should("exist");
+      cy.contains('[data-testid="signup-link"]').should("exist");
     });
 
     it("입력하지 않거나 일부만 입력하면 로그인 버튼이 비활성화되어야 한다", () => {

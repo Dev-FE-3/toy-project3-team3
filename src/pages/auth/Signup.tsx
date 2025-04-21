@@ -79,7 +79,7 @@ const Signup = () => {
         <Logo src={IdolLinkLogo} alt="로고" />
 
         <Form onSubmit={handleSubmit(handleSignup)}>
-          <Title>회원가입</Title>
+          <Title data-testid="signup-title">회원가입</Title>
 
           <FormInput
             id="email"
@@ -148,9 +148,11 @@ const Signup = () => {
             회원가입
           </SignupButton>
 
-          <LoginGuide>
+          <LoginGuide data-testid="signup-guide">
             계정이 이미 있으신가요?{" "}
-            <span onClick={() => navigate("/login")}>로그인</span>
+            <span data-testid="login-link" onClick={() => navigate("/login")}>
+              로그인
+            </span>
           </LoginGuide>
         </Form>
       </Wrapper>
