@@ -3,43 +3,24 @@ describe("사용자 인증 플로우", () => {
   const email = `test${randomId}@naver.com`;
   const password = Cypress.env("TEST_USER_PASSWORD") || "1234567!";
 
-  //  API로 직접 로그인하는 함수
-  const loginWithoutUI = () => {
-    return cy
-      .request({
-        method: "POST",
-        url: `${Cypress.env("SUPABASE_URL")}/auth/v1/token?grant_type=password`,
-        body: {
-          email,
-          password,
-        },
-        headers: {
-          apikey: Cypress.env("SUPABASE_ANON_KEY"),
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        // 응답에서 토큰 추출
-        const { access_token, refresh_token } = response.body;
-
-        // 토큰을 로컬 스토리지에 저장
+  cy.session(
+    "logged-in",
+    () => {
+      cy.loginWithoutUI(email, password);
+    },
+    {
+      validate() {
         cy.window().then((win) => {
-          const authData = {
-            access_token,
-            refresh_token,
-            expires_at: Math.floor(Date.now() / 1000) + 3600, // 임의로 1시간 후 만료
-            expires_in: 3600,
-            token_type: "bearer",
-            user: response.body.user,
-          };
-
-          win.localStorage.setItem(
-            Cypress.env("SUPABASE_AUTH_TOKEN_KEY"),
-            JSON.stringify(authData),
+          const authData = JSON.parse(
+            win.localStorage.getItem(Cypress.env("SUPABASE_AUTH_TOKEN_KEY")) ||
+              "null",
           );
+          expect(authData).to.not.be.null;
+          expect(authData.access_token).to.exist;
         });
-      });
-  };
+      },
+    },
+  );
 
   context("회원가입 페이지", () => {
     beforeEach(() => {
@@ -138,20 +119,25 @@ describe("사용자 인증 플로우", () => {
   context("로그아웃 플로우", () => {
     beforeEach(() => {
       // API로 로그인 후 세션 캐싱
-      cy.session("logged-in", loginWithoutUI, {
-        validate() {
-          // 로컬 스토리지에 토큰이 있는지 확인하여 세션 유효성 검증
-          cy.window().then((win) => {
-            const authData = JSON.parse(
-              win.localStorage.getItem(
-                Cypress.env("SUPABASE_AUTH_TOKEN_KEY"),
-              ) || "null",
-            );
-            expect(authData).to.not.be.null;
-            expect(authData.access_token).to.exist;
-          });
+      cy.session(
+        "logged-in",
+        () => {
+          cy.loginWithoutUI(email, password);
         },
-      });
+        {
+          validate() {
+            cy.window().then((win) => {
+              const authData = JSON.parse(
+                win.localStorage.getItem(
+                  Cypress.env("SUPABASE_AUTH_TOKEN_KEY"),
+                ) || "null",
+              );
+              expect(authData).to.not.be.null;
+              expect(authData.access_token).to.exist;
+            });
+          },
+        },
+      );
 
       // 로그인된 상태로 바로 홈페이지로 이동
       cy.visit("/");
