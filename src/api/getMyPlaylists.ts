@@ -1,4 +1,4 @@
-import axiosInstance from "@/api/axiosInstance";
+import axiosInstance from "@/db/axiosInstance";
 import { PlaylistCardData } from "@/db/playlistCardData";
 
 // 내가 만든 플레이리스트

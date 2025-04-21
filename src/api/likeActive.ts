@@ -1,4 +1,4 @@
-import axiosInstance from "../axiosInstance";
+import axiosInstance from "@/db/axiosInstance";
 
 export interface likeActive {
   p_id: number;

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "@/api/axiosInstance";
+import axiosInstance from "@/db/axiosInstance";
 
 const useFollowList = (targetId: number, type: "follower" | "following") => {
   const isFollower = type === "follower";
