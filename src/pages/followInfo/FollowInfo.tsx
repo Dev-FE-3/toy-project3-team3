@@ -1,5 +1,5 @@
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Title from "@/shared/component/Title";
 import CommonInput from "@/shared/component/input";
 import styled from "@emotion/styled";
@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "@/shared/component/Loading";
 import Reset from "@/assets/images/reset.svg";
 import useDebounce from "@/shared/hooks/useDebounce";
+import { TabMenu, TabButton } from "@/shared/component/Tab";
 
 interface FollowItem {
   random_id: number;
@@ -26,96 +27,63 @@ const FollowInfo = () => {
   const tabParam = searchParams.get("tab");
   const initialTab =
     tabParam === "follower" || tabParam === "following" ? tabParam : "follower";
-
   const [selectedTab, setSelectedTab] = useState<"follower" | "following">(
     initialTab,
   );
 
-  useEffect(() => {
-    if (tabParam === "follower" || tabParam === "following") {
-      setSelectedTab(tabParam);
-    }
-  }, [tabParam]);
-
   const targetId = Number(randomId);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 100);
 
   const { data: followList = [], isLoading: isFollowLoading } = useFollowList(
     targetId,
     selectedTab,
   );
 
-  const { data: users = [], isLoading: isUserLoading } = useQuery({
-    queryKey: ["allUsers"],
+  const { data: filteredUsers = [], isLoading: isUserLoading } = useQuery({
+    queryKey: ["allUsers", debouncedSearchTerm],
     queryFn: getUser,
+    select: (users) => {
+      if (!debouncedSearchTerm) return users;
+      return users.filter((user) =>
+        user.nickname
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()),
+      );
+    },
   });
 
   const isLoading = isFollowLoading || isUserLoading;
 
-  const [searchTerm, setSearchTerm] = useState("");
-  // const [filteredUsers, setFilteredUsers] = useState(users);
-
-  // 검색어 변경 → 필터링
-  // const handleSearch = useCallback(
-  //   (value: string) => {
-  //     if (!value) {
-  //       setFilteredUsers(users);
-  //     } else {
-  //       const filtered = users.filter((user) =>
-  //         user.nickname?.toLowerCase().includes(value.toLowerCase()),
-  //       );
-  //       setFilteredUsers(filtered);
-  //     }
-  //   },
-  //   [users],
-  // );
-
-  // const debouncedSearch = useMemo(
-  //   () => debounce(handleSearch, 100),
-  //   [handleSearch],
-  // );
-
-  // useEffect(() => {
-  //   debouncedSearch(searchTerm);
-  // }, [searchTerm, debouncedSearch]);
-
-  // useEffect(() => {
-  //   setFilteredUsers(users); // `users`가 변경될 때마다 `filteredUsers` 초기화
-  // }, [users]);
-
-  const debouncedSearchTerm = useDebounce(searchTerm, 100);
-
-  const filteredUsers = useMemo(() => {
-    if (!debouncedSearchTerm) return users;
-    return users.filter((user) =>
-      user.nickname?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+  const matchedUsers = useMemo(() => {
+    return filteredUsers.filter((user) =>
+      (followList as FollowItem[]).some((f) =>
+        selectedTab === "follower"
+          ? f.random_id === user.random_id
+          : f.following_id === user.random_id,
+      ),
     );
-  }, [debouncedSearchTerm, users]);
-
-  const matchedUsers = filteredUsers.filter((user) =>
-    (followList as FollowItem[]).some((f) =>
-      selectedTab === "follower"
-        ? f.random_id === user.random_id
-        : f.following_id === user.random_id,
-    ),
-  );
+  }, [filteredUsers, followList, selectedTab]);
 
   return (
     <>
       <Title showBackButton />
       <TabMenu>
-        <TabLeft
+        <TabButton
           isActive={selectedTab === "follower"}
           onClick={() => setSelectedTab("follower")}
         >
           팔로워
-        </TabLeft>
-        <TabRight
+        </TabButton>
+        <TabButton
           isActive={selectedTab === "following"}
           onClick={() => setSelectedTab("following")}
         >
           팔로잉
-        </TabRight>
+        </TabButton>
       </TabMenu>
+
       <InputWrapper>
         <InputContainer>
           <CommonInput
@@ -134,75 +102,28 @@ const FollowInfo = () => {
         </InputContainer>
       </InputWrapper>
 
-      {selectedTab === "follower" || selectedTab === "following" ? (
-        <ProfileListWrapper>
-          {isLoading ? (
-            <Loading />
-          ) : (
-            matchedUsers.map((user) => (
-              <ProfileArea
-                key={user.random_id}
-                onClick={() => navigate(`/storage/${user.random_id}`)}
-              >
-                <ProfileImg src={user.user_img || defaultProfile} />
-                <ProfileName>{user.nickname}</ProfileName>
-              </ProfileArea>
-            ))
-          )}
-        </ProfileListWrapper>
-      ) : null}
+      <ProfileListWrapper>
+        {isLoading ? (
+          <Loading />
+        ) : matchedUsers.length === 0 ? (
+          <EmptyMessage>일치하는 사용자가 없습니다.</EmptyMessage>
+        ) : (
+          matchedUsers.map((user) => (
+            <ProfileArea
+              key={user.random_id}
+              onClick={() => navigate(`/storage/${user.random_id}`)}
+            >
+              <ProfileImg src={user.user_img || defaultProfile} />
+              <ProfileName>{user.nickname}</ProfileName>
+            </ProfileArea>
+          ))
+        )}
+      </ProfileListWrapper>
     </>
   );
 };
 
 export default FollowInfo;
-
-const TabMenu = styled.div`
-  width: 600px;
-  height: 60px;
-  display: flex;
-  font-size: var(--font-size-large);
-`;
-
-const TabLeft = styled.div<{ isActive: boolean }>`
-  width: 300px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-weight: ${(props) => (props.isActive ? 700 : 400)};
-  border-bottom: ${(props) =>
-    props.isActive
-      ? `3px solid var(--primary)`
-      : `3px solid var(--disabled-2)`};
-  color: ${(props) =>
-    props.isActive ? `var(--primary)` : `var(--text-primary)`};
-  &:hover {
-    background-color: var(--profile-background);
-    transition: background-color 0.3s ease-in-out;
-  }
-`;
-
-const TabRight = styled.div<{ isActive: boolean }>`
-  width: 300px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-weight: ${(props) => (props.isActive ? 700 : 400)};
-  border-bottom: ${(props) =>
-    props.isActive
-      ? `3px solid var(--primary)`
-      : `3px solid var(--disabled-2)`};
-  color: ${(props) =>
-    props.isActive ? `var(--primary)` : `var(--text-primary)`};
-  &:hover {
-    background-color: var(--profile-background);
-    transition: background-color 0.3s ease-in-out;
-  }
-`;
 
 const InputWrapper = styled.div`
   width: 100%;
@@ -252,6 +173,7 @@ const ProfileImg = styled.img`
   width: 70px;
   height: 70px;
   border-radius: 50%;
+  object-fit: cover;
 `;
 
 const ProfileName = styled.span`
@@ -259,4 +181,11 @@ const ProfileName = styled.span`
   color: var(--text-primary);
   font-weight: 400;
   flex-direction: column;
+`;
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  margin-top: 40px;
+  font-size: var(--font-size-medium);
+  color: var(--text-secondary);
 `;
