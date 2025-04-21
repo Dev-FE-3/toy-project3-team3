@@ -99,6 +99,10 @@ const Create = () => {
       unlock();
       navigate("/storage");
     },
+    onError: (error) => {
+      console.error("업로드 실패: ", error);
+      toast.error("업로드에 실패했습니다. 다시 시도해주세요 😢");
+    },
   });
 
   const handleUpload = () => {
