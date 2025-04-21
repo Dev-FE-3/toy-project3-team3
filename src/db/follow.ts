@@ -133,3 +133,21 @@ export const getFollowingCount = async (userId: number) => {
   });
   return data.length;
 };
+
+export const fetchFollowList = async (
+  targetId: number,
+  type: "follower" | "following",
+) => {
+  const isFollower = type === "follower";
+  const queryKey = isFollower ? "following_id" : "random_id";
+
+  const response = await axiosInstance.get("/follow_table", {
+    params: {
+      [`${queryKey}`]: `eq.${targetId}`,
+      is_following: "eq.true",
+      select: "random_id, following_id",
+    },
+  });
+
+  return response.data;
+};
