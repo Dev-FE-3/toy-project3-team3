@@ -61,6 +61,20 @@ Cypress.Commands.add("loginWithoutUI", (email: string, password: string) => {
         Cypress.env("SUPABASE_AUTH_TOKEN_KEY"),
         JSON.stringify(authData),
       );
+      win.location.reload();
     });
+  });
+});
+
+Cypress.Commands.add("deleteTestUser", (email: string) => {
+  cy.request({
+    method: "POST",
+    url: `${Cypress.env("SUPABASE_URL")}/rest/v1/rpc/delete_user_by_email`,
+    headers: {
+      apikey: Cypress.env("SUPABASE_SERVICE_ROLE_KEY"), // ⚠️ 중요: service_role 키
+      Authorization: `Bearer ${Cypress.env("SUPABASE_SERVICE_ROLE_KEY")}`,
+      "Content-Type": "application/json",
+    },
+    body: { user_email: email },
   });
 });

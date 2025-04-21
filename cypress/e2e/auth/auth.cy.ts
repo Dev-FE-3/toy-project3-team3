@@ -3,25 +3,6 @@ describe("사용자 인증 플로우", () => {
   const email = `test${randomId}@naver.com`;
   const password = Cypress.env("TEST_USER_PASSWORD") || "1234567!";
 
-  cy.session(
-    "logged-in",
-    () => {
-      cy.loginWithoutUI(email, password);
-    },
-    {
-      validate() {
-        cy.window().then((win) => {
-          const authData = JSON.parse(
-            win.localStorage.getItem(Cypress.env("SUPABASE_AUTH_TOKEN_KEY")) ||
-              "null",
-          );
-          expect(authData).to.not.be.null;
-          expect(authData.access_token).to.exist;
-        });
-      },
-    },
-  );
-
   context("회원가입 페이지", () => {
     beforeEach(() => {
       cy.visit("/signup");
@@ -31,9 +12,9 @@ describe("사용자 인증 플로우", () => {
       cy.get("input#email").should("exist");
       cy.get("input#password").should("exist");
       cy.get("input#confirmPassword").should("exist");
-      cy.contains('[data-testid="signup-title"]').should("exist");
-      cy.contains('[data-testid="login-guide"]').should("exist");
-      cy.contains('[data-testid="login-link"]').should("exist");
+      cy.get('[data-testid="signup-title"]').should("exist");
+      cy.get('[data-testid="signup-guide"]').should("exist");
+      cy.get('[data-testid="login-link"]').should("exist");
     });
 
     it("입력값이 유효하지 않으면 회원가입 버튼은 비활성화 상태여야 한다", () => {
@@ -46,15 +27,15 @@ describe("사용자 인증 플로우", () => {
       cy.contains("유효한 이메일 주소를 입력해 주세요.").should("exist");
 
       cy.get("input#email").clear();
-      cy.get("input#password").type("123456"); // 7자
+      cy.get("input#password").type("123456");
       cy.get("input#confirmPassword").click();
       cy.contains("비밀번호는 8자리 이상이어야 합니다.").should("exist");
 
-      cy.get("input#password").clear().type("12345678901234567"); // 17자
+      cy.get("input#password").clear().type("12345678901234567");
       cy.get("input#confirmPassword").click();
       cy.contains("비밀번호는 16자리 이하여야 합니다.").should("exist");
 
-      cy.get("input#password").clear().type("abcdefgh"); // 특수문자 없음
+      cy.get("input#password").clear().type("abcdefgh");
       cy.get("input#confirmPassword").click();
       cy.contains("비밀번호에 특수문자 하나 이상 포함해주세요.").should(
         "exist",
@@ -79,20 +60,15 @@ describe("사용자 인증 플로우", () => {
     it("로그인 폼 요소들이 보여야 한다", () => {
       cy.get("input#email").should("exist");
       cy.get("input#password").should("exist");
-      cy.contains('[data-testid="login-title"]').should("exist");
-      cy.contains('[data-testid="login-guide"]').should("exist");
-      cy.contains('[data-testid="signup-link"]').should("exist");
+      cy.get('[data-testid="login-title"]').should("exist");
+      cy.get('[data-testid="login-guide"]').should("exist");
+      cy.get('[data-testid="signup-link"]').should("exist");
     });
 
     it("입력하지 않거나 일부만 입력하면 로그인 버튼이 비활성화되어야 한다", () => {
-      //아무것도 입력하지 않은 상태
       cy.get("button").contains("로그인").should("be.disabled");
-
-      //이메일만 입력한 상태
       cy.get("input#email").type(email);
       cy.get("button").contains("로그인").should("be.disabled");
-
-      // 비밀번호만 입력한 상태
       cy.get("input#email").clear();
       cy.get("input#password").type(password);
       cy.get("button").contains("로그인").should("be.disabled");
@@ -102,7 +78,6 @@ describe("사용자 인증 플로우", () => {
       cy.get("input#email").type("wrong@example.com");
       cy.get("input#password").type("wrongpassword");
       cy.get("button").contains("로그인").click();
-
       cy.contains("이메일 또는 비밀번호를 다시 확인해주세요.").should("exist");
     });
 
@@ -110,7 +85,6 @@ describe("사용자 인증 플로우", () => {
       cy.get("input#email").type(email);
       cy.get("input#password").type(password);
       cy.get("button").contains("로그인").click();
-
       cy.url().should("eq", `${Cypress.config().baseUrl}/`);
       cy.contains("반갑습니다").should("exist");
     });
@@ -118,7 +92,6 @@ describe("사용자 인증 플로우", () => {
 
   context("로그아웃 플로우", () => {
     beforeEach(() => {
-      // API로 로그인 후 세션 캐싱
       cy.session(
         "logged-in",
         () => {
@@ -138,8 +111,6 @@ describe("사용자 인증 플로우", () => {
           },
         },
       );
-
-      // 로그인된 상태로 바로 홈페이지로 이동
       cy.visit("/");
     });
 
@@ -147,11 +118,13 @@ describe("사용자 인증 플로우", () => {
       cy.get("[data-testid='header']").should("exist");
       cy.get("img[alt='Profile Image']").click();
       cy.url().should("include", "/profile");
-
       cy.get("button").contains("로그아웃").click();
-
       cy.url().should("include", "/login");
       cy.contains("로그인").should("exist");
     });
+  });
+
+  after(() => {
+    cy.deleteTestUser(email);
   });
 });
