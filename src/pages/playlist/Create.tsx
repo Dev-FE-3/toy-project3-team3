@@ -15,7 +15,6 @@ import { toast } from "react-toastify";
 import { useYoutubeInfo } from "@/pages/playlist/hooks/useYoutubeInfo";
 import { useThumbnail } from "@/pages/playlist/hooks/useThumbnailUpload";
 import { useUserStore } from "@/stores/userStore";
-import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
 import { useUploadPlaylist } from "@/pages/playlist/hooks/useUploadPlaylist";
 
 const Create = () => {
@@ -53,12 +52,6 @@ const Create = () => {
     const { data: video } = await refetch();
     if (!video) return;
 
-    try {
-      const file = await convertImageToFile(video.thumbnail!, video.title);
-      video.thumbnailFile = file;
-    } catch (e) {
-      console.error("썸네일 업로드 실패:", e);
-    }
     setVideos((prev) => [...prev, video]);
     setVideoUrl("");
   };

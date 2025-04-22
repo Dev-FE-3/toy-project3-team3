@@ -15,7 +15,6 @@ import VideoItem from "@/pages/playlist/component/VideoItem";
 import { toast } from "react-toastify";
 import { useYoutubeInfo } from "@/pages/playlist/hooks/useYoutubeInfo";
 import { useThumbnail } from "@/pages/playlist/hooks/useThumbnailUpload";
-import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
 import { getPlaylistWithVideos } from "@/db/playlistWithvideos";
 import { Video } from "@/types/video";
 import { useUpdatePlaylist } from "@/pages/playlist/hooks/useUpdatePlaylist";
@@ -87,12 +86,6 @@ const Modify = () => {
     const { data: video } = await refetch(); //추가할 유튜브 영상 정보 받아오기기
     if (!video) return;
 
-    try {
-      const file = await convertImageToFile(video.thumbnail!, video.title);
-      video.thumbnailFile = file;
-    } catch (e) {
-      console.error("썸네일 업로드 실패:", e);
-    }
     setVideos((prev) => [
       ...prev,
       {
