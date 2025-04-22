@@ -17,9 +17,9 @@ import {
   getPlaylistWithVideos,
   PlaylistWithVideos,
 } from "@/db/playlistWithvideos";
-import { useLikeStatus } from "../playlist/detail/hooks/useLikeStatus";
 import VideoMetaSection from "./component/VideoMetaSection";
 import CommentSection from "./component/CommentSection";
+import { useLikeStatus } from "../detail/hooks/useLikeStatus";
 
 const Play = () => {
   const queryClient = useQueryClient();
