@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { uploadPlaylist } from "@/api/uploadPlaylist";
-import { toast } from "react-toastify";
 
 type UploadVideo = {
   videoId: string;
@@ -79,8 +78,6 @@ export function useUploadPlaylist({
     onSuccess,
     onError: (error) => {
       console.error("업로드 실패:", error.message || error);
-      toast.error(error.message || "업로드에 실패했습니다. 다시 시도해주세요.");
-      throw error;
     },
   });
 }

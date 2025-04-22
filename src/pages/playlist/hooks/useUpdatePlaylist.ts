@@ -3,7 +3,6 @@ import { patchPlaylist } from "@/db/playlist";
 import { createVideo, deleteVideosByIds } from "@/db/video";
 import { Video } from "@/types/video";
 import { diffVideoList } from "@/pages/playlist/utils/diffVideoList";
-import { toast } from "react-toastify";
 
 export interface VideoWithFile extends Video {
   thumbnailFile?: File;
@@ -83,7 +82,6 @@ export const useUpdatePlaylist = ({
     onSuccess,
     onError: (error) => {
       console.error("업데이트 실패:", error.message || error);
-      toast.error("업데이트에 실패했습니다. 다시 시도해주세요.");
     },
   });
 };
