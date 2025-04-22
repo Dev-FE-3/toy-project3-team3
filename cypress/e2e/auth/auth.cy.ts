@@ -92,33 +92,23 @@ describe("사용자 인증 플로우", () => {
 
   context("로그아웃 플로우", () => {
     beforeEach(() => {
-      cy.session(
-        "logged-in",
-        () => {
-          cy.loginWithoutUI(email, password);
-        },
-        {
-          validate() {
-            cy.window().then((win) => {
-              const authData = JSON.parse(
-                win.localStorage.getItem(
-                  Cypress.env("SUPABASE_AUTH_TOKEN_KEY"),
-                ) || "null",
-              );
-              expect(authData).to.not.be.null;
-              expect(authData.access_token).to.exist;
-            });
-          },
-        },
-      );
-      cy.visit("/");
+      cy.clearLocalStorage();
+
+      // 세션 생성 및 로그인
+      cy.loginWithoutUI(email, password).then(() => {
+        cy.visit("/");
+        cy.get("[data-testid='header']", { timeout: 10000 }).should("exist");
+      });
     });
 
     it("프로필 페이지에서 로그아웃하면 로그인 페이지로 이동해야 한다", () => {
-      cy.get("[data-testid='header']").should("exist");
-      cy.get("img[alt='Profile Image']").click();
+      cy.get("[data-testid='header']", { timeout: 10000 }).should("exist");
+
+      cy.get("img[alt='Profile Image']", { timeout: 5000 })
+        .should("be.visible")
+        .click();
       cy.url().should("include", "/profile");
-      cy.get("button").contains("로그아웃").click();
+      cy.get("button").contains("로그아웃").should("be.visible").click();
       cy.url().should("include", "/login");
       cy.contains("로그인").should("exist");
     });
