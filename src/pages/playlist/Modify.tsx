@@ -15,7 +15,7 @@ import VideoItem from "@/pages/playlist/component/VideoItem";
 import { toast } from "react-toastify";
 import { useYoutubeInfo } from "@/pages/playlist/hooks/useYoutubeInfo";
 import { useThumbnail } from "@/pages/playlist/hooks/useThumbnailUpload";
-import { getPlaylistWithVideos } from "@/db/playlistWithvideos";
+import { getPlaylistWithVideos } from "@/shared/api/playlistWithvideos";
 import { Video } from "@/types/video";
 import { useUpdatePlaylist } from "@/pages/playlist/hooks/useUpdatePlaylist";
 import ErrorFallback from "@/shared/component/ErrorFallback";

@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllPlaylistCardData } from "@/db/playlistCardData";
-import { getMyLikedPlaylistIds } from "@/db/like";
+import { getAllPlaylistCardData } from "@/shared/api/playlistCardData";
+import { getMyLikedPlaylistIds } from "@/shared/api/like";
 import { useMemo } from "react";
-import { QUERY_KEYS } from "@/constants/queryKey";
+import { QUERY_KEYS } from "@/shared/constants/queryKey";
 
 const useLikedPlaylists = (randomId?: number) => {
   const {

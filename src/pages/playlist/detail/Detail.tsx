@@ -7,12 +7,12 @@ import backgroundImage from "@/assets/images/backGround.png";
 import comment from "@/assets/images/comment.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getPlaylistWithVideos } from "@/db/playlistWithvideos";
+import { getPlaylistWithVideos } from "@/shared/api/playlistWithvideos";
 import { useLikeStatus } from "./hooks/useLikeStatus";
 import { ReactSVG } from "react-svg";
 import { useState } from "react";
 import Modal from "@/shared/component/Modal";
-import { softDeletePlaylist } from "@/db/playlist";
+import { softDeletePlaylist } from "@/shared/api/playlist";
 import Loading from "@/shared/component/Loading";
 import ErrorFallback from "@/shared/component/ErrorFallback";
 

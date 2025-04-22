@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getFollowerCount, getFollowingCount } from "@/db/follow";
-import { QUERY_KEYS } from "@/constants/queryKey";
+import { getFollowerCount, getFollowingCount } from "@/shared/api/follow";
+import { QUERY_KEYS } from "@/shared/constants/queryKey";
 
 const useFollowCount = (targetId?: number) => {
   const {

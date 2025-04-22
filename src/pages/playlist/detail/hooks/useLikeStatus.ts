@@ -4,9 +4,9 @@ import {
   addLike,
   updateLikeActive,
   getLikeCountByPlaylist,
-} from "@/db/like";
+} from "@/shared/api/like";
 import { useEffect, useState } from "react";
-import { getCommentCountByPlaylist } from "@/db/comment";
+import { getCommentCountByPlaylist } from "@/shared/api/comment";
 
 export const useLikeStatus = (userId?: number, playlistId?: number) => {
   const [likeCount, setLikeCount] = useState<number>(0);
