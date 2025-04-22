@@ -1,43 +1,12 @@
-const loginWithoutUI = () => {
-  const email = `test33@naver.com`;
-  const password = "1234567!";
-
-  return cy
-    .request({
-      method: "POST",
-      url: `${Cypress.env("SUPABASE_URL")}/auth/v1/token?grant_type=password`,
-      body: { email, password },
-      headers: {
-        apikey: Cypress.env("SUPABASE_ANON_KEY"),
-        "Content-Type": "application/json",
-      },
-    })
-    .then((res) => {
-      const { access_token, refresh_token } = res.body;
-      cy.window().then((win) => {
-        const authData = {
-          access_token,
-          refresh_token,
-          expires_at: Math.floor(Date.now() / 1000) + 3600,
-          expires_in: 3600,
-          token_type: "bearer",
-          user: res.body.user,
-        };
-
-        win.localStorage.setItem(
-          Cypress.env("SUPABASE_AUTH_TOKEN_KEY"),
-          JSON.stringify(authData),
-        );
-      });
-    });
-};
 const title = `aespa 플레이 리스트`;
 const videoUrl = "https://youtu.be/jWQx2f-CErU?si=gxr0poNeypvXAByC";
 
 describe("플레이리스트 생성 페이지", () => {
   beforeEach(() => {
     cy.viewport(600, 1000);
-    cy.session("logged-in", loginWithoutUI);
+    cy.session("logged-in", () => {
+      cy.loginWithoutUI("test33@naver.com", "1234567!");
+    });
     cy.visit("/");
     cy.get('[data-testid="nav-생성"]').click();
     cy.url().should("include", "/create");

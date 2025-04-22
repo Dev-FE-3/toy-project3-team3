@@ -1,15 +1,4 @@
-import axiosInstance from "./axiosInstance";
-
-export interface Video {
-  v_id: number;
-  title: string;
-  playlist_id: number;
-  channel_name: string;
-  thumbnail_url: string;
-  created_at: string; // ISO timestamp
-  video_id: string;
-  thumbnailFile?: File;
-}
+import axiosInstance from "@/db/axiosInstance";
 
 //가져오기
 // export async function getVideo(p_id: number): Promise<Video[]> {

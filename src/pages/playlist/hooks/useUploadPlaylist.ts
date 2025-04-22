@@ -16,6 +16,7 @@ interface UseUploadPlaylistProps {
   uploadPlaylistThumbnail: () => Promise<string>;
   uploadVideoThumbnail: (file: File) => Promise<string>;
   onSuccess?: () => void;
+  onError?: (error: unknown) => void;
 }
 
 /**
