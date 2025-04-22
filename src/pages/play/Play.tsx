@@ -24,6 +24,8 @@ import {
   PlaylistWithVideos,
 } from "@/db/playlistWithvideos";
 import { useLikeStatus } from "../playlist/detail/hooks/useLikeStatus";
+import Loading from "@/shared/component/Loading";
+import ErrorFallback from "@/shared/component/ErrorFallback";
 
 const Play = () => {
   const queryClient = useQueryClient();
@@ -42,21 +44,21 @@ const Play = () => {
   } = useLikeStatus(userId, playlistId);
   const navigate = useNavigate();
 
-  // ✅ 비디오 정보 가져오기
+  // 비디오 정보 가져오기
   const { data: videoData, isLoading: isPlaylistLoading } = useQuery({
     queryKey: ["singleVideo", playlistId, videoId],
     queryFn: () => getSingleVideoFromPlaylist(playlistId, videoId),
     enabled: !!playlistId && !!videoId,
   });
 
-  // ✅ 댓글 목록 가져오기
+  // 댓글 목록 가져오기
   const { data: commentList = [] } = useQuery<CommentWithUserInfo[]>({
     queryKey: ["comments", playlistId],
     queryFn: () => getCommentWithUserInfo(playlistId),
     enabled: !!playlistId,
   });
 
-  // ✅ 댓글 작성
+  // 댓글 작성
   const mutation = useMutation({
     mutationFn: createComment,
     onSuccess: () => {
@@ -70,7 +72,7 @@ const Play = () => {
     },
   });
 
-  // ✅ 댓글 제출
+  // 댓글 제출
   const handleSubmit = () => {
     if (!commentText.trim()) return alert("댓글을 입력해주세요.");
     if (!userId || !playlistId) return alert("로그인 정보 없음");
@@ -82,7 +84,7 @@ const Play = () => {
     });
   };
 
-  // ✅ 영상 리모트
+  // 영상 리모트
   const { data: videoListData } = useQuery<PlaylistWithVideos | null>({
     queryKey: ["playlistWithVideos", playlistId],
     queryFn: () => getPlaylistWithVideos(playlistId),
@@ -95,18 +97,17 @@ const Play = () => {
   const nextVideo = videoList[currentIndex + 1];
   const totalCount = videoList.length;
 
-  // ✅ 조건 분기 처리
   if (isPlaylistLoading || isLikeLoading) {
-    return <p>플레이리스트 정보를 불러오는 중...</p>;
+    return <Loading />;
+  }
+
+  if (!videoData) {
+    return <ErrorFallback message="존재하지 않는 영상입니다." />;
   }
 
   return (
     <Wrapper>
-      <Title
-        showBackButton
-        title={videoData?.playlist_title}
-        // onBackClick={() => navigate(`/playlist/${playlistId}`)} //
-      />
+      <Title showBackButton title={videoData?.playlist_title} />
       <VideoWrapper className="playContainer">
         {videoData?.video_id && (
           <iframe
