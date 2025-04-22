@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getFollowStatus, postFollow, deleteFollow } from "@/db/follow";
 import { useUserStore } from "@/stores/userStore";
+import { QUERY_KEYS } from "@/constants/queryKey";
 
 const useFollowStatus = (targetId?: number) => {
   const queryClient = useQueryClient();
@@ -8,8 +9,8 @@ const useFollowStatus = (targetId?: number) => {
   const fromId = user?.random_id;
   const toId = targetId;
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["followStatus", fromId, toId],
+  const { data, isLoading, isError } = useQuery({
+    queryKey: [QUERY_KEYS.followStatus, fromId, toId],
     queryFn: () => getFollowStatus(fromId, toId),
     enabled: !!fromId && !!toId,
   });
@@ -18,10 +19,14 @@ const useFollowStatus = (targetId?: number) => {
     mutationFn: postFollow,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["followStatus", fromId, toId],
+        queryKey: [QUERY_KEYS.followStatus, fromId, toId],
       });
-      queryClient.invalidateQueries({ queryKey: ["followerCount", toId] });
-      queryClient.invalidateQueries({ queryKey: ["followingCount", fromId] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.followerCount, toId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.followingCount, fromId],
+      });
     },
   });
 
@@ -29,15 +34,19 @@ const useFollowStatus = (targetId?: number) => {
     mutationFn: (f_id: number) => deleteFollow(f_id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["followStatus", fromId, toId],
+        queryKey: [QUERY_KEYS.followStatus, fromId, toId],
       });
-      queryClient.invalidateQueries({ queryKey: ["followerCount", toId] });
-      queryClient.invalidateQueries({ queryKey: ["followingCount", fromId] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.followerCount, toId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.followingCount, fromId],
+      });
     },
   });
+
   const handleFollow = () => {
     if (!fromId || !toId) return;
-
     follow.mutate({ fromId, toId });
   };
 
@@ -50,10 +59,13 @@ const useFollowStatus = (targetId?: number) => {
     isFollowing: !!data,
     followRowId: data?.f_id,
     isLoading,
+    isError,
     handleFollow,
     handleUnfollow,
     isFollowPending: follow.isPending,
     isUnfollowPending: unfollow.isPending,
+    isFollowError: follow.isError,
+    isUnfollowError: unfollow.isError,
   };
 };
 
