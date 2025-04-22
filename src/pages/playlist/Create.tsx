@@ -27,6 +27,9 @@ const Create = () => {
     uploadVideoThumbnail,
   } = useThumbnail();
 
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const user = useUserStore((s) => s.user); //store에서 사용자 정보 가져오기
   const [videoUrl, setVideoUrl] = useState("");
   const [videos, setVideos] = useState<
@@ -94,7 +97,8 @@ const Create = () => {
     },
     onError: (error) => {
       console.error("업로드 실패: ", error);
-      toast.error("업로드에 실패했습니다. 다시 시도해주세요 😢");
+      setErrorMessage("업로드에 실패했습니다. 다시 시도해주세요 😢");
+      setErrorModalOpen(true);
     },
   });
 
@@ -211,6 +215,15 @@ const Create = () => {
         }
         leftButtonText="취소"
         rightButtonText={modalType === "exit" ? "나가기" : "삭제"}
+      />
+
+      <Modal
+        isOpen={errorModalOpen}
+        onClose={() => setErrorModalOpen(false)}
+        onConfirm={() => setErrorModalOpen(false)}
+        message={errorMessage}
+        rightButtonText="확인"
+        type="alert"
       />
     </Wrapper>
   );

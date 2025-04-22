@@ -1,23 +1,25 @@
 import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
 import Button from "@/shared/component/Button";
-import useProfileImage from "@/shared/hooks/useProfileImage";
 import Title from "@/shared/component/Title";
-import useUpdateUserInfo from "@/api/useUpdateUserInfo";
-import Cancel from "@/assets/images/cancel.svg";
 import Modal from "@/shared/component/Modal";
-import { useNavigate } from "react-router-dom";
 import useLockStore from "@/stores/lockStore";
-import useUploadDeleteProfileImage from "@/api/useUploadDeleteProfileImage";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useUserStore } from "@/stores/userStore";
+import useProfileImage from "@/shared/hooks/useProfileImage";
+import useUploadDeleteProfileImage from "@/api/useUploadDeleteProfileImage";
+import useUpdateUserInfo from "@/api/useUpdateUserInfo";
+import useUser from "@/shared/hooks/useUser";
 import { isNicknameDuplicated } from "@/db/users";
+import Loading from "@/shared/component/Loading";
 import ProfileImageSection from "@/pages/profile/component/ProfileImageSection";
 import ProfileForm from "@/pages/profile/component/ProfileForm";
+import ErrorFallback from "@/shared/component/ErrorFallback";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { lock, unlock } = useLockStore();
+  const { user, isLoading, isError } = useUser();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -27,9 +29,7 @@ const Profile = () => {
     artist_hash_tag: "",
   });
 
-  const user = useUserStore((state) => state.user);
-  const { profileImage, refetch: refetchImage } = useProfileImage(); // 프로필 이미지 fetch
-
+  const { profileImage, refetch: refetchImage } = useProfileImage();
   const imageMutation = useUploadDeleteProfileImage(refetchImage);
   const updateMutation = useUpdateUserInfo(() => {
     setIsEditing(false);
@@ -41,9 +41,8 @@ const Profile = () => {
     } else {
       unlock();
     }
-  }, [isEditing, lock, unlock]); // isEditing 상태에 따라 상단 하단 lock/unlock
+  }, [isEditing, lock, unlock]);
 
-  // 초기 유저 데이터 profileData에 세팅
   useEffect(() => {
     if (user) {
       setProfileData({
@@ -85,7 +84,6 @@ const Profile = () => {
   const handleSave = async () => {
     if (!user?.id) return;
 
-    // 닉네임 중복 체크
     if (profileData.nickname !== user.nickname) {
       const isDuplicate = await isNicknameDuplicated(profileData.nickname);
       if (isDuplicate) {
@@ -100,11 +98,16 @@ const Profile = () => {
     });
   };
 
-  if (!user) {
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError || !user) {
     return (
-      <ProfilePage>
-        <EmptyMessage>유저 정보를 불러올 수 없습니다.</EmptyMessage>
-      </ProfilePage>
+      <>
+        <Title title="프로필" showBackButton />
+        <ErrorFallback message="유저 정보를 불러오는 데 실패했습니다." />
+      </>
     );
   }
 
@@ -115,7 +118,7 @@ const Profile = () => {
           title="프로필"
           rightContent={
             <img
-              src={Cancel}
+              src="/assets/cancel.svg"
               alt="닫기"
               onClick={() => setIsModalOpen(true)}
               style={{ cursor: "pointer" }}
@@ -133,14 +136,16 @@ const Profile = () => {
           onIconAction={handleIconAction}
         />
       </ProfileHeader>
+
       <ProfileDataWrapper>
         <ProfileForm
           profileData={profileData}
-          email={user?.email ?? ""}
+          email={user.email ?? ""}
           isEditing={isEditing}
           onInputChange={handleInputChange}
         />
       </ProfileDataWrapper>
+
       <ButtonWrapper>
         <Button
           size="mid"
@@ -153,7 +158,7 @@ const Profile = () => {
 
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} // 계속하기
+        onClose={() => setIsModalOpen(false)}
         onConfirm={() => {
           setIsModalOpen(false);
           navigate(0);
@@ -200,11 +205,4 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 30px;
-`;
-
-const EmptyMessage = styled.div`
-  text-align: center;
-  margin-top: 40px;
-  font-size: var(--font-size-medium);
-  color: var(--text-secondary);
 `;

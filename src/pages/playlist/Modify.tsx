@@ -31,6 +31,9 @@ const Modify = () => {
     uploadVideoThumbnail,
   } = useThumbnail();
 
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const [videoUrl, setVideoUrl] = useState("");
   const [videos, setVideos] = useState<Video[]>([]);
   const [originalVideos, setOriginalVideos] = useState<Video[]>([]);
@@ -149,7 +152,8 @@ const Modify = () => {
     },
     onError: (error) => {
       console.error("업데이트 실패:", error);
-      toast.error("업데이트에 실패했습니다. 다시 시도해주세요 😢");
+      setErrorMessage("업데이트에 실패했습니다. 다시 시도해주세요 😢");
+      setErrorModalOpen(true);
     },
   });
 
@@ -262,6 +266,15 @@ const Modify = () => {
         }
         leftButtonText="취소"
         rightButtonText={modalType === "exit" ? "나가기" : "삭제"}
+      />
+
+      <Modal
+        isOpen={errorModalOpen}
+        onClose={() => setErrorModalOpen(false)}
+        onConfirm={() => setErrorModalOpen(false)}
+        message={errorMessage}
+        rightButtonText="확인"
+        type="alert"
       />
     </Wrapper>
   );

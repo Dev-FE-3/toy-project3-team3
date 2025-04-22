@@ -3,7 +3,6 @@ import { patchPlaylist } from "@/db/playlist";
 import { createVideo, deleteVideosByIds } from "@/db/video";
 import { Video } from "@/types/video";
 import { diffVideoList } from "@/pages/playlist/utils/diffVideoList";
-import { toast } from "react-toastify";
 
 export interface VideoWithFile extends Video {
   thumbnailFile?: File;
@@ -38,10 +37,12 @@ export const useUpdatePlaylist = ({
       // 플레이리스트 썸네일 업로드
       let coverImgUrl = thumbnailPreview as string;
 
-      try {
-        coverImgUrl = await uploadPlaylistThumbnail();
-      } catch (e) {
-        console.error("커버 이미지 업로드 실패:", e);
+      if (thumbnailPreview instanceof File) {
+        try {
+          coverImgUrl = await uploadPlaylistThumbnail();
+        } catch (e) {
+          console.error("커버 이미지 업로드 실패:", e);
+        }
       }
 
       // 영상 썸네일 업로드
@@ -81,7 +82,6 @@ export const useUpdatePlaylist = ({
     onSuccess,
     onError: (error) => {
       console.error("업데이트 실패:", error.message || error);
-      toast.error("업데이트에 실패했습니다. 다시 시도해주세요.");
     },
   });
 };

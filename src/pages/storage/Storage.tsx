@@ -1,47 +1,48 @@
 import styled from "@emotion/styled";
-import Title from "@/shared/component/Title";
 import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import useOtherUser from "@/api/useOtherUser";
-import useFollowCount from "@/api/useFollowCount";
-import Loading from "@/shared/component/Loading";
-import { useUserStore } from "@/stores/userStore";
-import useFollowStatus from "@/api/useFollowStatus";
-import useLikedPlaylists from "@/api/useLikedPlaylists";
-import useMyPlaylists from "@/api/useMyPlaylists";
+import Title from "@/shared/component/Title";
 import Modal from "@/shared/component/Modal";
-import { softDeletePlaylist } from "@/db/playlist";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { getMyLikedPlaylistIds } from "@/db/like";
+import Loading from "@/shared/component/Loading";
 import StoragePlaylistCard from "@/pages/storage/component/StoragePlaylistCard";
 import StorageProfileCard from "@/pages/storage/component/StorageProfileCard";
 import { TabMenu, TabButton } from "@/shared/component/Tab";
+import useOtherUser from "@/api/useOtherUser";
+import useFollowCount from "@/api/useFollowCount";
+import useMyPlaylists from "@/api/useMyPlaylists";
+import useLikedPlaylists from "@/api/useLikedPlaylists";
+import useFollowStatus from "@/api/useFollowStatus";
+import { useUserStore } from "@/stores/userStore";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { getMyLikedPlaylistIds } from "@/db/like";
+import { softDeletePlaylist } from "@/db/playlist";
+import ErrorFallback from "@/shared/component/ErrorFallback";
 
 const Storage = () => {
-  const [activeTab, setActiveTab] = useState<"left" | "right">("left");
   const { randomId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<"left" | "right">("left");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedIdToDelete, setSelectedIdToDelete] = useState<number | null>(
+    null,
+  );
 
   const currentUser = useUserStore((state) => state.user);
   const {
     otherUser,
-    //isLoading: isOtherUserLoading,
-    //isError: isOtherUserError,
+    isLoading: isOtherUserLoading,
+    isError: isOtherUserError,
   } = useOtherUser(Number(randomId));
+
   const isMyPage = currentUser?.random_id === Number(randomId);
   const targetId = isMyPage ? currentUser?.random_id : otherUser?.random_id;
   const targetUser = isMyPage ? currentUser : otherUser;
-  const userData = targetUser;
 
   const { followerCount, followingCount } = useFollowCount(targetId);
-  const {
-    myPlaylists = [],
-    isLoading: isMyPlaylistsLoading,
-    //isError: isMyPlaylistsError,
-  } = useMyPlaylists(targetId);
-
+  const { myPlaylists = [], isLoading: isMyPlaylistsLoading } =
+    useMyPlaylists(targetId);
   const { likedPlaylists = [], isLoading: isLikedPlaylistsLoading } =
     useLikedPlaylists(targetId);
 
@@ -50,12 +51,6 @@ const Storage = () => {
     queryFn: () => getMyLikedPlaylistIds(currentUser!.random_id),
     enabled: !!currentUser?.random_id,
   });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [selectedIdToDelete, setSelectedIdToDelete] = useState<number | null>(
-    null,
-  );
 
   const {
     isFollowing,
@@ -70,11 +65,6 @@ const Storage = () => {
     navigate(`/storage/${randomId}/follow-info?tab=${tab}`);
   };
 
-  if (!targetUser || isFollowLoading) return <Loading />;
-
-  const isProfilePage = location.pathname === "/profile";
-
-  // 1 = "수정하기" 2 = "삭제하기"
   const handleIconAction = async (action: number, p_id: number) => {
     if (action === 1) {
       navigate(`/edit/${p_id}`);
@@ -82,6 +72,36 @@ const Storage = () => {
       setSelectedIdToDelete(p_id);
       setIsModalOpen(true);
     }
+  };
+
+  if (isOtherUserLoading || isFollowLoading) {
+    return <Loading />;
+  }
+
+  if (isOtherUserError || !targetUser) {
+    return (
+      <StorageWrapper>
+        <ErrorFallback message="존재하지 않는 유저입니다." />
+      </StorageWrapper>
+    );
+  }
+
+  const isProfilePage = location.pathname === "/profile";
+
+  const profileCardProps = {
+    userData: targetUser,
+    isMyPage,
+    isProfilePage,
+    followerCount,
+    followingCount,
+    playlistCount: myPlaylists.length,
+    isFollowing,
+    isFollowPending,
+    isUnfollowPending,
+    onFollow: handleFollow,
+    onUnfollow: handleUnfollow,
+    onNavigateToProfile: () => navigate("/profile"),
+    onNavigateToFollowInfo: handleNavigate,
   };
 
   return (
@@ -94,21 +114,7 @@ const Storage = () => {
 
       <StorageWrapper>
         <FixedHeaderArea>
-          <StorageProfileCard
-            userData={userData!}
-            isMyPage={isMyPage}
-            isProfilePage={isProfilePage}
-            followerCount={followerCount}
-            followingCount={followingCount}
-            playlistCount={myPlaylists.length}
-            isFollowing={isFollowing}
-            isFollowPending={isFollowPending}
-            isUnfollowPending={isUnfollowPending}
-            onFollow={handleFollow}
-            onUnfollow={handleUnfollow}
-            onNavigateToProfile={() => navigate("/profile")}
-            onNavigateToFollowInfo={handleNavigate}
-          />
+          <StorageProfileCard {...profileCardProps} />
 
           <TabMenu>
             <TabButton
@@ -130,7 +136,6 @@ const Storage = () => {
           {(activeTab === "left" ? myPlaylists : likedPlaylists)?.map(
             (item) => {
               const isLiked = likedIds.includes(item.p_id);
-
               return (
                 <StoragePlaylistCard
                   key={item.p_id}

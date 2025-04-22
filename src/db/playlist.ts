@@ -10,12 +10,6 @@ export interface Playlist {
   created_at: string;
 }
 
-//가져오기
-// export async function getPlaylist(): Promise<Playlist[]> {
-//   const response = await axiosInstance.get<Playlist[]>("/playlist_table");
-//   return response.data;
-// }
-
 //만들기
 export async function createPlaylist(playlistData: {
   cover_img_path: string;
