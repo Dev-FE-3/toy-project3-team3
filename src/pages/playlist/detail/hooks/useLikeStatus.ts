@@ -34,10 +34,37 @@ export const useLikeStatus = (userId?: number, playlistId?: number) => {
   // 좋아요 추가
   const like = useMutation({
     mutationFn: addLike,
+    onMutate: async (_newData) => {
+      await queryClient.cancelQueries({ queryKey: ["likeCount", playlistId] });
+
+      const previousLikeCount = queryClient.getQueryData<number>([
+        "likeCount",
+        playlistId,
+      ]);
+
+      if (typeof previousLikeCount === "number") {
+        queryClient.setQueryData(
+          ["likeCount", playlistId],
+          previousLikeCount + 1,
+        );
+      }
+
+      return { previousLikeCount };
+    },
+    onError: (err, _variables, context) => {
+      if (typeof context?.previousLikeCount === "number") {
+        queryClient.setQueryData(
+          ["likeCount", playlistId],
+          context.previousLikeCount,
+        );
+      }
+      console.error("❌ 좋아요 추가 실패:", err);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["likeStatus", userId, playlistId],
       });
+      queryClient.invalidateQueries({ queryKey: ["likeCount", playlistId] });
     },
   });
 
@@ -49,11 +76,17 @@ export const useLikeStatus = (userId?: number, playlistId?: number) => {
       await queryClient.cancelQueries({
         queryKey: ["likeStatus", userId, playlistId],
       });
+      await queryClient.cancelQueries({ queryKey: ["likeCount", playlistId] });
 
       const previousData = queryClient.getQueryData<{
         is_active: boolean;
         l_id: number;
       }>(["likeStatus", userId, playlistId]);
+
+      const previousLikeCount = queryClient.getQueryData<number>([
+        "likeCount",
+        playlistId,
+      ]);
 
       if (previousData) {
         queryClient.setQueryData(["likeStatus", userId, playlistId], {
@@ -62,15 +95,37 @@ export const useLikeStatus = (userId?: number, playlistId?: number) => {
         });
       }
 
-      return { previousData };
+      if (typeof previousLikeCount === "number") {
+        // ★ 추가!
+        queryClient.setQueryData(
+          ["likeCount", playlistId],
+          payload.is_active ? previousLikeCount + 1 : previousLikeCount - 1,
+        );
+      }
+
+      return { previousData, previousLikeCount };
     },
-    onError: (err) => {
+    onError: (err, _variables, context) => {
       console.error("❌ PATCH 실패:", err);
+
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ["likeStatus", userId, playlistId],
+          context.previousData,
+        );
+      }
+      if (typeof context?.previousLikeCount === "number") {
+        queryClient.setQueryData(
+          ["likeCount", playlistId],
+          context.previousLikeCount,
+        );
+      }
     },
     onSuccess: () => {
-      queryClient.refetchQueries({
+      queryClient.invalidateQueries({
         queryKey: ["likeStatus", userId, playlistId],
       });
+      queryClient.invalidateQueries({ queryKey: ["likeCount", playlistId] });
     },
   });
 
