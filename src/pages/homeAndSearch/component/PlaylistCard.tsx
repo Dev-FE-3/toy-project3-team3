@@ -7,31 +7,35 @@ import commentIcon from "@/assets/images/comment.svg";
 import backgroundImage from "@/assets/images/backGround.png";
 import defaultProfile from "@/assets/images/defaultProfile.svg";
 
-interface Props {
-  p_id: number;
-  cover_img_path: string | null;
-  playlist_title: string;
-  video_count: number;
-  user_img: string | null;
-  nickname: string;
-  like_count: number;
-  comment_count: number;
-  is_active: boolean;
-  random_id: number;
+interface PlaylistCardProps {
+  playlist: {
+    p_id: number;
+    cover_img_path: string | null;
+    playlist_title: string;
+    video_count: number;
+    user_img: string | null;
+    nickname: string;
+    like_count: number;
+    comment_count: number;
+    is_active: boolean;
+    random_id: number;
+  };
 }
 
-const PlaylistCard = ({
-  p_id,
-  cover_img_path,
-  playlist_title,
-  video_count,
-  user_img,
-  nickname,
-  like_count,
-  comment_count,
-  is_active,
-  random_id,
-}: Props) => {
+const PlaylistCard = ({ playlist }: PlaylistCardProps) => {
+  const {
+    p_id,
+    cover_img_path,
+    playlist_title,
+    video_count,
+    user_img,
+    nickname,
+    like_count,
+    comment_count,
+    is_active,
+    random_id,
+  } = playlist;
+
   const navigate = useNavigate();
 
   const handleGoToStorage = () => {
