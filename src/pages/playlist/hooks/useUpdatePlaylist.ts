@@ -38,10 +38,12 @@ export const useUpdatePlaylist = ({
       // 플레이리스트 썸네일 업로드
       let coverImgUrl = thumbnailPreview as string;
 
-      try {
-        coverImgUrl = await uploadPlaylistThumbnail();
-      } catch (e) {
-        console.error("커버 이미지 업로드 실패:", e);
+      if (thumbnailPreview instanceof File) {
+        try {
+          coverImgUrl = await uploadPlaylistThumbnail();
+        } catch (e) {
+          console.error("커버 이미지 업로드 실패:", e);
+        }
       }
 
       // 영상 썸네일 업로드

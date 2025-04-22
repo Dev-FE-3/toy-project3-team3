@@ -41,7 +41,14 @@ export function useUploadPlaylist({
       if (videos.length === 0)
         throw new Error("1개 이상의 영상을 추가해주세요.");
 
-      const thumbnailUrl = await uploadPlaylistThumbnail();
+      let thumbnailUrl = "";
+      if (typeof uploadPlaylistThumbnail === "function") {
+        try {
+          thumbnailUrl = await uploadPlaylistThumbnail();
+        } catch (e) {
+          console.error("커버 이미지 업로드 실패:", e);
+        }
+      }
 
       const videoData = await Promise.all(
         videos.map(async (v) => {
