@@ -1,15 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFollowerCount, getFollowingCount } from "@/db/follow";
+import { QUERY_KEYS } from "@/constants/queryKey";
 
 const useFollowCount = (targetId?: number) => {
-  const { data: followerCount = 0, isLoading: isFollowerLoading } = useQuery({
-    queryKey: ["followerCount", targetId],
+  const {
+    data: followerCount = 0,
+    isLoading: isFollowerLoading,
+    isError: isFollowerError,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.followerCount, targetId],
     queryFn: () => getFollowerCount(targetId!),
     enabled: !!targetId,
   });
 
-  const { data: followingCount = 0, isLoading: isFollowingLoading } = useQuery({
-    queryKey: ["followingCount", targetId],
+  const {
+    data: followingCount = 0,
+    isLoading: isFollowingLoading,
+    isError: isFollowingError,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.followingCount, targetId],
     queryFn: () => getFollowingCount(targetId!),
     enabled: !!targetId,
   });
@@ -18,6 +27,7 @@ const useFollowCount = (targetId?: number) => {
     followerCount,
     followingCount,
     isLoading: isFollowerLoading || isFollowingLoading,
+    isError: isFollowerError || isFollowingError,
   };
 };
 

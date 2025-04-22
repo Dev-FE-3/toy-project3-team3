@@ -2,12 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useUserStore } from "@/stores/userStore";
 import { supabase } from "@/lib/supabase";
 import { getUser } from "@/db/users";
+import { QUERY_KEYS } from "@/constants/queryKey";
 
 const useUser = () => {
   const setUser = useUserStore((state) => state.setUser);
 
   const query = useQuery({
-    queryKey: ["currentUser"],
+    queryKey: [QUERY_KEYS.currentUser],
     queryFn: async () => {
       const {
         data: { user: authUser },

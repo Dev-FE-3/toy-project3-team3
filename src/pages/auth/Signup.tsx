@@ -13,6 +13,10 @@ type FormValues = {
   confirmPassword: string;
 };
 
+const generateRandomId = () => {
+  return Math.floor(100000 + Math.random() * 900000); //6자리 숫자
+};
+
 const Signup = () => {
   const navigate = useNavigate();
   const {
@@ -23,10 +27,6 @@ const Signup = () => {
   } = useForm<FormValues>({ mode: "onChange" }); //입력이 바뀔 때마다 유효성 검사 실행
 
   const password = watch("password");
-
-  const generateRandomId = () => {
-    return Math.floor(100000 + Math.random() * 900000); //6자리 숫자
-  };
 
   /**회원가입 처리 */
   const handleSignup = async (data: FormValues) => {
@@ -79,7 +79,7 @@ const Signup = () => {
         <Logo src={IdolLinkLogo} alt="로고" />
 
         <Form onSubmit={handleSubmit(handleSignup)}>
-          <Title>회원가입</Title>
+          <Title data-testid="signup-title">회원가입</Title>
 
           <FormInput
             id="email"
@@ -91,7 +91,7 @@ const Signup = () => {
             {...register("email", {
               required: "이메일을 입력해주세요.",
               validate: (value) =>
-                value.trim() !== "" || "공백만 입력할 수 없습니다.",
+                value.trim() !== "" || "공백을 입력할 수 없습니다.",
               pattern: {
                 value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                 message: "유효한 이메일 주소를 입력해 주세요.",
@@ -148,9 +148,11 @@ const Signup = () => {
             회원가입
           </SignupButton>
 
-          <LoginGuide>
+          <LoginGuide data-testid="signup-guide">
             계정이 이미 있으신가요?{" "}
-            <span onClick={() => navigate("/login")}>로그인</span>
+            <span data-testid="login-link" onClick={() => navigate("/login")}>
+              로그인
+            </span>
           </LoginGuide>
         </Form>
       </Wrapper>

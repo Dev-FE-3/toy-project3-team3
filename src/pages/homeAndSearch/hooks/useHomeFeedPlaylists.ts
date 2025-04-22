@@ -9,10 +9,11 @@ const useHomeFeedPlaylists = () => {
   const currentUserId = useUserStore((state) => state.user?.random_id);
 
   // 팔로잉 리스트 (random_id → following_id)
-  const { data: followList = [] } = useFollowList(
-    currentUserId ?? -1,
-    "following",
-  );
+  const {
+    followList,
+    //isLoading: isFollowLoading,
+    //isError: isFollowError,
+  } = useFollowList(currentUserId ?? -1, "following");
 
   // followingId 배열 추출 (useMemo로 안정적으로 계산)
   const followingIds = useMemo(() => {
