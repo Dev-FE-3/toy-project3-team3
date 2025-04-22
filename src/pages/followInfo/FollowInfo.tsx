@@ -11,6 +11,7 @@ import Loading from "@/shared/component/Loading";
 import Reset from "@/assets/images/reset.svg";
 import useDebounce from "@/shared/hooks/useDebounce";
 import { TabMenu, TabButton } from "@/shared/component/Tab";
+import ErrorFallback from "@/shared/component/ErrorFallback";
 
 interface FollowItem {
   random_id: number;
@@ -110,7 +111,7 @@ const FollowInfo = () => {
 
       <ScrollableListWrapper>
         {isError ? (
-          <ErrorMessage>사용자 정보를 불러오는 데 실패했습니다.</ErrorMessage>
+          <ErrorFallback message="사용자 정보를 불러오는 데 실패했습니다." />
         ) : isLoading ? (
           <Loading />
         ) : matchedUsers.length === 0 ? (
@@ -132,81 +133,6 @@ const FollowInfo = () => {
 };
 
 export default FollowInfo;
-
-// const InputWrapper = styled.div`
-//   width: 100%;
-//   height: 40px;
-//   margin-top: 25px;
-//   margin-bottom: 10px;
-//   display: flex;
-//   justify-content: center;
-// `;
-
-// const InputContainer = styled.div`
-//   position: relative;
-//   width: 400px; // CommonInput의 width와 동일
-// `;
-
-// const ResetButton = styled.img<{ visible: boolean }>`
-//   width: 18px;
-//   height: 18px;
-//   position: absolute;
-//   top: 50%;
-//   right: 12px;
-//   transform: translateY(-50%);
-//   cursor: pointer;
-//   visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-// `;
-
-// const ProfileListWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-
-//   flex: 1; // 높이 꽉 채우기
-//   overflow-y: auto; // 스크롤 가능
-// `;
-
-// const ProfileArea = styled.div`
-//   margin: 0 65px;
-//   padding: 15px 0;
-//   display: flex;
-//   gap: 30px;
-//   border-bottom: 1px solid var(--disabled-2);
-//   align-items: center;
-//   cursor: pointer;
-
-//   &:last-child {
-//     border-bottom: none;
-//   }
-// `;
-
-// const ProfileImg = styled.img`
-//   width: 70px;
-//   height: 70px;
-//   border-radius: 50%;
-//   object-fit: cover;
-// `;
-
-// const ProfileName = styled.span`
-//   font-size: var(--font-size-large);
-//   color: var(--text-primary);
-//   font-weight: 400;
-//   flex-direction: column;
-// `;
-
-// const EmptyMessage = styled.div`
-//   text-align: center;
-//   margin-top: 40px;
-//   font-size: var(--font-size-medium);
-//   color: var(--text-secondary);
-// `;
-
-// const ErrorMessage = styled.div`
-//   text-align: center;
-//   margin-top: 40px;
-//   font-size: var(--font-size-medium);
-//   color: red;
-// `;
 
 const FollowPageWrapper = styled.div`
   display: flex;
@@ -272,13 +198,6 @@ const EmptyMessage = styled.div`
   margin-top: 40px;
   font-size: var(--font-size-medium);
   color: var(--text-secondary);
-`;
-
-const ErrorMessage = styled.div`
-  text-align: center;
-  margin-top: 40px;
-  font-size: var(--font-size-medium);
-  color: red;
 `;
 
 const ResetButton = styled.img<{ visible: boolean }>`
