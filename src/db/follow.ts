@@ -9,22 +9,22 @@ export interface Follow {
 }
 
 //가져오기
-export async function getFollow(): Promise<Follow[]> {
-  const response = await axiosInstance.get<Follow[]>("/follow_table");
-  return response.data;
-}
+// export async function getFollow(): Promise<Follow[]> {
+//   const response = await axiosInstance.get<Follow[]>("/follow_table");
+//   return response.data;
+// }
 
 //만들기
-export async function createFollow(): Promise<Follow[]> {
-  const response = await axiosInstance.post<Follow[]>("/follow_table");
-  return response.data;
-}
+// export async function createFollow(): Promise<Follow[]> {
+//   const response = await axiosInstance.post<Follow[]>("/follow_table");
+//   return response.data;
+// }
 
 //수정하기
-export async function patchFollow(): Promise<Follow[]> {
-  const response = await axiosInstance.patch<Follow[]>("/follow_table");
-  return response.data;
-}
+// export async function patchFollow(): Promise<Follow[]> {
+//   const response = await axiosInstance.patch<Follow[]>("/follow_table");
+//   return response.data;
+// }
 
 // 팔로우 상태 확인 (is_following: true인 경우만)
 export const getFollowStatus = async (fromId?: number, toId?: number) => {

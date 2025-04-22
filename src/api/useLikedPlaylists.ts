@@ -5,12 +5,20 @@ import { useMemo } from "react";
 import { QUERY_KEYS } from "@/constants/queryKey";
 
 const useLikedPlaylists = (randomId?: number) => {
-  const { data: allPlaylists = [], isLoading: isPlaylistsLoading } = useQuery({
+  const {
+    data: allPlaylists = [],
+    isLoading: isPlaylistsLoading,
+    isError: isPlaylistsError,
+  } = useQuery({
     queryKey: [QUERY_KEYS.allPlaylists],
     queryFn: getAllPlaylistCardData,
   });
 
-  const { data: likedIds = [], isLoading: isLikesLoading } = useQuery({
+  const {
+    data: likedIds = [],
+    isLoading: isLikesLoading,
+    isError: isLikesError,
+  } = useQuery({
     queryKey: [QUERY_KEYS.myLikedIds, randomId],
     queryFn: () => getMyLikedPlaylistIds(randomId!),
     enabled: !!randomId,
@@ -23,6 +31,9 @@ const useLikedPlaylists = (randomId?: number) => {
   return {
     likedPlaylists,
     isLoading: isPlaylistsLoading || isLikesLoading,
+    isError: isPlaylistsError || isLikesError,
+    isPlaylistsError,
+    isLikesError,
   };
 };
 

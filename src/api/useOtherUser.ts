@@ -4,11 +4,17 @@ import { User } from "@/db/users";
 import { QUERY_KEYS } from "@/constants/queryKey";
 
 const useOtherUser = (randomId: number) => {
-  return useQuery<User | null>({
+  const { data, isLoading, isError } = useQuery<User | null>({
     queryKey: [QUERY_KEYS.otherUser, randomId],
     queryFn: () => getUserByRandomId(randomId),
     enabled: !!randomId,
   });
+
+  return {
+    otherUser: data,
+    isLoading,
+    isError,
+  };
 };
 
 export default useOtherUser;

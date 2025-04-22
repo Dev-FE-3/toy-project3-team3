@@ -10,7 +10,11 @@ interface UploadDeleteArgs {
 const useUploadDeleteProfileImage = (refetchImage?: () => void) => {
   const { user } = useUser();
 
-  const mutation = useMutation<string | void, Error, UploadDeleteArgs>({
+  const { mutate, isPending, isError } = useMutation<
+    string | void,
+    Error,
+    UploadDeleteArgs
+  >({
     mutationFn: async ({ file }) => {
       if (!user) throw new Error("유저 정보를 찾을 수 없습니다");
 
@@ -42,7 +46,6 @@ const useUploadDeleteProfileImage = (refetchImage?: () => void) => {
 
         return path;
       } else {
-        // 확장자 모르니까 delete 시도만 해보자
         const extensions = ["png", "jpg", "jpeg", "webp"];
         for (const ext of extensions) {
           const path = `${random_id}.${ext}`;
@@ -57,12 +60,9 @@ const useUploadDeleteProfileImage = (refetchImage?: () => void) => {
     onSuccess: () => {
       refetchImage?.();
     },
-    onError: (err) => {
-      console.error(err.message);
-    },
   });
 
-  return mutation;
+  return { mutate, isPending, isError };
 };
 
 export default useUploadDeleteProfileImage;

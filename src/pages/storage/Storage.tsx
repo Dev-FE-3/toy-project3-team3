@@ -25,15 +25,22 @@ const Storage = () => {
   const queryClient = useQueryClient();
 
   const currentUser = useUserStore((state) => state.user);
-  const { data: otherUser } = useOtherUser(Number(randomId));
+  const {
+    otherUser,
+    //isLoading: isOtherUserLoading,
+    //isError: isOtherUserError,
+  } = useOtherUser(Number(randomId));
   const isMyPage = currentUser?.random_id === Number(randomId);
   const targetId = isMyPage ? currentUser?.random_id : otherUser?.random_id;
   const targetUser = isMyPage ? currentUser : otherUser;
   const userData = targetUser;
 
   const { followerCount, followingCount } = useFollowCount(targetId);
-  const { data: myPlaylists = [], isLoading: isMyPlaylistsLoading } =
-    useMyPlaylists(targetId);
+  const {
+    myPlaylists = [],
+    isLoading: isMyPlaylistsLoading,
+    //isError: isMyPlaylistsError,
+  } = useMyPlaylists(targetId);
 
   const { likedPlaylists = [], isLoading: isLikedPlaylistsLoading } =
     useLikedPlaylists(targetId);

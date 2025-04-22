@@ -9,7 +9,7 @@ const useFollowStatus = (targetId?: number) => {
   const fromId = user?.random_id;
   const toId = targetId;
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.followStatus, fromId, toId],
     queryFn: () => getFollowStatus(fromId, toId),
     enabled: !!fromId && !!toId,
@@ -44,9 +44,9 @@ const useFollowStatus = (targetId?: number) => {
       });
     },
   });
+
   const handleFollow = () => {
     if (!fromId || !toId) return;
-
     follow.mutate({ fromId, toId });
   };
 
@@ -59,10 +59,13 @@ const useFollowStatus = (targetId?: number) => {
     isFollowing: !!data,
     followRowId: data?.f_id,
     isLoading,
+    isError,
     handleFollow,
     handleUnfollow,
     isFollowPending: follow.isPending,
     isUnfollowPending: unfollow.isPending,
+    isFollowError: follow.isError,
+    isUnfollowError: unfollow.isError,
   };
 };
 

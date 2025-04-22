@@ -36,10 +36,11 @@ const FollowInfo = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 100);
 
-  const { data: followList = [], isLoading: isFollowLoading } = useFollowList(
-    targetId,
-    selectedTab,
-  );
+  const {
+    followList,
+    isLoading: isFollowLoading,
+    //isError: isFollowError,
+  } = useFollowList(targetId, selectedTab);
 
   const { data: filteredUsers = [], isLoading: isUserLoading } = useQuery({
     queryKey: ["allUsers", debouncedSearchTerm],

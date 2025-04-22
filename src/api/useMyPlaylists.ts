@@ -3,11 +3,21 @@ import { getMyPlaylists } from "@/api/getMyPlaylists";
 import { QUERY_KEYS } from "@/constants/queryKey";
 
 const useMyPlaylists = (randomId?: number) => {
-  return useQuery({
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: [QUERY_KEYS.myPlaylists, randomId],
     queryFn: () => getMyPlaylists(randomId!),
     enabled: !!randomId,
   });
+
+  return {
+    myPlaylists: data,
+    isLoading,
+    isError,
+  };
 };
 
 export default useMyPlaylists;

@@ -19,7 +19,14 @@ const useFollowMutation = () => {
     },
   });
 
-  return { follow, unfollow };
+  return {
+    follow: follow.mutate,
+    unfollow: unfollow.mutate,
+    isFollowPending: follow.isPending,
+    isUnfollowPending: unfollow.isPending,
+    isFollowError: follow.isError,
+    isUnfollowError: unfollow.isError,
+  };
 };
 
 export default useFollowMutation;

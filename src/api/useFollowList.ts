@@ -3,10 +3,20 @@ import { fetchFollowList } from "@/db/follow";
 import { QUERY_KEYS } from "@/constants/queryKey";
 
 const useFollowList = (targetId: number, type: "follower" | "following") => {
-  return useQuery({
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: [QUERY_KEYS.followListDetail, targetId, type],
     queryFn: () => fetchFollowList(targetId, type),
   });
+
+  return {
+    followList: data,
+    isLoading,
+    isError,
+  };
 };
 
 export default useFollowList;
