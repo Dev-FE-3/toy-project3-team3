@@ -88,6 +88,22 @@ const Storage = () => {
 
   const isProfilePage = location.pathname === "/profile";
 
+  const profileCardProps = {
+    userData: targetUser,
+    isMyPage,
+    isProfilePage,
+    followerCount,
+    followingCount,
+    playlistCount: myPlaylists.length,
+    isFollowing,
+    isFollowPending,
+    isUnfollowPending,
+    onFollow: handleFollow,
+    onUnfollow: handleUnfollow,
+    onNavigateToProfile: () => navigate("/profile"),
+    onNavigateToFollowInfo: handleNavigate,
+  };
+
   return (
     <>
       {isMyPage ? (
@@ -98,21 +114,7 @@ const Storage = () => {
 
       <StorageWrapper>
         <FixedHeaderArea>
-          <StorageProfileCard
-            userData={targetUser}
-            isMyPage={isMyPage}
-            isProfilePage={isProfilePage}
-            followerCount={followerCount}
-            followingCount={followingCount}
-            playlistCount={myPlaylists.length}
-            isFollowing={isFollowing}
-            isFollowPending={isFollowPending}
-            isUnfollowPending={isUnfollowPending}
-            onFollow={handleFollow}
-            onUnfollow={handleUnfollow}
-            onNavigateToProfile={() => navigate("/profile")}
-            onNavigateToFollowInfo={handleNavigate}
-          />
+          <StorageProfileCard {...profileCardProps} />
 
           <TabMenu>
             <TabButton
