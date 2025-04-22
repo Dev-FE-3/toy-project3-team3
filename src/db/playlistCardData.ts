@@ -23,29 +23,31 @@ export interface PlaylistPageResponse {
 }
 
 export async function getAllPlaylistCardData(): Promise<PlaylistCardData[]> {
-  const res = await axiosInstance.get<PlaylistCardData[]>(
-    "/playlist_card_data",
-    {
-      params: {
-        is_delete: "eq.false",
+  try {
+    const res = await axiosInstance.get<PlaylistCardData[]>(
+      "/playlist_card_data",
+      {
+        params: {
+          is_delete: "eq.false",
+        },
       },
-    },
-  );
-
-  return res.data;
+    );
+    return res.data;
+  } catch (error) {
+    console.error("getAllPlaylistCardData error:", error);
+    return [];
+  }
 }
 
 // 전체 플레이리스트 카드 + 무한스크롤
 export const getPlaylistCardData = async (
   pageParam: number = 1,
-  sortOrder: string = "최신순",
+  sortOrder: number = 1,
   searchKeyword: string = "",
 ): Promise<PlaylistPageResponse> => {
   const limit = 3;
   const offset = (pageParam - 1) * limit;
-
-  const orderBy =
-    sortOrder === "최신순" ? "created_at.desc" : "like_count.desc";
+  const orderBy = sortOrder === 1 ? "created_at.desc" : "like_count.desc";
 
   const params: Record<string, string | number> = {
     limit,
@@ -58,12 +60,19 @@ export const getPlaylistCardData = async (
     params.playlist_title = `ilike.*${searchKeyword}*`;
   }
 
-  const res = await axiosInstance.get("/playlist_card_data", { params });
-
-  return {
-    data: res.data,
-    nextPage: res.data.length === limit ? pageParam + 1 : undefined,
-  };
+  try {
+    const res = await axiosInstance.get("/playlist_card_data", { params });
+    return {
+      data: res.data,
+      nextPage: res.data.length === limit ? pageParam + 1 : undefined,
+    };
+  } catch (error) {
+    console.error("getPlaylistCardData error:", error);
+    return {
+      data: [],
+      nextPage: undefined,
+    };
+  }
 };
 
 export const getFilteredPlaylistCardData = async ({
@@ -82,19 +91,25 @@ export const getFilteredPlaylistCardData = async ({
 
   const randomIdFilter = `in.(${randomIds.join(",")})`;
 
-  const res = await axiosInstance.get<PlaylistCardData[]>(
-    "/playlist_card_data",
-    {
-      params: {
-        limit,
-        offset,
-        random_id: randomIdFilter,
+  try {
+    const res = await axiosInstance.get<PlaylistCardData[]>(
+      "/playlist_card_data",
+      {
+        params: {
+          limit,
+          offset,
+          random_id: randomIdFilter,
+        },
       },
-    },
-  );
+    );
 
-  const data = res.data;
-  const nextPage = data.length === limit ? pageParam + 1 : undefined;
+    const data = res.data;
+    const nextPage = data.length === limit ? pageParam + 1 : undefined;
 
-  return { data, nextPage };
+    return { data, nextPage };
+  } catch (error) {
+    console.error("getFilteredPlaylistCardData 에러:", error);
+    return { data: [], nextPage: undefined }; // 실패 시 안전한 기본값 반환
+  }
+  
 };

@@ -1,5 +1,5 @@
+import axiosInstance from "@/db/axiosInstance";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/api/axiosInstance";
 
 const useFollowMutation = () => {
   const queryClient = useQueryClient();

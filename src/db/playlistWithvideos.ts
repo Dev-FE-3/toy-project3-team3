@@ -13,9 +13,14 @@ export interface PlaylistWithVideos {
 }
 
 export async function getPlaylistWithVideos(p_id: number): Promise<PlaylistWithVideos | null> {
-  const response = await axiosInstance.get<PlaylistWithVideos[]>(
-    `/playlist_with_videos?p_id=eq.${p_id}&is_delete=eq.false`,
-  );
+  try {
+    const response = await axiosInstance.get<PlaylistWithVideos[]>(
+      `/playlist_with_videos?p_id=eq.${p_id}&is_delete=eq.false`,
+    );
 
-  return response.data[0] ?? null; 
+    return response.data[0] ?? null;
+  } catch (error) {
+    console.error("getPlaylistWithVideos 에러:", error);
+    return null; // 실패 시 안전하게 null 반환
+  }
 }

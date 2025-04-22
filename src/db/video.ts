@@ -6,7 +6,7 @@ export interface Video {
   playlist_id: number;
   channel_name: string;
   thumbnail_url: string;
-  created_at: string; // ISO timestamp
+  created_at: string;
   video_id: string;
   thumbnailFile?: File;
 }
