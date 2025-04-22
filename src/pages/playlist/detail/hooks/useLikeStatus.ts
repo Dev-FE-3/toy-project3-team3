@@ -70,13 +70,24 @@ export const useLikeStatus = (userId?: number, playlistId?: number) => {
 
     // 좋아요 row가 존재하지 않으면 → 새로 생성 (is_active: true)
     if (!data) {
-      like.mutate({ random_id: userId, playlist_id: playlistId });
-      setLikeCount((prev) => prev + 1); // 👍 좋아요 수 증가
+      setLikeCount((prev) => prev + 1); // 먼저 화면 업데이트 (좋아요 수 증가)
+      like.mutate(
+        { random_id: userId, playlist_id: playlistId },
+        {
+          onError: () => {
+            // ❌ 실패하면 원상복구
+            setLikeCount((prev) => prev - 1);
+          },
+        },
+      );
       return;
     }
 
     // 좋아요 row 존재 시 → is_active 상태 토글
     const nextActive = !data.is_active;
+
+    // 1️⃣ 먼저 화면 업데이트 (optimistic update)
+    setLikeCount((prev) => prev + (nextActive ? 1 : -1));
 
     try {
       await toggleLike.mutateAsync({
@@ -84,13 +95,9 @@ export const useLikeStatus = (userId?: number, playlistId?: number) => {
         is_active: nextActive,
       });
 
-      // 좋아요 수 증감 반영
-      setLikeCount((prev) => prev + (nextActive ? 1 : -1));
-
-      // 최신 상태 다시 조회
-      await refetch();
     } catch (error) {
       console.error("❌ 좋아요 상태 토글 실패:", error);
+      setLikeCount((prev) => prev + (nextActive ? -1 : 1));
     }
   };
 
