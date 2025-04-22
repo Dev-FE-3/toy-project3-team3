@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ReactSVG } from "react-svg";
 import styled from "@emotion/styled";
 import useLockStore from "@/stores/lockStore";
@@ -10,14 +11,13 @@ import cancel from "@/assets/images/cancel.svg";
 import add from "@/assets/images/add.svg";
 import Modal from "@/shared/component/Modal";
 import Loading from "@/shared/component/Loading";
-import VideoItem from "./component/VideoItem";
+import VideoItem from "@/pages/playlist/component/VideoItem";
 import { toast } from "react-toastify";
-import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
-import { useThumbnail } from "./hooks/useThumbnailUpload";
-import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
-import { getPlaylistDetail } from "@/db/getPlaylistDetail";
-import { Video } from "@/db/video";
-import { useUpdatePlaylist } from "./hooks/useUpdatePlaylist";
+import { useYoutubeInfo } from "@/pages/playlist/hooks/useYoutubeInfo";
+import { useThumbnail } from "@/pages/playlist/hooks/useThumbnailUpload";
+import { getPlaylistWithVideos } from "@/db/playlistWithvideos";
+import { Video } from "@/types/video";
+import { useUpdatePlaylist } from "@/pages/playlist/hooks/useUpdatePlaylist";
 
 const Modify = () => {
   const navigate = useNavigate();
@@ -39,46 +39,53 @@ const Modify = () => {
   const [modalType, setModalType] = useState<"exit" | "delete" | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { refetch, isFetching } = useYoutubeInfo(videoUrl);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     lock();
   }, [lock, navigate]);
 
+  // 1. React Query
+  const {
+    data: playlistData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["playlistDetail", playlistId] as const,
+    queryFn: async () => {
+      const data = await getPlaylistWithVideos(Number(playlistId));
+      if (!data)
+        throw new Error("플레이리스트가 존재하지 않거나 삭제되었습니다.");
+      return data;
+    },
+    enabled: !!playlistId,
+  });
+
+  // 2. 상태 초기화 useEffect
   useEffect(() => {
-    if (!playlistId) return;
+    if (!playlistData) return;
 
-    const fetch = async () => {
-      const data = await getPlaylistDetail(Number(playlistId));
-      const formattedVideos = data.videos.map((v) => ({
-        v_id: v.v_id,
-        title: v.title,
-        playlist_id: v.playlist_id,
-        channel_name: v.channel_name,
-        thumbnail_url: v.thumbnail_url,
-        created_at: v.created_at,
-        video_id: v.video_id,
-        thumbnailFile: undefined,
-      }));
+    const formattedVideos = playlistData.videos.map((v: Video) => ({
+      v_id: v.v_id,
+      title: v.title,
+      playlist_id: v.playlist_id,
+      channel_name: v.channel_name,
+      thumbnail_url: v.thumbnail_url,
+      created_at: v.created_at,
+      video_id: v.video_id,
+      thumbnailFile: undefined,
+    }));
 
-      setTitle(data.playlist_title);
-      setVideos(formattedVideos);
-      setOriginalVideos(formattedVideos);
-      setThumbnailPreview(data.cover_img_path);
-    };
-
-    fetch();
-  }, [playlistId, setThumbnailPreview]);
+    setTitle(playlistData.playlist_title);
+    setVideos(formattedVideos);
+    setOriginalVideos(formattedVideos);
+    setThumbnailPreview(playlistData.cover_img_path);
+  }, [playlistData]);
 
   const handleAddVideo = async () => {
-    const { data: video } = await refetch();
+    const { data: video } = await refetch(); //추가할 유튜브 영상 정보 받아오기기
     if (!video) return;
 
-    try {
-      const file = await convertImageToFile(video.thumbnail!, video.title);
-      video.thumbnailFile = file;
-    } catch (e) {
-      console.error("썸네일 업로드 실패:", e);
-    }
     setVideos((prev) => [
       ...prev,
       {
@@ -131,10 +138,23 @@ const Modify = () => {
     thumbnailPreview: thumbnailPreview ?? "",
     onSuccess: () => {
       toast.success("업데이트 성공! 멋진 변화를 주셨네요 ✨");
+
+      //수정 성공 후 캐시 무효화 → 다시 데이터를 가져옴
+      queryClient.invalidateQueries({
+        queryKey: ["playlistDetail", playlistId],
+      });
+
       unlock();
       navigate("/storage");
     },
+    onError: (error) => {
+      console.error("업데이트 실패:", error);
+      toast.error("업데이트에 실패했습니다. 다시 시도해주세요 😢");
+    },
   });
+
+  if (isLoading) return <Loading />;
+  if (isError) return <p>플레이리스트 정보를 불러오는 데 실패했습니다.</p>;
 
   return (
     <Wrapper>
