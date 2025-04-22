@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import useUser from "@/shared/hooks/useUser";
+import { QUERY_KEYS } from "@/constants/queryKey";
 
 const fetchProfileImage = async (randomId: number): Promise<string> => {
   const { data: list } = await supabase.storage.from("profiles").list();
@@ -23,7 +24,7 @@ const useProfileImage = () => {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["profileImage", randomId],
+    queryKey: [QUERY_KEYS.profileImage, randomId],
     queryFn: () => fetchProfileImage(randomId!),
     enabled: !!randomId,
   });

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUser } from "@/db/users";
 import { useUserStore } from "@/stores/userStore";
+import { QUERY_KEYS } from "@/constants/queryKey";
 
 interface UpdateUserInfoParams {
   id: number; // user_table의 id (PK)
@@ -21,7 +22,7 @@ const useUpdateUserInfo = (onSuccessCallback?: () => void) => {
       updateUser(id, updatedFields),
     onSuccess: (updatedUser) => {
       setUser(updatedUser); // 최신 정보로 상태 갱신
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.currentUser] });
       onSuccessCallback?.();
     },
     onError: (error) => {
