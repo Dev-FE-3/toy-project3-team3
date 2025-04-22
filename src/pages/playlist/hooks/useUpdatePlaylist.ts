@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { patchPlaylist } from "@/shared/api/playlist";
 import { createVideo, deleteVideosByIds } from "@/shared/api/video";
-import { Video } from "@/types/video";
+import { Video } from "@/shared/types/video";
 import { diffVideoList } from "@/pages/playlist/utils/diffVideoList";
 
 export interface VideoWithFile extends Video {
