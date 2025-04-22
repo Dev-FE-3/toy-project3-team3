@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyPlaylists } from "@/api/getMyPlaylists";
+import { getMyPlaylists } from "@/db/playlistCardData";
 import { QUERY_KEYS } from "@/constants/queryKey";
 
 const useMyPlaylists = (randomId?: number) => {
