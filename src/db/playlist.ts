@@ -11,10 +11,10 @@ export interface Playlist {
 }
 
 //가져오기
-export async function getPlaylist(): Promise<Playlist[]> {
-  const response = await axiosInstance.get<Playlist[]>("/playlist_table");
-  return response.data;
-}
+// export async function getPlaylist(): Promise<Playlist[]> {
+//   const response = await axiosInstance.get<Playlist[]>("/playlist_table");
+//   return response.data;
+// }
 
 //만들기
 export async function createPlaylist(playlistData: {
