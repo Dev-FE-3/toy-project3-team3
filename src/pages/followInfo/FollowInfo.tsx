@@ -11,6 +11,7 @@ import Loading from "@/shared/component/Loading";
 import Reset from "@/assets/images/reset.svg";
 import useDebounce from "@/shared/hooks/useDebounce";
 import { TabMenu, TabButton } from "@/shared/component/Tab";
+import ErrorFallback from "@/shared/component/ErrorFallback";
 
 interface FollowItem {
   random_id: number;
@@ -39,10 +40,14 @@ const FollowInfo = () => {
   const {
     followList,
     isLoading: isFollowLoading,
-    //isError: isFollowError,
+    isError: isFollowError,
   } = useFollowList(targetId, selectedTab);
 
-  const { data: filteredUsers = [], isLoading: isUserLoading } = useQuery({
+  const {
+    data: filteredUsers = [],
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useQuery({
     queryKey: ["allUsers", debouncedSearchTerm],
     queryFn: getUser,
     select: (users) => {
@@ -56,6 +61,7 @@ const FollowInfo = () => {
   });
 
   const isLoading = isFollowLoading || isUserLoading;
+  const isError = isFollowError || isUserError;
 
   const matchedUsers = useMemo(() => {
     return filteredUsers.filter((user) =>
@@ -68,7 +74,7 @@ const FollowInfo = () => {
   }, [filteredUsers, followList, selectedTab]);
 
   return (
-    <>
+    <FollowPageWrapper>
       <Title showBackButton />
       <TabMenu>
         <TabButton
@@ -103,8 +109,10 @@ const FollowInfo = () => {
         </InputContainer>
       </InputWrapper>
 
-      <ProfileListWrapper>
-        {isLoading ? (
+      <ScrollableListWrapper>
+        {isError ? (
+          <ErrorFallback message="사용자 정보를 불러오는 데 실패했습니다." />
+        ) : isLoading ? (
           <Loading />
         ) : matchedUsers.length === 0 ? (
           <EmptyMessage>일치하는 사용자가 없습니다.</EmptyMessage>
@@ -119,12 +127,20 @@ const FollowInfo = () => {
             </ProfileArea>
           ))
         )}
-      </ProfileListWrapper>
-    </>
+      </ScrollableListWrapper>
+    </FollowPageWrapper>
   );
 };
 
 export default FollowInfo;
+
+const FollowPageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+`;
 
 const InputWrapper = styled.div`
   width: 100%;
@@ -137,23 +153,15 @@ const InputWrapper = styled.div`
 
 const InputContainer = styled.div`
   position: relative;
-  width: 400px; // CommonInput의 width와 동일
+  width: 400px;
 `;
 
-const ResetButton = styled.img<{ visible: boolean }>`
-  width: 18px;
-  height: 18px;
-  position: absolute;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
-  cursor: pointer;
-  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-`;
-
-const ProfileListWrapper = styled.div`
+const ScrollableListWrapper = styled.div`
+  flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 `;
 
 const ProfileArea = styled.div`
@@ -167,6 +175,7 @@ const ProfileArea = styled.div`
 
   &:last-child {
     border-bottom: none;
+    margin-bottom: 100px;
   }
 `;
 
@@ -189,4 +198,15 @@ const EmptyMessage = styled.div`
   margin-top: 40px;
   font-size: var(--font-size-medium);
   color: var(--text-secondary);
+`;
+
+const ResetButton = styled.img<{ visible: boolean }>`
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
 `;
