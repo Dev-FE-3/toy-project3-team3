@@ -81,7 +81,6 @@ const Storage = () => {
   if (isOtherUserError || !targetUser) {
     return (
       <StorageWrapper>
-        <Title title="보관함" showBackButton />
         <ErrorFallback message="존재하지 않는 유저입니다." />
       </StorageWrapper>
     );
