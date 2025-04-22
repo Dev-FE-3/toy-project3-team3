@@ -1,5 +1,4 @@
 import axiosInstance from "@/db/axiosInstance";
-import { Video } from "@/types/video";
 
 //가져오기
 // export async function getVideo(p_id: number): Promise<Video[]> {
