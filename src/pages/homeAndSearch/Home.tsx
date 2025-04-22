@@ -12,7 +12,7 @@ import { useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Home = () => {
-  const [sortOrder, setSortOrder] = useState("최신순");
+  const [sortOrder, setSortOrder] = useState<number>(1);
 
   const randomId = useUserStore((state) => state.user?.random_id);
   const { data: likedIds = [] } = useLikedPlaylistIds(randomId);
@@ -45,7 +45,7 @@ const Home = () => {
 
   const sortedPlaylistCards = useMemo(() => {
     return [...playlistWithLikeState].sort((a, b) => {
-      if (sortOrder === "최신순") {
+      if (sortOrder === 1) {
         return (
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );

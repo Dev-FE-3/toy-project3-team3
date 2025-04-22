@@ -51,12 +51,12 @@ const Detail = () => {
   if (isLoading) return <div>로딩 중...</div>;
   if (error || !playlistData) return <div>에러 발생 또는 데이터 없음</div>;
 
-  // 메뉴 동작
-  const handleIconAction = (action: string, p_id: number) => {
+  // 메뉴 동작 1 = "수정하기" 2 = "삭제하기"
+  const handleIconAction = (action: number, p_id: number) => {
     if (!userId) return;
-    if (action === "수정하기") {
+    if (action === 1) {
       navigate(`/edit/${p_id}`);
-    } else if (action === "삭제하기") {
+    } else if (action === 2) {
       setSelectedIdToDelete(p_id);
       setIsModalOpen(true);
     }

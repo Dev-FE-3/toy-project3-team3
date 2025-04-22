@@ -76,10 +76,11 @@ const Storage = () => {
 
   const isProfilePage = location.pathname === "/profile";
 
-  const handleIconAction = async (action: string, p_id: number) => {
-    if (action === "수정하기") {
+  // 1 = "수정하기" 2 = "삭제하기"
+  const handleIconAction = async (action: number, p_id: number) => {
+    if (action === 1) {
       navigate(`/edit/${p_id}`);
-    } else if (action === "삭제하기") {
+    } else if (action === 2) {
       setSelectedIdToDelete(p_id);
       setIsModalOpen(true);
     }
