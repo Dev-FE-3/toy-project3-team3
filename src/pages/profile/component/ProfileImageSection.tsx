@@ -1,21 +1,32 @@
 import styled from "@emotion/styled";
 import Dropbox from "@/shared/component/Dropbox";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
+import { useUserStore } from "@/stores/userStore";
 
 interface ProfileImageSectionProps {
   profileImage?: string;
   isEditing: boolean;
-  onIconAction: (action: string) => void;
+  onIconAction: (action: number) => void;
 }
 
 const ProfileImageSection = ({
-  profileImage,
   isEditing,
   onIconAction,
 }: ProfileImageSectionProps) => {
+  const { user } = useUserStore();
+  const profileSrc = user?.user_img
+    ? `${user.user_img}?t=${Date.now()}`
+    : DefaultProfile;
+
   return (
     <Wrapper>
-      <Image src={profileImage || DefaultProfile} alt="프로필 이미지" />
+      <Image
+        src={profileSrc}
+        alt="프로필 이미지"
+        onError={(e) => {
+          e.currentTarget.src = DefaultProfile;
+        }}
+      />
       {isEditing && (
         <DropboxWrapper>
           <Dropbox variant="icon" iconSize={24} onChange={onIconAction} />

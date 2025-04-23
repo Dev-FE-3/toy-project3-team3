@@ -30,8 +30,9 @@ const Profile = () => {
     artist_hash_tag: "",
   });
 
-  const { profileImage, refetch: refetchImage } = useProfileImage();
-  const imageMutation = useUploadDeleteProfileImage(refetchImage);
+  const { profileImage } = useProfileImage(); // 읽기만!
+  const imageMutation = useUploadDeleteProfileImage();
+
   const updateMutation = useUpdateUserInfo(() => {
     setIsEditing(false);
   });
