@@ -13,7 +13,7 @@ import FollowInfo from "@/pages/followInfo/FollowInfo";
 import Play from "@/pages/play/Play";
 import Search from "@/pages/homeAndSearch/Search";
 import Modify from "@/pages/playlist/Modify";
-import Detail from "@/pages/playlist/detail/Detail";
+import Detail from "./pages/detail/Detail";
 
 const router = createBrowserRouter([
   {

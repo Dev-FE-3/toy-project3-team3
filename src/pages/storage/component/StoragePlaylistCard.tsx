@@ -20,7 +20,7 @@ interface StoragePlaylistCardProps {
   activeTab: "left" | "right";
   currentUserId?: number;
   onNavigate: (p_id: number) => void;
-  onIconAction: (action: string, p_id: number) => void;
+  onIconAction: (action: number, p_id: number) => void;
 }
 
 const StoragePlaylistCard = ({
