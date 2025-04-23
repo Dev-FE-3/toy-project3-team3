@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import { Video } from "@/types/video";
+import { Video } from "@/shared/types/video";
 
 export interface PlaylistWithVideos {
   p_id: number;

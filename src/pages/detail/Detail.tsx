@@ -7,12 +7,14 @@ import backgroundImage from "@/assets/images/backGround.png";
 import comment from "@/assets/images/comment.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getPlaylistWithVideos } from "@/db/playlistWithvideos";
+import { getPlaylistWithVideos } from "@/shared/api/playlistWithvideos";
 import { useLikeStatus } from "./hooks/useLikeStatus";
 import { ReactSVG } from "react-svg";
 import { useState } from "react";
 import Modal from "@/shared/component/Modal";
-import { softDeletePlaylist } from "@/db/playlist";
+import { softDeletePlaylist } from "@/shared/api/playlist";
+import Loading from "@/shared/component/Loading";
+import ErrorFallback from "@/shared/component/ErrorFallback";
 
 const Detail = () => {
   // 로그인된 유저의 random_id를 userId로 사용 (DB 컬럼명은 random_id)
@@ -30,7 +32,7 @@ const Detail = () => {
   const {
     data: playlistData,
     isLoading: isPlaylistLoading,
-    error,
+    error: playlistError,
   } = useQuery({
     queryKey: ["playlistWithVideos", playlistId],
     queryFn: () => getPlaylistWithVideos(playlistId),
@@ -48,8 +50,10 @@ const Detail = () => {
 
   const isLoading = isPlaylistLoading || isLikeLoading;
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (error || !playlistData) return <div>에러 발생 또는 데이터 없음</div>;
+  if (isLoading) return <Loading />;
+  if (playlistError || !playlistData) {
+    return <ErrorFallback message="존재하지 않는 플레이리스트입니다." />;
+  }
 
   // 메뉴 동작 1 = "수정하기" 2 = "삭제하기"
   const handleIconAction = (action: number, p_id: number) => {

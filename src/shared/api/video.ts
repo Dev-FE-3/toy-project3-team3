@@ -1,4 +1,4 @@
-import axiosInstance from "@/db/axiosInstance";
+import axiosInstance from "@/shared/api/axiosInstance";
 
 //만들기
 export async function createVideo(

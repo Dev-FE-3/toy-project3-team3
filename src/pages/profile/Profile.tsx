@@ -7,14 +7,15 @@ import useLockStore from "@/stores/lockStore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useProfileImage from "@/shared/hooks/useProfileImage";
-import useUploadDeleteProfileImage from "@/api/useUploadDeleteProfileImage";
-import useUpdateUserInfo from "@/api/useUpdateUserInfo";
+import useUploadDeleteProfileImage from "@/pages/profile/hooks/useUploadDeleteProfileImage";
+import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
 import useUser from "@/shared/hooks/useUser";
-import { isNicknameDuplicated } from "@/db/users";
+import { isNicknameDuplicated } from "@/shared/api/users";
 import Loading from "@/shared/component/Loading";
 import ProfileImageSection from "@/pages/profile/component/ProfileImageSection";
 import ProfileForm from "@/pages/profile/component/ProfileForm";
 import ErrorFallback from "@/shared/component/ErrorFallback";
+import cancel from "@/assets/images/cancel.svg";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -118,7 +119,7 @@ const Profile = () => {
           title="프로필"
           rightContent={
             <img
-              src="/assets/cancel.svg"
+              src={cancel}
               alt="닫기"
               onClick={() => setIsModalOpen(true)}
               style={{ cursor: "pointer" }}
