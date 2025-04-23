@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { ReactSVG } from "react-svg";
-import Like from "@/assets/images/like.svg";
+import Like from "@/assets/images/Like.svg";
 import Comment from "@/assets/images/comment.svg";
 import Dropbox from "@/shared/component/Dropbox";
 import backgroundImage from "@/assets/images/backGround.png";
