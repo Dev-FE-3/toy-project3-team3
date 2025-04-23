@@ -15,9 +15,10 @@ import VideoItem from "@/pages/playlist/component/VideoItem";
 import { toast } from "react-toastify";
 import { useYoutubeInfo } from "@/pages/playlist/hooks/useYoutubeInfo";
 import { useThumbnail } from "@/pages/playlist/hooks/useThumbnailUpload";
-import { getPlaylistWithVideos } from "@/db/playlistWithvideos";
-import { Video } from "@/types/video";
+import { getPlaylistWithVideos } from "@/shared/api/playlistWithvideos";
+import { Video } from "@/shared/types/video";
 import { useUpdatePlaylist } from "@/pages/playlist/hooks/useUpdatePlaylist";
+import ErrorFallback from "@/shared/component/ErrorFallback";
 
 const Modify = () => {
   const navigate = useNavigate();
@@ -57,8 +58,8 @@ const Modify = () => {
     queryKey: ["playlistDetail", playlistId] as const,
     queryFn: async () => {
       const data = await getPlaylistWithVideos(Number(playlistId));
-      if (!data)
-        throw new Error("플레이리스트가 존재하지 않거나 삭제되었습니다.");
+      // if (!data)
+      //   throw new Error("플레이리스트가 존재하지 않거나 삭제되었습니다.");
       return data;
     },
     enabled: !!playlistId,
@@ -158,7 +159,12 @@ const Modify = () => {
   });
 
   if (isLoading) return <Loading />;
-  if (isError) return <p>플레이리스트 정보를 불러오는 데 실패했습니다.</p>;
+
+  if (isError || !playlistData) {
+    return (
+      <ErrorFallback message="존재하지 않거나 삭제된 플레이리스트입니다." />
+    );
+  }
 
   return (
     <Wrapper>

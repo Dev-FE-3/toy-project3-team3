@@ -1,4 +1,4 @@
-import { Video } from "@/types/video";
+import { Video } from "@/shared/types/video";
 
 /**
  * 기존 영상 목록과 현재 영상 목록을 비교하여

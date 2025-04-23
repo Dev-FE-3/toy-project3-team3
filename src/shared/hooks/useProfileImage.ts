@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/shared/lib/supabase";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import useUser from "@/shared/hooks/useUser";
-import { QUERY_KEYS } from "@/constants/queryKey";
+import { QUERY_KEYS } from "@/shared/constants/queryKey";
 
 const fetchProfileImage = async (randomId: number): Promise<string> => {
   const { data: list } = await supabase.storage.from("profiles").list();

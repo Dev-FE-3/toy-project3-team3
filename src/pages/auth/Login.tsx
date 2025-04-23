@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase.ts";
+import { supabase } from "@/shared/lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import styled from "@emotion/styled";

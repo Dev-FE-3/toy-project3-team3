@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/shared/lib/supabase";
 import styled from "@emotion/styled";
 import IdolLink from "@/assets/images/IdolLink.svg";
 import DefaultProfile from "@/assets/images/DefaultProfile.svg";

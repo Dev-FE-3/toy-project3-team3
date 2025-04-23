@@ -7,15 +7,15 @@ import Loading from "@/shared/component/Loading";
 import StoragePlaylistCard from "@/pages/storage/component/StoragePlaylistCard";
 import StorageProfileCard from "@/pages/storage/component/StorageProfileCard";
 import { TabMenu, TabButton } from "@/shared/component/Tab";
-import useOtherUser from "@/api/useOtherUser";
-import useFollowCount from "@/api/useFollowCount";
-import useMyPlaylists from "@/api/useMyPlaylists";
-import useLikedPlaylists from "@/api/useLikedPlaylists";
-import useFollowStatus from "@/api/useFollowStatus";
+import useOtherUser from "@/pages/profile/hooks/useOtherUser";
+import useFollowCount from "@/pages/storage/hooks/useFollowCount";
+import useMyPlaylists from "@/pages/storage/hooks/useMyPlaylists";
+import useLikedPlaylists from "@/pages/storage/hooks/useLikedPlaylists";
+import useFollowStatus from "@/pages/storage/hooks/useFollowStatus";
 import { useUserStore } from "@/stores/userStore";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { getMyLikedPlaylistIds } from "@/db/like";
-import { softDeletePlaylist } from "@/db/playlist";
+import { getMyLikedPlaylistIds } from "@/shared/api/like";
+import { softDeletePlaylist } from "@/shared/api/playlist";
 import ErrorFallback from "@/shared/component/ErrorFallback";
 
 const Storage = () => {

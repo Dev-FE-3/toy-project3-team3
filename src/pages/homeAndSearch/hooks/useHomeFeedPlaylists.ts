@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getFilteredPlaylistCardData } from "@/db/playlistCardData";
-import useFollowList from "@/api/useFollowList";
+import { getFilteredPlaylistCardData } from "@/shared/api/playlistCardData";
+import useFollowList from "@/shared/hooks/useFollowList";
 import { useUserStore } from "@/stores/userStore";
-import { Follow } from "@/db/follow";
+import { Follow } from "@/shared/api/follow";
 import { useMemo } from "react";
 
 const useHomeFeedPlaylists = () => {
