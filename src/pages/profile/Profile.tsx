@@ -54,10 +54,11 @@ const Profile = () => {
     }
   }, [user]);
 
-  const handleIconAction = (action: string) => {
+  const handleIconAction = (action: number) => {
     if (!user) return;
 
-    if (action === "수정하기") {
+    // 1 = "수정하기" 2 = "삭제하기"
+    if (action === 1) {
       const input = document.createElement("input");
       input.type = "file";
       input.accept = "image/*";
@@ -69,7 +70,7 @@ const Profile = () => {
         }
       };
       input.click();
-    } else if (action === "삭제하기") {
+    } else if (action === 2) {
       imageMutation.mutate({});
     }
   };

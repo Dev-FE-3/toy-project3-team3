@@ -65,10 +65,10 @@ const Storage = () => {
     navigate(`/storage/${randomId}/follow-info?tab=${tab}`);
   };
 
-  const handleIconAction = async (action: string, p_id: number) => {
-    if (action === "수정하기") {
+  const handleIconAction = async (action: number, p_id: number) => {
+    if (action === 1) {
       navigate(`/edit/${p_id}`);
-    } else if (action === "삭제하기") {
+    } else if (action === 2) {
       setSelectedIdToDelete(p_id);
       setIsModalOpen(true);
     }
@@ -200,7 +200,6 @@ const FixedHeaderArea = styled.div`
 `;
 
 const ScrollablePlaylistArea = styled.div`
-  flex: 1;
   overflow-y: auto;
   padding: 15px 40px;
   display: flex;
