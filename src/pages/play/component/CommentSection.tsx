@@ -1,8 +1,8 @@
-import CommonInput from '@/shared/component/input';
+import CommonInput from "@/shared/component/input";
 import styled from "@emotion/styled";
 import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import Submit from "@/assets/images/Submit.svg";
-import { CommentWithUserInfo } from '@/db/comment';
+import { CommentWithUserInfo } from "@/shared/api/comment";
 
 interface CommentSectionProps {
   userImg: string;
@@ -57,10 +57,10 @@ const CommentSection = ({
         </CommentListWrapper>
       </ScrollableContent>
     </div>
-  )
-}
+  );
+};
 
-export default CommentSection
+export default CommentSection;
 
 const ProfileImage = styled.img`
   width: 50px;
