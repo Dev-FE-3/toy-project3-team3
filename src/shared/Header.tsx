@@ -4,17 +4,19 @@ import { supabase } from "@/shared/lib/supabase";
 import styled from "@emotion/styled";
 import IdolLink from "@/assets/images/IdolLink.svg";
 import DefaultProfile from "@/assets/images/DefaultProfile.svg";
-import useProfileImage from "./hooks/useProfileImage";
 import useLockStore from "@/stores/lockStore";
 import Modal from "./component/Modal";
+import { useUserStore } from "@/stores/userStore";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isLocked } = useLockStore();
+  const { user } = useUserStore();
 
-  const { profileImage } = useProfileImage(); // 프로필 이미지 fetch
-
+  const userImgWithNoCache = user?.user_img
+    ? `${user.user_img}?t=${Date.now()}`
+    : DefaultProfile;
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -53,7 +55,7 @@ const Header = () => {
         ) : (
           <Link to="/profile" onClick={(e) => isLocked && e.preventDefault()}>
             <Profile
-              src={profileImage || DefaultProfile}
+              src={userImgWithNoCache}
               alt="Profile Image"
               data-testid="header-profileLogo"
             />
