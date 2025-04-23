@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/shared/lib/supabase";
 
 export const useThumbnail = () => {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null); //thumbnailFile : 사용자가 선택한 이미지 파일

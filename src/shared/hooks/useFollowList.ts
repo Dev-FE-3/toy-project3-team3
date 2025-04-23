@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchFollowList } from "@/db/follow";
-import { QUERY_KEYS } from "@/constants/queryKey";
+import { fetchFollowList } from "@/shared/api/follow";
+import { QUERY_KEYS } from "@/shared/constants/queryKey";
 
 const useFollowList = (targetId: number, type: "follower" | "following") => {
   const {

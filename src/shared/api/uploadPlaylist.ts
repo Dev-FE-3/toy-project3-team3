@@ -1,5 +1,5 @@
-import { createPlaylist } from "@/db/playlist";
-import { createVideo } from "@/db/video";
+import { createPlaylist } from "@/shared/api/playlist";
+import { createVideo } from "@/shared/api/video";
 
 interface PlaylistInsert {
   random_id: number;

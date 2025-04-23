@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateUser } from "@/db/users";
+import { updateUser } from "@/shared/api/users";
 import { useUserStore } from "@/stores/userStore";
-import { QUERY_KEYS } from "@/constants/queryKey";
+import { QUERY_KEYS } from "@/shared/constants/queryKey";
 
 interface UpdateUserInfoParams {
   id: number;
