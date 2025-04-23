@@ -15,6 +15,7 @@ import Loading from "@/shared/component/Loading";
 import ProfileImageSection from "@/pages/profile/component/ProfileImageSection";
 import ProfileForm from "@/pages/profile/component/ProfileForm";
 import ErrorFallback from "@/shared/component/ErrorFallback";
+import cancel from "@/assets/images/cancel.svg";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -117,7 +118,7 @@ const Profile = () => {
           title="프로필"
           rightContent={
             <img
-              src="/assets/cancel.svg"
+              src={cancel}
               alt="닫기"
               onClick={() => setIsModalOpen(true)}
               style={{ cursor: "pointer" }}
