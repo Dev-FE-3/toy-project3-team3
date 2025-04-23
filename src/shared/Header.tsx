@@ -3,7 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/shared/lib/supabase";
 import styled from "@emotion/styled";
 import IdolLink from "@/assets/images/IdolLink.svg";
-import DefaultProfile from "@/assets/images/DefaultProfile.svg";
+import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import useLockStore from "@/stores/lockStore";
 import Modal from "./component/Modal";
 import { useUserStore } from "@/stores/userStore";
