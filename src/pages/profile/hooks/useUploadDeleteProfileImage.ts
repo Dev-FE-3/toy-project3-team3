@@ -2,6 +2,7 @@ import { supabase } from "@/shared/lib/supabase";
 import { useMutation } from "@tanstack/react-query";
 import { updateUser } from "@/shared/api/users";
 import useUser from "@/shared/hooks/useUser";
+import { useUserStore } from "@/stores/userStore";
 
 interface UploadDeleteArgs {
   file?: File;
@@ -9,9 +10,10 @@ interface UploadDeleteArgs {
 
 const useUploadDeleteProfileImage = (refetchImage?: () => void) => {
   const { user } = useUser();
+  const setUser = useUserStore((state) => state.setUser); // ✅ Zustand 상태 접근
 
   const { mutate, isPending, isError } = useMutation<
-    string | void,
+    void,
     Error,
     UploadDeleteArgs
   >({
@@ -27,7 +29,7 @@ const useUploadDeleteProfileImage = (refetchImage?: () => void) => {
         const { error: uploadError } = await supabase.storage
           .from("profiles")
           .upload(path, file, {
-            cacheControl: "3600",
+            cacheControl: "0", // 캐싱 무력화
             contentType: file.type,
             upsert: true,
           });
@@ -40,25 +42,35 @@ const useUploadDeleteProfileImage = (refetchImage?: () => void) => {
           .from("profiles")
           .getPublicUrl(path);
 
-        const publicUrl = urlData?.publicUrl;
+        const publicUrl = `${urlData?.publicUrl}?t=${Date.now()}`;
 
         await updateUser(userId, { user_img: publicUrl });
 
-        return path;
+        // 상태 갱신: 전역 Zustand user store에 반영
+        setUser({
+          ...user,
+          user_img: publicUrl,
+        });
+
+        refetchImage?.();
       } else {
         const extensions = ["png", "jpg", "jpeg", "webp"];
         for (const ext of extensions) {
-          const path = `${random_id}.${ext}`;
-          await supabase.storage.from("profiles").remove([path]);
+          await supabase.storage
+            .from("profiles")
+            .remove([`${random_id}.${ext}`]);
         }
 
         await updateUser(userId, { user_img: "" });
 
-        return;
+        // 상태 갱신: 전역 user_img 초기화
+        setUser({
+          ...user,
+          user_img: "",
+        });
+
+        refetchImage?.();
       }
-    },
-    onSuccess: () => {
-      refetchImage?.();
     },
   });
 

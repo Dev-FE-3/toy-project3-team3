@@ -6,12 +6,11 @@ import { QUERY_KEYS } from "@/shared/constants/queryKey";
 
 const fetchProfileImage = async (randomId: number): Promise<string> => {
   const { data: list } = await supabase.storage.from("profiles").list();
-
   const file = list?.find((f) => f.name.startsWith(`${randomId}`));
   if (!file) return DefaultProfile;
 
   const { data } = supabase.storage.from("profiles").getPublicUrl(file.name);
-  return data?.publicUrl || DefaultProfile;
+  return `${data?.publicUrl}?t=${Date.now()}` || DefaultProfile;
 };
 
 const useProfileImage = () => {
