@@ -13,14 +13,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleVideoFromPlaylist } from "@/shared/api/playlistFullView";
-import { ReactSVG } from "react-svg";
 import {
   getPlaylistWithVideos,
   PlaylistWithVideos,
 } from "@/shared/api/playlistWithvideos";
-import { useLikeStatus } from "../playlist/detail/hooks/useLikeStatus";
 import Loading from "@/shared/component/Loading";
 import ErrorFallback from "@/shared/component/ErrorFallback";
+import { useLikeStatus } from "../detail/hooks/useLikeStatus";
+import VideoMetaSection from "./component/VideoMetaSection";
+import CommentSection from "./component/CommentSection";
 
 const Play = () => {
   const queryClient = useQueryClient();

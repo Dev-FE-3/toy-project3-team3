@@ -200,7 +200,6 @@ const FixedHeaderArea = styled.div`
 `;
 
 const ScrollablePlaylistArea = styled.div`
-  flex: 1;
   overflow-y: auto;
   padding: 15px 40px;
   display: flex;

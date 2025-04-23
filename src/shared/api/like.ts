@@ -8,12 +8,6 @@ export interface Like {
   created_at: string;
 }
 
-//가져오기
-// export async function getLike(): Promise<Like[]> {
-//   const response = await axiosInstance.get<Like[]>("/likes_table");
-//   return response.data;
-// }
-
 // 좋아요 여부 확인
 export async function getLikeStatus(
   userId: number,

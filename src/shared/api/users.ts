@@ -23,12 +23,6 @@ export async function getUser(): Promise<User[]> {
   }
 }
 
-//만들기
-// export async function createUser(): Promise<User[]> {
-//   const response = await axiosInstance.post<User[]>("/user_table");
-//   return response.data;
-// }
-
 //수정하기
 export async function updateUser(
   id: number,
@@ -45,12 +39,6 @@ export async function updateUser(
     throw error;
   }
 }
-
-// 현재로서 사용하지 않음
-// export async function deleteAllUser(): Promise<User[]> {
-//   const response = await axiosInstance.delete<User[]>("/user_table");
-//   return response.data;
-// }
 
 // 닉네임 중복 체크
 export const isNicknameDuplicated = async (nickname: string) => {

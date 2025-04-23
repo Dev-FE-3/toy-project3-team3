@@ -102,14 +102,3 @@ export async function getCommentCountByPlaylist(
   
 }
 
-// 현재로서 사용하지 않음
-// export async function patchComment(): Promise<Comment[]> {
-//   const response = await axiosInstance.patch<Comment[]>("/comments_table");
-//   return response.data;
-// }
-
-// 현재로서 사용하지 않음
-// export async function deleteComment(): Promise<Comment[]> {
-//   const response = await axiosInstance.delete<Comment[]>("/comments_table");
-//   return response.data;
-// }
