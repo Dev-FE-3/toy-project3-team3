@@ -14,8 +14,13 @@ export interface User {
 
 //가져오기
 export async function getUser(): Promise<User[]> {
-  const response = await axiosInstance.get<User[]>("/user_table");
-  return response.data;
+  try {
+    const response = await axiosInstance.get<User[]>("/user_table");
+    return response.data;
+  } catch (error) {
+    console.error("getUser 에러:", error);
+    return [];
+  }
 }
 
 //만들기
@@ -29,11 +34,16 @@ export async function updateUser(
   id: number,
   updatedFields: Partial<User>,
 ): Promise<User> {
-  const response = await axiosInstance.patch<User>(
-    `/user_table?id=eq.${id}`, // 쿼리 파라미터를 사용하여 id를 찾음
-    updatedFields,
-  ); // 변경하고 싶은 유저 정보를 담는 객체를 지정해야함!
-  return response.data;
+  try {
+    const response = await axiosInstance.patch<User>(
+      `/user_table?id=eq.${id}`,
+      updatedFields,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("updateUser 에러:", error);
+    throw error;
+  }
 }
 
 // 현재로서 사용하지 않음
@@ -44,22 +54,31 @@ export async function updateUser(
 
 // 닉네임 중복 체크
 export const isNicknameDuplicated = async (nickname: string) => {
-  const { data } = await axiosInstance.get("/user_table", {
-    params: {
-      nickname: `eq.${nickname}`,
-      select: "id",
-    },
-  });
-  return data.length > 0; // 하나라도 있으면 중복
+  try {
+    const { data } = await axiosInstance.get("/user_table", {
+      params: {
+        nickname: `eq.${nickname}`,
+        select: "id",
+      },
+    });
+    return data.length > 0;
+  } catch (error) {
+    console.error("isNicknameDuplicated 에러:", error);
+    return false; // 에러 발생 시 중복 아님으로 처리 (보수적으로 동작)
+  }
 };
 
 // 랜덤 아이디로 유저 찾기
 export async function getUserByRandomId(
   randomId: number,
 ): Promise<User | null> {
-  const response = await axiosInstance.get<User[]>(
-    `/user_table?random_id=eq.${randomId}`,
-  );
-
-  return response.data.length > 0 ? response.data[0] : null;
+  try {
+    const response = await axiosInstance.get<User[]>(
+      `/user_table?random_id=eq.${randomId}`,
+    );
+    return response.data.length > 0 ? response.data[0] : null;
+  } catch (error) {
+    console.error("getUserByRandomId 에러:", error);
+    return null;
+  }
 }
