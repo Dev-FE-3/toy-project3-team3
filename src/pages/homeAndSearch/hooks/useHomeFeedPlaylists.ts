@@ -1,18 +1,19 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getFilteredPlaylistCardData } from "@/api/playlistCardData";
-import useFollowList from "@/api/services/useFollowList";
+import { getFilteredPlaylistCardData } from "@/shared/api/playlistCardData";
+import useFollowList from "@/shared/hooks/useFollowList";
 import { useUserStore } from "@/stores/userStore";
-import { Follow } from "@/api/follow";
+import { Follow } from "@/shared/api/follow";
 import { useMemo } from "react";
 
 const useHomeFeedPlaylists = () => {
   const currentUserId = useUserStore((state) => state.user?.random_id);
 
   // 팔로잉 리스트 (random_id → following_id)
-  const { data: followList = [] } = useFollowList(
-    currentUserId ?? -1,
-    "following",
-  );
+  const {
+    followList,
+    //isLoading: isFollowLoading,
+    //isError: isFollowError,
+  } = useFollowList(currentUserId ?? -1, "following");
 
   // followingId 배열 추출 (useMemo로 안정적으로 계산)
   const followingIds = useMemo(() => {

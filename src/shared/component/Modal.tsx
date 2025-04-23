@@ -2,13 +2,16 @@ import ReactDOM from "react-dom";
 import styled from "@emotion/styled";
 import Button from "@/shared/component/Button";
 
+type ModalType = "alert" | "confirm";
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   message: React.ReactNode;
-  leftButtonText: string;
+  leftButtonText?: string;
   rightButtonText: string;
+  type?: ModalType;
 }
 
 const Modal = ({
@@ -18,6 +21,7 @@ const Modal = ({
   message,
   leftButtonText,
   rightButtonText,
+  type = "confirm",
 }: ModalProps) => {
   if (!isOpen) return null;
 
@@ -34,14 +38,16 @@ const Modal = ({
       <Container>
         <Message>{message}</Message>
         <ButtonGroup>
-          <Button
-            className="left-button"
-            size="small"
-            btnColor="white"
-            onClick={onClose}
-          >
-            {leftButtonText}
-          </Button>
+          {type === "confirm" && leftButtonText && (
+            <Button
+              className="left-button"
+              size="small"
+              btnColor="white"
+              onClick={onClose}
+            >
+              {leftButtonText}
+            </Button>
+          )}
           <Button
             className="right-button"
             size="small"

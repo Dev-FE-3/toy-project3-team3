@@ -1,22 +1,23 @@
+import { InputHTMLAttributes, forwardRef } from "react";
 import styled from "@emotion/styled";
-import { InputHTMLAttributes, Ref } from "react";
 
 /**HTML <input> 요소에 들어가는  기본 props를 모두 상속*/
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
-  ref?: Ref<HTMLInputElement>; // ref를 prop으로 직접 받음
 }
 
-const FormInput = ({ label, error, ref, ...inputProps }: FormInputProps) => {
-  return (
-    <InputWrapper>
-      <InputLabel htmlFor={inputProps.id}>{label}</InputLabel>
-      <InputField ref={ref} {...inputProps} hasError={!!error} />
-      {error && <ErrorText>{error}</ErrorText>}
-    </InputWrapper>
-  );
-};
+const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
+  ({ label, error, ...inputProps }, ref) => {
+    return (
+      <InputWrapper>
+        <InputLabel htmlFor={inputProps.id}>{label}</InputLabel>
+        <InputField ref={ref} {...inputProps} hasError={!!error} />
+        {error && <ErrorText>{error}</ErrorText>}
+      </InputWrapper>
+    );
+  },
+);
 
 export default FormInput;
 

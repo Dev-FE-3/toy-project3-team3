@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase.ts";
+import { supabase } from "@/shared/lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import styled from "@emotion/styled";
@@ -42,7 +42,7 @@ const Login = () => {
         <Logo src={IdolLinkLogo} alt="로고" />
 
         <Form onSubmit={handleSubmit(handleLogin)}>
-          <Title>로그인</Title>
+          <Title data-testid="login-title">로그인</Title>
 
           <FormInput
             id="email"
@@ -75,9 +75,12 @@ const Login = () => {
           >
             로그인
           </LoginButton>
-          <SignupGuide>
+          <SignupGuide data-testid="login-guide">
             계정이 아직 없으신가요?
-            <span onClick={() => navigate("/signup")}> 회원가입</span>
+            <span data-testid="signup-link" onClick={() => navigate("/signup")}>
+              {" "}
+              회원가입
+            </span>
           </SignupGuide>
         </Form>
       </Wrapper>

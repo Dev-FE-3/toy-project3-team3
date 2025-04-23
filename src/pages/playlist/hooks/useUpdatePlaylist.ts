@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { patchPlaylist } from "@/api/playlist";
-import { createVideo, deleteVideosByIds, Video } from "@/api/video";
+import { patchPlaylist } from "@/shared/api/playlist";
+import { createVideo, deleteVideosByIds } from "@/shared/api/video";
+import { Video } from "@/shared/types/video";
 import { diffVideoList } from "@/pages/playlist/utils/diffVideoList";
-import { toast } from "react-toastify";
 
 export interface VideoWithFile extends Video {
   thumbnailFile?: File;
@@ -35,26 +35,23 @@ export const useUpdatePlaylist = ({
       const { deleted, added } = diffVideoList(originalVideos, updatedVideos);
 
       // 플레이리스트 썸네일 업로드
-      let coverImgUrl = thumbnailPreview as string;
-
-      try {
-        coverImgUrl = await uploadPlaylistThumbnail();
-      } catch (e) {
-        console.error("커버 이미지 업로드 실패:", e);
-      }
+      const coverImgUrl =
+        thumbnailPreview instanceof File
+          ? await uploadPlaylistThumbnail().catch((e) => {
+              console.error("커버 이미지 업로드 실패:", e);
+              return "";
+            })
+          : (thumbnailPreview as string);
 
       // 영상 썸네일 업로드
       const uploadedVideos = await Promise.all(
         added.map(async (v) => {
-          let thumbnailUrl = v.thumbnail_url;
-
-          if (v.thumbnailFile) {
-            try {
-              thumbnailUrl = await uploadVideoThumbnail(v.thumbnailFile);
-            } catch (e) {
-              console.error("영상 썸네일 업로드 실패:", e);
-            }
-          }
+          const thumbnailUrl = v.thumbnailFile
+            ? await uploadVideoThumbnail(v.thumbnailFile).catch((e) => {
+                console.error("영상 썸네일 업로드 실패:", e);
+                return v.thumbnail_url; // 실패 시 기존 URL 유지
+              })
+            : v.thumbnail_url;
 
           return {
             title: v.title,
@@ -65,7 +62,6 @@ export const useUpdatePlaylist = ({
           };
         }),
       );
-
       await Promise.all([
         patchPlaylist({
           p_id: playlistId,
@@ -80,7 +76,6 @@ export const useUpdatePlaylist = ({
     onSuccess,
     onError: (error) => {
       console.error("업데이트 실패:", error.message || error);
-      toast.error("업데이트에 실패했습니다. 다시 시도해주세요.");
     },
   });
 };

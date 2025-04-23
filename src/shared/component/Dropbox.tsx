@@ -5,6 +5,11 @@ import styled from "@emotion/styled";
 
 type DropdownVariant = "icon" | "text";
 
+interface OptionItem {
+  value: number;
+  label: string;
+}
+
 interface CommonProps {
   variant: DropdownVariant;
   iconSize?: number;
@@ -12,29 +17,44 @@ interface CommonProps {
 
 interface TextDropdownProps extends CommonProps {
   variant: "text";
-  value: string;
-  onChange: (selected: string) => void;
+  value: number;
+  onChange: (selected: number) => void;
 }
 
 interface IconDropdownProps extends CommonProps {
   variant: "icon";
-  onChange?: (selected: string) => void;
+  onChange?: (selected: number) => void;
   value?: never;
 }
 
 type DropboxProps = TextDropdownProps | IconDropdownProps;
 
-const Dropbox: React.FC<DropboxProps> = (props) => {
-  const { variant, onChange, iconSize = 14 } = props;
+const Dropbox = ({ variant, onChange, iconSize = 14, value }: DropboxProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const iconOptions = ["수정하기", "삭제하기"];
-  const textOptions = ["최신순", "인기순"];
+  // value + label로 구분된 옵션 배열
+  const iconOptions: OptionItem[] = [
+    { value: 1, label: "수정하기" },
+    { value: 2, label: "삭제하기" },
+  ];
+
+  const textOptions: OptionItem[] = [
+    { value: 1, label: "최신순" },
+    { value: 2, label: "인기순" },
+  ];
+
   const options = variant === "icon" ? iconOptions : textOptions;
 
+  // 선택된 label 보여주기
+  const selectedLabel =
+    variant === "text"
+      ? (options.find((opt) => opt.value === value)?.label ?? "")
+      : "";
+
   const handleToggle = () => setIsOpen((prev) => !prev);
-  const handleSelect = (item: string) => {
+
+  const handleSelect = (item: number) => {
     setIsOpen(false);
     onChange?.(item);
   };
@@ -69,7 +89,7 @@ const Dropbox: React.FC<DropboxProps> = (props) => {
           />
         ) : (
           <>
-            {"value" in props && <span>{props.value}</span>}
+            <span>{selectedLabel}</span>
             <img
               src={drop}
               alt="드롭다운 아이콘"
@@ -82,15 +102,15 @@ const Dropbox: React.FC<DropboxProps> = (props) => {
 
       {isOpen && (
         <DropdownMenu variant={variant}>
-          {options.map((option, index) => (
+          {options.map((option) => (
             <DropdownOption
               type="button"
-              key={index}
-              isActive={"value" in props && props.value === option}
+              key={option.value}
+              isActive={variant === "text" && value === option.value}
               variant={variant}
-              onClick={() => handleSelect(option)}
+              onClick={() => handleSelect(option.value)}
             >
-              {option}
+              {option.label}
             </DropdownOption>
           ))}
         </DropdownMenu>

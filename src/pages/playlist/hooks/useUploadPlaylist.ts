@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { uploadPlaylist } from "@/api/services/uploadPlaylist";
-import { toast } from "react-toastify";
+import { uploadPlaylist } from "@/shared/api/uploadPlaylist";
 
 type UploadVideo = {
   videoId: string;
@@ -16,6 +15,7 @@ interface UseUploadPlaylistProps {
   uploadPlaylistThumbnail: () => Promise<string>;
   uploadVideoThumbnail: (file: File) => Promise<string>;
   onSuccess?: () => void;
+  onError?: (error: unknown) => void;
 }
 
 /**
@@ -40,7 +40,14 @@ export function useUploadPlaylist({
       if (videos.length === 0)
         throw new Error("1개 이상의 영상을 추가해주세요.");
 
-      const thumbnailUrl = await uploadPlaylistThumbnail();
+      let thumbnailUrl = "";
+      if (typeof uploadPlaylistThumbnail === "function") {
+        try {
+          thumbnailUrl = await uploadPlaylistThumbnail();
+        } catch (e) {
+          console.error("커버 이미지 업로드 실패:", e);
+        }
+      }
 
       const videoData = await Promise.all(
         videos.map(async (v) => {
@@ -71,8 +78,6 @@ export function useUploadPlaylist({
     onSuccess,
     onError: (error) => {
       console.error("업로드 실패:", error.message || error);
-      toast.error(error.message || "업로드에 실패했습니다. 다시 시도해주세요.");
-      throw error;
     },
   });
 }

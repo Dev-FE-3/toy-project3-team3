@@ -10,12 +10,11 @@ import cancel from "@/assets/images/cancel.svg";
 import add from "@/assets/images/add.svg";
 import Modal from "@/shared/component/Modal";
 import Loading from "@/shared/component/Loading";
-import VideoItem from "./component/VideoItem";
+import VideoItem from "@/pages/playlist/component/VideoItem";
 import { toast } from "react-toastify";
-import { useYoutubeInfo } from "./hooks/useYoutubeInfo";
-import { useThumbnail } from "./hooks/useThumbnailUpload";
+import { useYoutubeInfo } from "@/pages/playlist/hooks/useYoutubeInfo";
+import { useThumbnail } from "@/pages/playlist/hooks/useThumbnailUpload";
 import { useUserStore } from "@/stores/userStore";
-import { convertImageToFile } from "@/pages/playlist/utils/convertToFile";
 import { useUploadPlaylist } from "@/pages/playlist/hooks/useUploadPlaylist";
 
 const Create = () => {
@@ -27,6 +26,9 @@ const Create = () => {
     uploadPlaylistThumbnail,
     uploadVideoThumbnail,
   } = useThumbnail();
+
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const user = useUserStore((s) => s.user); //store에서 사용자 정보 가져오기
   const [videoUrl, setVideoUrl] = useState("");
@@ -53,12 +55,6 @@ const Create = () => {
     const { data: video } = await refetch();
     if (!video) return;
 
-    try {
-      const file = await convertImageToFile(video.thumbnail!, video.title);
-      video.thumbnailFile = file;
-    } catch (e) {
-      console.error("썸네일 업로드 실패:", e);
-    }
     setVideos((prev) => [...prev, video]);
     setVideoUrl("");
   };
@@ -98,6 +94,11 @@ const Create = () => {
       toast.success("좋아요! 새로운 플레이리스트가 생성되었어요 🎶");
       unlock();
       navigate("/storage");
+    },
+    onError: (error) => {
+      console.error("업로드 실패: ", error);
+      setErrorMessage("업로드에 실패했습니다. 다시 시도해주세요 😢");
+      setErrorModalOpen(true);
     },
   });
 
@@ -174,7 +175,7 @@ const Create = () => {
             {isFetching && <Loading />}
             {videos.map((video, index) => (
               <VideoItem
-                key={index}
+                key={video.videoId}
                 thumbnail={video.thumbnail}
                 title={video.title}
                 source={video.source}
@@ -214,6 +215,15 @@ const Create = () => {
         }
         leftButtonText="취소"
         rightButtonText={modalType === "exit" ? "나가기" : "삭제"}
+      />
+
+      <Modal
+        isOpen={errorModalOpen}
+        onClose={() => setErrorModalOpen(false)}
+        onConfirm={() => setErrorModalOpen(false)}
+        message={errorMessage}
+        rightButtonText="확인"
+        type="alert"
       />
     </Wrapper>
   );

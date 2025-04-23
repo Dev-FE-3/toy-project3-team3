@@ -1,13 +1,4 @@
-export type Video = {
-  v_id: number;
-  title: string;
-  playlist_id: number;
-  channel_name: string;
-  thumbnail_url: string;
-  created_at: string; // ISO timestamp
-  video_id: string;
-  thumbnailFile?: File;
-};
+import { Video } from "@/shared/types/video";
 
 /**
  * 기존 영상 목록과 현재 영상 목록을 비교하여

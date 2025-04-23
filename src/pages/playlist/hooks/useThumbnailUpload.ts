@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/shared/lib/supabase";
 
 export const useThumbnail = () => {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null); //thumbnailFile : 사용자가 선택한 이미지 파일
@@ -10,6 +10,16 @@ export const useThumbnail = () => {
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    const MAX_FILE_SIZE_MB = 5;
+    const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+    if (file.size > MAX_FILE_SIZE) {
+      alert(
+        `파일 용량이 너무 큽니다. ${MAX_FILE_SIZE_MB}MB 이하의 이미지만 업로드할 수 있어요.`,
+      );
+      return;
+    }
     setThumbnailFile(file); //스토리지에 업로드용
     setThumbnailPreview(URL.createObjectURL(file)); //미리보기용
   };

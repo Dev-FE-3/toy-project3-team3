@@ -1,24 +1,26 @@
 import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
-import DefaultProfile from "@/assets/images/defaultProfile.svg";
 import Button from "@/shared/component/Button";
-import CommonInput from "@/shared/component/input";
-import useProfileImage from "@/shared/hooks/useProfileImage";
-import Dropbox from "@/shared/component/Dropbox";
 import Title from "@/shared/component/Title";
-import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
-import Cancel from "@/assets/images/cancel.svg";
 import Modal from "@/shared/component/Modal";
-import { useNavigate } from "react-router-dom";
 import useLockStore from "@/stores/lockStore";
-import useUploadDeleteProfileImage from "./hooks/useUploadDeleteProfileImage";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useUserStore } from "@/stores/userStore";
-import { isNicknameDuplicated } from "@/api/users";
+import useProfileImage from "@/shared/hooks/useProfileImage";
+import useUploadDeleteProfileImage from "@/pages/profile/hooks/useUploadDeleteProfileImage";
+import useUpdateUserInfo from "@/pages/profile/hooks/useUpdateUserInfo";
+import useUser from "@/shared/hooks/useUser";
+import { isNicknameDuplicated } from "@/shared/api/users";
+import Loading from "@/shared/component/Loading";
+import ProfileImageSection from "@/pages/profile/component/ProfileImageSection";
+import ProfileForm from "@/pages/profile/component/ProfileForm";
+import ErrorFallback from "@/shared/component/ErrorFallback";
+import cancel from "@/assets/images/cancel.svg";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { lock, unlock } = useLockStore();
+  const { user, isLoading, isError } = useUser();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -28,10 +30,9 @@ const Profile = () => {
     artist_hash_tag: "",
   });
 
-  const user = useUserStore((state) => state.user);
-  const { profileImage, refetch: refetchImage } = useProfileImage(); // 프로필 이미지 fetch
+  const { profileImage } = useProfileImage(); // 읽기만!
+  const imageMutation = useUploadDeleteProfileImage();
 
-  const imageMutation = useUploadDeleteProfileImage(refetchImage);
   const updateMutation = useUpdateUserInfo(() => {
     setIsEditing(false);
   });
@@ -42,9 +43,8 @@ const Profile = () => {
     } else {
       unlock();
     }
-  }, [isEditing, lock, unlock]); // isEditing 상태에 따라 상단 하단 lock/unlock
+  }, [isEditing, lock, unlock]);
 
-  // 초기 유저 데이터 profileData에 세팅
   useEffect(() => {
     if (user) {
       setProfileData({
@@ -55,10 +55,11 @@ const Profile = () => {
     }
   }, [user]);
 
-  const handleIconAction = (action: string) => {
+  const handleIconAction = (action: number) => {
     if (!user) return;
 
-    if (action === "수정하기") {
+    // 1 = "수정하기" 2 = "삭제하기"
+    if (action === 1) {
       const input = document.createElement("input");
       input.type = "file";
       input.accept = "image/*";
@@ -70,7 +71,7 @@ const Profile = () => {
         }
       };
       input.click();
-    } else if (action === "삭제하기") {
+    } else if (action === 2) {
       imageMutation.mutate({});
     }
   };
@@ -85,7 +86,6 @@ const Profile = () => {
   const handleSave = async () => {
     if (!user?.id) return;
 
-    // 닉네임 중복 체크
     if (profileData.nickname !== user.nickname) {
       const isDuplicate = await isNicknameDuplicated(profileData.nickname);
       if (isDuplicate) {
@@ -100,7 +100,18 @@ const Profile = () => {
     });
   };
 
-  if (!user) return toast.error("유저 정보가 존재하지 않습니다.");
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError || !user) {
+    return (
+      <>
+        <Title title="프로필" showBackButton />
+        <ErrorFallback message="유저 정보를 불러오는 데 실패했습니다." />
+      </>
+    );
+  }
 
   return (
     <ProfilePage>
@@ -109,7 +120,7 @@ const Profile = () => {
           title="프로필"
           rightContent={
             <img
-              src={Cancel}
+              src={cancel}
               alt="닫기"
               onClick={() => setIsModalOpen(true)}
               style={{ cursor: "pointer" }}
@@ -121,95 +132,22 @@ const Profile = () => {
       )}
 
       <ProfileHeader>
-        <ImageWrapper>
-          <ProfileImage
-            src={profileImage || DefaultProfile}
-            alt="프로필 이미지"
-          />
-          {isEditing && (
-            <DropboxWrapper>
-              <Dropbox
-                variant="icon"
-                iconSize={24}
-                onChange={handleIconAction}
-              />
-            </DropboxWrapper>
-          )}
-        </ImageWrapper>
+        <ProfileImageSection
+          profileImage={profileImage}
+          isEditing={isEditing}
+          onIconAction={handleIconAction}
+        />
       </ProfileHeader>
+
       <ProfileDataWrapper>
-        <FormWrapper>
-          <CommonInput
-            id="nickname"
-            label="닉네임"
-            placeholder="닉네임"
-            labelPosition="left"
-            value={profileData.nickname}
-            onChange={handleInputChange}
-            width="250px"
-            isReadOnly={!isEditing}
-          />
-          <CommonInput
-            id="email"
-            label="이메일"
-            labelPosition="left"
-            value={user?.email ?? ""}
-            onChange={() => {}}
-            width="250px"
-            isReadOnly
-          />
-          <CommonInput
-            id="sort_intro"
-            label="한 줄 소개"
-            placeholder="한 줄 소개를 입력해 주세요."
-            labelPosition="left"
-            isTextarea
-            value={profileData.sort_intro}
-            onChange={handleInputChange}
-            isReadOnly={!isEditing}
-          />
-          {isEditing ? (
-            <CommonInput
-              id="artist_hash_tag"
-              label="관심 아티스트"
-              placeholder="관심 아티스트를 입력해 주세요."
-              labelPosition="left"
-              isTextarea
-              value={profileData.artist_hash_tag}
-              onChange={handleInputChange}
-              isReadOnly={false}
-            />
-          ) : (
-            <div
-              style={{ display: "flex", gap: "50px", alignItems: "flex-start" }}
-            >
-              <label
-                style={{
-                  minWidth: "110px",
-                  fontWeight: "bold",
-                  fontSize: "var(--font-size-large)",
-                  color: "var(--text-primary)",
-                  textAlign: "right",
-                  marginTop: "10px",
-                }}
-              >
-                관심 아티스트
-              </label>
-              <StyledReadOnlyTag>
-                {profileData.artist_hash_tag.split(" ").map((word, idx) =>
-                  word.startsWith("#") ? (
-                    <span className="hashtag" key={idx}>
-                      {word + " "}
-                    </span>
-                  ) : (
-                    word + " "
-                  ),
-                )}
-              </StyledReadOnlyTag>
-            </div>
-          )}
-        </FormWrapper>
+        <ProfileForm
+          profileData={profileData}
+          email={user.email ?? ""}
+          isEditing={isEditing}
+          onInputChange={handleInputChange}
+        />
       </ProfileDataWrapper>
+
       <ButtonWrapper>
         <Button
           size="mid"
@@ -222,7 +160,7 @@ const Profile = () => {
 
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} // 계속하기
+        onClose={() => setIsModalOpen(false)}
         onConfirm={() => {
           setIsModalOpen(false);
           navigate(0);
@@ -240,97 +178,33 @@ export default Profile;
 const ProfilePage = styled.div`
   flex: 1;
   height: 100%;
-  overflow-y: auto; // 🔥 이걸 추가!
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 100px; // Nav 가림 방지용
+  padding-bottom: 100px;
 `;
 
 const ProfileHeader = styled.div`
   width: 100%;
-  //height: 150px;
   height: 220px;
   background-color: var(--profile-background);
   position: relative;
 `;
 
-const ImageWrapper = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  height: 200px;
-`;
-
-const DropboxWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 2;
-`;
-
-const ProfileImage = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-`;
-
 const ProfileDataWrapper = styled.div`
   width: 500px;
-  //height: 350px;
   height: 400px;
   border-radius: 18px;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  //margin: 110px auto 0;
   margin: 125px auto 0;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  //margin-top: 15px;
   margin-top: 30px;
-`;
-
-const FormWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-`;
-
-const StyledReadOnlyTag = styled.div`
-  width: 250px;
-  min-height: 60px;
-  padding: 5px 5px;
-  border-radius: 20px;
-  background-color: transparent;
-  color: var(--text-primary);
-  font-size: var(--font-size-primary);
-  border: 1px solid transparent;
-  white-space: pre-wrap;
-  word-break: break-word;
-
-  span.hashtag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    background-color: var(--primary);
-    color: white;
-
-    height: 26px;
-    padding: 0 10px;
-    margin-right: 6px;
-
-    border-radius: 999px; /* pill 모양 */
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1;
-  }
 `;
