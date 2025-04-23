@@ -35,28 +35,23 @@ export const useUpdatePlaylist = ({
       const { deleted, added } = diffVideoList(originalVideos, updatedVideos);
 
       // 플레이리스트 썸네일 업로드
-      let coverImgUrl = thumbnailPreview as string;
-
-      if (thumbnailPreview instanceof File) {
-        try {
-          coverImgUrl = await uploadPlaylistThumbnail();
-        } catch (e) {
-          console.error("커버 이미지 업로드 실패:", e);
-        }
-      }
+      const coverImgUrl =
+        thumbnailPreview instanceof File
+          ? await uploadPlaylistThumbnail().catch((e) => {
+              console.error("커버 이미지 업로드 실패:", e);
+              return "";
+            })
+          : (thumbnailPreview as string);
 
       // 영상 썸네일 업로드
       const uploadedVideos = await Promise.all(
         added.map(async (v) => {
-          let thumbnailUrl = v.thumbnail_url;
-
-          if (v.thumbnailFile) {
-            try {
-              thumbnailUrl = await uploadVideoThumbnail(v.thumbnailFile);
-            } catch (e) {
-              console.error("영상 썸네일 업로드 실패:", e);
-            }
-          }
+          const thumbnailUrl = v.thumbnailFile
+            ? await uploadVideoThumbnail(v.thumbnailFile).catch((e) => {
+                console.error("영상 썸네일 업로드 실패:", e);
+                return v.thumbnail_url; // 실패 시 기존 URL 유지
+              })
+            : v.thumbnail_url;
 
           return {
             title: v.title,
@@ -67,7 +62,6 @@ export const useUpdatePlaylist = ({
           };
         }),
       );
-
       await Promise.all([
         patchPlaylist({
           p_id: playlistId,
