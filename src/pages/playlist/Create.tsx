@@ -107,6 +107,19 @@ const Create = () => {
       "playlistTitle",
     ) as HTMLInputElement;
     const playlistTitle = titleInput?.value.trim();
+
+    if (!playlistTitle) {
+      setErrorMessage("플레이리스트 제목을 입력해주세요.");
+      setErrorModalOpen(true);
+      return;
+    }
+
+    if (videos.length === 0) {
+      setErrorMessage("1개 이상의 영상을 추가해주세요.");
+      setErrorModalOpen(true);
+      return;
+    }
+
     uploadPlaylistMutate({ playlistTitle });
   };
 
